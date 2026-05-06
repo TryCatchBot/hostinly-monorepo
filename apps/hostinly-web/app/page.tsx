@@ -14,13 +14,6 @@ export default function Home() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
 
-  // Redirect logged-in users to dashboard
-  useEffect(() => {
-    if (!isLoading && user) {
-      router.push('/dashboard');
-    }
-  }, [user, isLoading, router]);
-
   // Show loading state while checking auth
   if (isLoading) {
     return (
@@ -33,18 +26,15 @@ export default function Home() {
     );
   }
 
-  // Only show page if user is not logged in
-  if (user) {
-    return null;
-  }
-
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Navigation />
       <HeroSection />
-      <ServicesSection />
-      <PropertyListingSection />
-      <HowItWorksSection />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <ServicesSection />
+        <PropertyListingSection />
+        <HowItWorksSection />
+      </div>
       <Footer />
     </div>
   );

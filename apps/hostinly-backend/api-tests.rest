@@ -1,0 +1,122 @@
+@baseUrl = http://localhost:3333/api
+
+### Health Check
+GET http://localhost:3333/
+
+### --- Auth & Users ---
+
+# @name signup
+POST {{baseUrl}}/auth/signup
+Content-Type: application/json
+
+{
+  "email": "test-user@example.com",
+  "password": "password123",
+  "name": "Test User",
+  "userType": "host"
+}
+
+###
+
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "super@hostinly.com",
+  "password": "password123"
+}
+
+### Get Current User
+GET {{baseUrl}}/users/me
+
+### Get All Users (Admin)
+GET {{baseUrl}}/users
+
+### --- Properties ---
+
+### Get All Properties
+GET {{baseUrl}}/properties
+
+### Get Single Property
+GET {{baseUrl}}/properties/1
+
+### Create Property
+POST {{baseUrl}}/properties
+Content-Type: application/json
+
+{
+  "title": "Modern Beach House",
+  "description": "Stunning views and private beach access.",
+  "location": "Malibu, CA",
+  "price": 850,
+  "bedrooms": 4,
+  "bathrooms": 3,
+  "status": "available",
+  "type": "villa"
+}
+
+### Update Property
+PUT {{baseUrl}}/properties/1
+Content-Type: application/json
+
+{
+  "price": 900,
+  "status": "managing"
+}
+
+### Delete Property
+DELETE {{baseUrl}}/properties/1
+
+### --- Co-hosts ---
+
+### Get All Co-hosts
+GET {{baseUrl}}/cohosts
+
+### Get Single Co-host
+GET {{baseUrl}}/cohosts/1
+
+### --- Jobs ---
+
+### Get All Jobs
+GET {{baseUrl}}/jobs
+
+### Post a New Job
+POST {{baseUrl}}/jobs
+Content-Type: application/json
+
+{
+  "title": "Cleaning & Maintenance",
+  "description": "Looking for help with property turnovers.",
+  "propertyLocation": "Austin, TX",
+  "budget": 1200,
+  "duration": "Part-time",
+  "experience": "1 year",
+  "status": "open"
+}
+
+### --- Payments & Billing ---
+
+### Get All Payments (Admin)
+GET {{baseUrl}}/payments
+
+### Get Pricing Plans
+GET {{baseUrl}}/pricing
+
+### --- Services ---
+
+### Get All Services
+GET {{baseUrl}}/services
+
+### --- Contact ---
+
+### Send Contact Message
+POST {{baseUrl}}/contact
+Content-Type: application/json
+
+{
+  "name": "Interested Guest",
+  "email": "guest@example.com",
+  "subject": "Booking Inquiry",
+  "message": "I would like to know more about the Malibu property."
+}

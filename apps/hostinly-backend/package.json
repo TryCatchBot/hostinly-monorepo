@@ -123,8 +123,14 @@
     ]
   },
   "dependencies": {
-    "express": "^4.21.2",
     "@org/hostinly-backend-products": "workspace:*",
-    "@org/models": "workspace:*"
+    "@org/models": "workspace:*",
+    "@prisma/client": "^6.19.3",
+    "@supabase/supabase-js": "^2.105.3",
+    "dotenv": "^17.4.2",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "prisma": "6"
   }
 }

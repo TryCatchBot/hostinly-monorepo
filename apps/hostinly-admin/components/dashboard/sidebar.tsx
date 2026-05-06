@@ -40,7 +40,7 @@ const mainNavItems: NavItem[] = [
   { title: "Users", href: "/users", icon: Users, permissionKey: "users" },
   { title: "Properties", href: "/properties", icon: Home, permissionKey: "properties" },
   { title: "Co-hosts", href: "/co-hosts", icon: UserCheck, permissionKey: "coHosts" },
-  { title: "Bookings", href: "/bookings", icon: Calendar, permissionKey: "bookings" },
+  // { title: "Bookings", href: "/bookings", icon: Calendar, permissionKey: "bookings" },
   { title: "Payments", href: "/payments", icon: CreditCard, permissionKey: "payments" },
   { title: "Services", href: "/services", icon: Wrench, permissionKey: "services" },
 ];
