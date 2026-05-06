@@ -302,7 +302,7 @@ function SignUpContent() {
         <div className="flex items-center justify-center mb-8">
           <Link href="/" className="flex items-center space-x-2">
             <Image
-              src="/hostinly-logo.png"
+              src="/images/hostinly-logo.png"
               alt="Hostinly"
               width={40}
               height={40}

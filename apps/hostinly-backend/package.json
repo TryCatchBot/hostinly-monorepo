@@ -124,7 +124,7 @@
   },
   "dependencies": {
     "express": "^4.21.2",
-    "@org/api-products": "workspace:*",
+    "@org/hostinly-backend-products": "workspace:*",
     "@org/models": "workspace:*"
   }
 }

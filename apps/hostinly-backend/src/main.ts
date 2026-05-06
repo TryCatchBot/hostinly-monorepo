@@ -1,5 +1,5 @@
 import express from 'express';
-import { ProductsService } from '@org/api-products';
+import { ProductsService } from '@org/hostinly-backend-products';
 import {
   ApiResponse,
   Product,

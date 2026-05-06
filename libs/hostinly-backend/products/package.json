@@ -1,5 +1,5 @@
 {
-  "name": "@org/api-products",
+  "name": "@org/hostinly-backend-products",
   "version": "0.0.1",
   "private": true,
   "main": "./dist/index.js",
@@ -16,7 +16,8 @@
   },
   "nx": {
     "tags": [
-      "scope:api"
+      "scope:hostinly-backend",
+      "type:data"
     ]
   },
   "dependencies": {

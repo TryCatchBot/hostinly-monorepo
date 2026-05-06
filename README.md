@@ -10,19 +10,20 @@
 
 This repository demonstrates a production-ready React monorepo with:
 
-- **2 Applications**
+- **3 Applications**
 
-  - `shop` - React e-commerce application with product listings and detail views
-  - `api` - Backend API serving product data
+  - `hostinly-web` - Next.js vacation rental application
+  - `hostinly-admin` - Next.js admin dashboard
+  - `hostinly-backend` - Express backend API
 
 - **7 Libraries**
 
-  - `@org/shop-feature-products` - Product listing feature (React)
-  - `@org/shop-feature-product-detail` - Product detail feature (React)
-  - `@org/shop-data` - Data access layer for shop features
-  - `@org/shop-shared-ui` - Shared UI components
+  - `@org/hostinly-web-feature-products` - Product listing feature (React)
+  - `@org/hostinly-web-feature-product-detail` - Product detail feature (React)
+  - `@org/hostinly-web-data` - Data access layer for web features
+  - `@org/hostinly-web-shared-ui` - Shared UI components
   - `@org/models` - Shared data models
-  - `@org/api-products` - API product service library
+  - `@org/hostinly-backend-products` - API product service library
   - `@org/shared-test-utils` - Shared testing utilities
 
 - **E2E Testing**
@@ -36,32 +37,32 @@ git clone <your-fork-url>
 cd <your-repository-name>
 
 # Install dependencies
-npx install
+pnpm install
 
 # Serve the React shop application (this will simultaneously serve the API backend)
-npx nx serve shop
+pnpm nx serve hostinly-web
 
 # ...or you can serve the API separately
-npx nx serve api
+pnpm nx serve hostinly-backend
 
 # Build all projects
-npx nx run-many -t build
+pnpm nx run-many -t build
 
 # Run tests
-npx nx run-many -t test
+pnpm nx run-many -t test
 
 # Lint all projects
-npx nx run-many -t lint
+pnpm nx run-many -t lint
 
 # Run e2e tests
-npx nx e2e shop-e2e
+pnpm nx e2e shop-e2e
 
 # Run tasks in parallel
 
-npx nx run-many -t lint test build e2e --parallel=3
+pnpm nx run-many -t lint test build e2e --parallel=3
 
 # Visualize the project graph
-npx nx graph
+pnpm nx graph
 ```
 
 ## ⭐ Featured Nx Capabilities
@@ -73,8 +74,8 @@ This repository showcases several powerful Nx features:
 Enforces architectural constraints using tags. Each project has specific dependencies it can use:
 
 - `scope:shared` - Can be used by all projects
-- `scope:shop` - Shop-specific libraries
-- `scope:api` - API-specific libraries
+- `scope:hostinly-web` - Web-specific libraries
+- `scope:hostinly-backend` - Backend-specific libraries
 - `type:feature` - Feature libraries
 - `type:data` - Data access libraries
 - `type:ui` - UI component libraries
@@ -86,7 +87,7 @@ Enforces architectural constraints using tags. Each project has specific depende
 npx nx graph
 
 # View a specific project's details
-npx nx show project shop --web
+pnpm nx show project hostinly-web --web
 ```
 
 [Learn more about module boundaries →](https://nx.dev/features/enforce-module-boundaries)
@@ -97,10 +98,10 @@ End-to-end testing with Playwright is pre-configured:
 
 ```bash
 # Run e2e tests
-npx nx e2e shop-e2e
+pnpm nx e2e shop-e2e
 
 # Run e2e tests in CI mode
-npx nx e2e-ci shop-e2e
+pnpm nx e2e-ci shop-e2e
 ```
 
 [Learn more about E2E testing →](https://nx.dev/technologies/test-tools/playwright/introduction#e2e-testing)
@@ -111,10 +112,10 @@ Fast unit testing with Vitest for React libraries:
 
 ```bash
 # Test a specific library
-npx nx test shop-data
+pnpm nx test hostinly-web-data
 
 # Test all projects
-npx nx run-many -t test
+pnpm nx run-many -t test
 ```
 
 [Learn more about Vite testing →](https://nx.dev/recipes/vite)
@@ -141,17 +142,17 @@ This feature helps maintain a healthy CI pipeline by automatically detecting and
 
 ```
 ├── apps/
-│   ├── shop/           [scope:shop]    - React e-commerce app
-│   ├── shop-e2e/                       - E2E tests for shop
-│   └── api/            [scope:api]     - Backend API
+│   ├── hostinly-web/   [scope:hostinly-web]    - Next.js web app
+│   ├── hostinly-admin/ [scope:hostinly-admin]  - Next.js admin app
+│   └── hostinly-backend/ [scope:hostinly-backend] - Express backend API
 ├── libs/
-│   ├── shop/
-│   │   ├── feature-products/        [scope:shop,type:feature] - Product listing
-│   │   ├── feature-product-detail/  [scope:shop,type:feature] - Product details
-│   │   ├── data/                    [scope:shop,type:data]    - Data access
-│   │   └── shared-ui/               [scope:shop,type:ui]      - UI components
-│   ├── api/
-│   │   └── products/    [scope:api]    - Product service
+│   ├── hostinly-web/
+│   │   ├── feature-products/        [scope:hostinly-web,type:feature] - Product listing
+│   │   ├── feature-product-detail/  [scope:hostinly-web,type:feature] - Product details
+│   │   ├── data/                    [scope:hostinly-web,type:data]    - Data access
+│   │   └── shared-ui/               [scope:hostinly-web,type:ui]      - UI components
+│   ├── hostinly-backend/
+│   │   └── products/    [scope:hostinly-backend] - Product service
 │   └── shared/
 │       ├── models/      [scope:shared,type:data] - Shared models
 │       └── test-utils/  [scope:shared]           - Testing utilities
@@ -164,37 +165,37 @@ This feature helps maintain a healthy CI pipeline by automatically detecting and
 
 This repository uses tags to enforce module boundaries:
 
-| Project                 | Tags                         | Can Import From              |
-| ----------------------- | ---------------------------- | ---------------------------- |
-| `shop`                  | `scope:shop`                 | `scope:shop`, `scope:shared` |
-| `api`                   | `scope:api`                  | `scope:api`, `scope:shared`  |
-| `shop-feature-products` | `scope:shop`, `type:feature` | `scope:shop`, `scope:shared` |
-| `shop-data`             | `scope:shop`, `type:data`    | `scope:shared`               |
-| `models`                | `scope:shared`, `type:data`  | Nothing (base library)       |
+| Project                         | Tags                                  | Can Import From                          |
+| ------------------------------- | ------------------------------------- | ---------------------------------------- |
+| `hostinly-web`                  | `scope:hostinly-web`                  | `scope:hostinly-web`, `scope:shared`     |
+| `hostinly-backend`              | `scope:hostinly-backend`              | `scope:hostinly-backend`, `scope:shared` |
+| `hostinly-web-feature-products` | `scope:hostinly-web`, `type:feature`  | `scope:hostinly-web`, `scope:shared`     |
+| `hostinly-web-data`             | `scope:hostinly-web`, `type:data`     | `scope:shared`                           |
+| `models`                        | `scope:shared`, `type:data`           | Nothing (base library)                   |
 
 ## 📚 Useful Commands
 
 ```bash
 # Project exploration
-npx nx graph                                    # Interactive dependency graph
-npx nx list                                     # List installed plugins
-npx nx show project shop --web                 # View project details
+pnpm nx graph                                    # Interactive dependency graph
+pnpm nx list                                     # List installed plugins
+pnpm nx show project hostinly-web --web         # View project details
 
 # Development
-npx nx serve shop                              # Serve React app
-npx nx serve api                               # Serve backend API
-npx nx build shop                              # Build React app
-npx nx test shop-data                          # Test a specific library
-npx nx lint shop-feature-products              # Lint a specific library
+pnpm nx serve hostinly-web                      # Serve web app
+pnpm nx serve hostinly-backend                  # Serve backend API
+pnpm nx build hostinly-web                       # Build web app
+pnpm nx test hostinly-web-data                  # Test a specific library
+pnpm nx lint hostinly-web-feature-products       # Lint a specific library
 
 # Running multiple tasks
-npx nx run-many -t build                       # Build all projects
-npx nx run-many -t test --parallel=3          # Test in parallel
-npx nx run-many -t lint test build            # Run multiple targets
+pnpm nx run-many -t build                       # Build all projects
+pnpm nx run-many -t test --parallel=3          # Test in parallel
+pnpm nx run-many -t lint test build            # Run multiple targets
 
 # Affected commands (great for CI)
-npx nx affected -t build                       # Build only affected projects
-npx nx affected -t test                        # Test only affected projects
+pnpm nx affected -t build                       # Build only affected projects
+pnpm nx affected -t test                        # Test only affected projects
 ```
 
 ## 🎯 Adding New Features

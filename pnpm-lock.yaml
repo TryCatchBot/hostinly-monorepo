@@ -319,9 +319,9 @@ importers:
 
   apps/hostinly-backend:
     dependencies:
-      '@org/api-products':
+      '@org/hostinly-backend-products':
         specifier: workspace:*
-        version: link:../../libs/api/products
+        version: link:../../libs/hostinly-backend/products
       '@org/models':
         specifier: workspace:*
         version: link:../../libs/shared/models
@@ -369,7 +369,7 @@ importers:
         specifier: ^5
         version: 5.9.3
 
-  libs/api/products:
+  libs/hostinly-backend/products:
     dependencies:
       tslib:
         specifier: ^2.3.0
@@ -379,42 +379,34 @@ importers:
         specifier: workspace:*
         version: link:../../shared/models
 
-  libs/shared/models: {}
-
-  libs/shared/test-utils:
-    devDependencies:
-      '@org/models':
-        specifier: workspace:*
-        version: link:../models
-
-  libs/shop/data:
+  libs/hostinly-web/data:
     devDependencies:
       '@org/models':
         specifier: workspace:*
         version: link:../../shared/models
 
-  libs/shop/feature-product-detail:
+  libs/hostinly-web/feature-product-detail:
     devDependencies:
-      '@org/shop-data':
+      '@org/hostinly-web-data':
         specifier: workspace:*
         version: link:../data
-      '@org/shop-shared-ui':
+      '@org/hostinly-web-shared-ui':
         specifier: workspace:*
         version: link:../shared-ui
 
-  libs/shop/feature-products:
+  libs/hostinly-web/feature-products:
     devDependencies:
+      '@org/hostinly-web-data':
+        specifier: workspace:*
+        version: link:../data
+      '@org/hostinly-web-shared-ui':
+        specifier: workspace:*
+        version: link:../shared-ui
       '@org/models':
         specifier: workspace:*
         version: link:../../shared/models
-      '@org/shop-data':
-        specifier: workspace:*
-        version: link:../data
-      '@org/shop-shared-ui':
-        specifier: workspace:*
-        version: link:../shared-ui
 
-  libs/shop/shared-ui:
+  libs/hostinly-web/shared-ui:
     devDependencies:
       '@org/models':
         specifier: workspace:*
@@ -422,6 +414,14 @@ importers:
       '@org/shared-test-utils':
         specifier: workspace:*
         version: link:../../shared/test-utils
+
+  libs/shared/models: {}
+
+  libs/shared/test-utils:
+    devDependencies:
+      '@org/models':
+        specifier: workspace:*
+        version: link:../models
 
 packages:
 

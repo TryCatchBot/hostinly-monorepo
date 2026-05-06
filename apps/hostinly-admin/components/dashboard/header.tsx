@@ -34,34 +34,36 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
-      {/* Mobile Menu Button */}
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={onMobileMenuClick}>
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle menu</span>
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="w-64 p-0">
-          <MobileSidebar />
-        </SheetContent>
-      </Sheet>
+    <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b bg-background px-4 md:px-6">
+      <div className="flex items-center gap-4">
+        {/* Mobile Menu Button */}
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="md:hidden" onClick={onMobileMenuClick}>
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-64 p-0">
+            <MobileSidebar />
+          </SheetContent>
+        </Sheet>
 
-      {/* Search */}
-      <div className="flex-1 max-w-md">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search users, properties, bookings..."
-            className="pl-10 w-full bg-muted/50"
-          />
+        {/* Search */}
+        <div className="w-full max-w-md">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search users, properties, bookings..."
+              className="pl-10 w-full bg-muted/50"
+            />
+          </div>
         </div>
       </div>
 
       {/* Right Side */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-6">
         {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -104,16 +106,16 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
         {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="flex items-center gap-2 px-2">
-              <Avatar className="h-8 w-8">
+            <Button variant="ghost" className="flex flex-col items-center gap-1 px-2 h-auto py-1">
+              <Avatar className="h-9 w-9">
                 <AvatarImage src={user?.avatar} alt={user?.name} />
                 <AvatarFallback>{user?.name ? getInitials(user.name) : "AD"}</AvatarFallback>
               </Avatar>
-              <div className="hidden md:flex flex-col items-start">
-                <span className="text-sm font-medium">{user?.name || "Admin"}</span>
-                <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+              <div className="flex flex-col items-center leading-tight text-center">
+                <span className="text-[13px] font-semibold">{user?.name || "Admin"}</span>
+                <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
                   {user?.role ? ROLE_LABELS[user.role] : "Admin"}
-                </Badge>
+                </span>
               </div>
             </Button>
           </DropdownMenuTrigger>

@@ -1,5 +1,5 @@
 {
-  "name": "@org/shop-feature-products",
+  "name": "@org/hostinly-web-feature-product-detail",
   "version": "0.0.1",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
@@ -13,13 +13,12 @@
   },
   "nx": {
     "tags": [
-      "scope:shop",
+      "scope:hostinly-web",
       "type:feature"
     ]
   },
   "devDependencies": {
-    "@org/models": "workspace:*",
-    "@org/shop-data": "workspace:*",
-    "@org/shop-shared-ui": "workspace:*"
+    "@org/hostinly-web-data": "workspace:*",
+    "@org/hostinly-web-shared-ui": "workspace:*"
   }
 }

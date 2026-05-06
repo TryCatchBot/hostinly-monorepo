@@ -3,22 +3,22 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../../node_modules/.vite/libs/shop/data',
+  cacheDir: '../../../node_modules/.vite/libs/hostinly-web/shared-ui',
   plugins: [react()],
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [ nxViteTsPaths() ],
   // },
   test: {
-    name: '@org/data',
+    name: '@org/shared-ui',
     watch: false,
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test-setup.ts'],
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    setupFiles: ['./src/test-setup.ts'],
     reporters: ['default'],
     coverage: {
-      reportsDirectory: './test-output/vitest/coverage',
+      reportsDirectory: '../../../coverage/libs/hostinly-web/shared-ui',
       provider: 'v8' as const,
       include: ['src/**/*.{ts,tsx}'],
     },
