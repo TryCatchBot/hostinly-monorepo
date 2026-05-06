@@ -1,0 +1,259 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserType {
+  host
+  cohost
+  guest
+  admin
+  super_admin
+  supervisor
+}
+
+enum UserStatus {
+  active
+  suspended
+  pending
+  banned
+}
+
+enum VerificationStatus {
+  verified
+  pending
+  rejected
+  unverified
+}
+
+model User {
+  id                  String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email               String             @unique
+  name                String
+  userType            UserType           @map("user_type")
+  avatar              String?
+  phone               String?
+  address             String?
+  city                String?
+  state               String?
+  zipCode             String?            @map("zip_code")
+  country             String?
+  status              UserStatus         @default(active)
+  verificationStatus  VerificationStatus @default(unverified) @map("verification_status")
+  createdAt           DateTime           @default(now()) @map("created_at")
+  lastActive          DateTime           @default(now()) @map("last_active")
+
+  properties          Property[]
+  cohostProfile       Cohost?
+  jobs                Job[]
+  bookings            Booking[]
+  payments            Payment[]
+
+  @@map("users")
+}
+
+enum PropertyStatus {
+  available
+  managing
+  pending
+  active
+  inactive
+  under_review
+  rejected
+}
+
+enum PropertyType {
+  apartment
+  house
+  villa
+  condo
+  studio
+  penthouse
+}
+
+model Property {
+  id           BigInt         @id @default(autoincrement())
+  title        String
+  description  String?
+  type         PropertyType?
+  location     String
+  address      String?
+  city         String?
+  country      String?
+  price        Decimal        @db.Decimal
+  nightlyRate  Decimal?       @map("nightly_rate") @db.Decimal
+  currency     String         @default("USD")
+  bedrooms     Int            @default(1)
+  bathrooms    Int            @default(1)
+  maxGuests    Int            @default(2) @map("max_guests")
+  image        String?
+  images       String[]
+  rating       Decimal        @default(0) @db.Decimal
+  reviews      Int            @default(0)
+  status       PropertyStatus @default(available)
+  ownerId      String?        @map("owner_id") @db.Uuid
+  ownerName    String?        @map("owner_name")
+  amenities    String[]
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @default(now()) @map("updated_at")
+
+  owner        User?          @relation(fields: [ownerId], references: [id])
+  bookings     Booking[]
+
+  @@map("properties")
+}
+
+enum CohostStatus {
+  active
+  pending
+  suspended
+  banned
+}
+
+model Cohost {
+  id                BigInt       @id @default(autoincrement())
+  userId            String?      @unique @map("user_id") @db.Uuid
+  name              String
+  title             String?
+  email             String?
+  phone             String?
+  rating            Decimal      @default(0) @db.Decimal
+  reviews           Int          @default(0)
+  specialties       String[]
+  image             String?
+  hourlyRate        Decimal?     @map("hourly_rate") @db.Decimal
+  commissionRate    Decimal?     @map("commission_rate") @db.Decimal
+  activeProperties  Int          @default(0) @map("active_properties")
+  completedBookings Int          @default(0) @map("completed_bookings")
+  responseTime      Int          @default(0) @map("response_time")
+  status            CohostStatus @default(active)
+  joinedAt          DateTime     @default(now()) @map("joined_at")
+  lastActive        DateTime     @default(now()) @map("last_active")
+
+  user              User?        @relation(fields: [userId], references: [id])
+
+  @@map("cohosts")
+}
+
+enum JobStatus {
+  open
+  closed
+  in_progress
+  completed
+}
+
+model Job {
+  id               BigInt    @id @default(autoincrement())
+  title            String
+  description      String?
+  propertyLocation String?   @map("property_location")
+  budget           Decimal?  @db.Decimal
+  duration         String?
+  experience       String?
+  status           JobStatus @default(open)
+  applications     Int       @default(0)
+  ownerId          String?   @map("owner_id") @db.Uuid
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  owner            User?     @relation(fields: [ownerId], references: [id])
+
+  @@map("jobs")
+}
+
+enum BookingStatus {
+  confirmed
+  pending
+  cancelled
+  completed
+  no_show
+}
+
+model Booking {
+  id            String        @id
+  propertyId    BigInt?       @map("property_id")
+  propertyTitle String?       @map("property_title")
+  guestId       String?       @map("guest_id") @db.Uuid
+  guestName     String?       @map("guest_name")
+  checkIn       DateTime      @map("check_in") @db.Date
+  checkOut      DateTime      @map("check_out") @db.Date
+  amount        Decimal       @db.Decimal
+  status        BookingStatus @default(pending)
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  property      Property?     @relation(fields: [propertyId], references: [id])
+  guest         User?         @relation(fields: [guestId], references: [id])
+
+  @@map("bookings")
+}
+
+enum MessageStatus {
+  unread
+  read
+  archived
+}
+
+model ContactMessage {
+  id        BigInt        @id @default(autoincrement())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  status    MessageStatus @default(unread)
+  createdAt DateTime      @default(now()) @map("created_at")
+
+  @@map("contact_messages")
+}
+
+enum PlanInterval {
+  month
+  year
+}
+
+model PricingPlan {
+  id        String       @id
+  name      String
+  price     Decimal      @db.Decimal
+  interval  PlanInterval
+  features  String[]
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  @@map("pricing_plans")
+}
+
+enum PaymentStatus {
+  succeeded
+  pending
+  failed
+  refunded
+}
+
+model Payment {
+  id            BigInt        @id @default(autoincrement())
+  userId        String?       @map("user_id") @db.Uuid
+  amount        Decimal       @db.Decimal
+  currency      String        @default("USD")
+  status        PaymentStatus
+  paymentMethod String?       @map("payment_method")
+  description   String?
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  user          User?         @relation(fields: [userId], references: [id])
+
+  @@map("payments")
+}
+
+model Service {
+  id          BigInt   @id @default(autoincrement())
+  name        String
+  description String?
+  price       Decimal? @db.Decimal
+  category    String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("services")
+}
