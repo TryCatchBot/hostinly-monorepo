@@ -4,15 +4,6 @@
   "files": [],
   "references": [
     {
-      "path": "./apps/api"
-    },
-    {
-      "path": "./apps/shop-e2e"
-    },
-    {
-      "path": "./apps/shop"
-    },
-    {
       "path": "./libs/api/products"
     },
     {
@@ -32,6 +23,15 @@
     },
     {
       "path": "./libs/shared/test-utils"
+    },
+    {
+      "path": "./apps/hostinly-web"
+    },
+    {
+      "path": "./apps/hostinly-admin"
+    },
+    {
+      "path": "./apps/hostinly-backend"
     }
   ]
 }
