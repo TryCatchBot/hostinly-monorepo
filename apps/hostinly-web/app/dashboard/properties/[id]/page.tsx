@@ -13,7 +13,11 @@ export default function PropertyDetailPage() {
   const router = useRouter();
   const [revision, setRevision] = useState(0);
   const property = useMemo(
-    () => getPropertyById(params.id),
+    () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const _ = revision;
+      return getPropertyById(params.id);
+    },
     [params.id, revision]
   );
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);

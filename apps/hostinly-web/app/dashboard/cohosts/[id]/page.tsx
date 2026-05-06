@@ -34,6 +34,8 @@ export default function CoHostDetailPage() {
 
   const hireKey = user ? `hostinly_hires_${user.email.toLowerCase()}` : null;
   const hires = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _ = hireRevision;
     if (typeof window === 'undefined') return [] as HireRecord[];
     if (!hireKey) return [] as HireRecord[];
     const raw = localStorage.getItem(hireKey);
@@ -51,6 +53,8 @@ export default function CoHostDetailPage() {
   }, [hires, params.id]);
 
   const hostProperties = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _ = propertiesRevision;
     if (!isHost) return [] as Property[];
     const all = getAllProperties();
     return all.filter((p) => !mockAvailableListings.some((a) => a.id === p.id));

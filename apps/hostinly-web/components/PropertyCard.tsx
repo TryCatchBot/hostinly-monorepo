@@ -8,7 +8,7 @@ interface PropertyCardProps {
   onSelect?: (property: Property) => void;
 }
 
-export default function PropertyCard({ property, onSelect }: PropertyCardProps) {
+export default function PropertyCard({ property }: PropertyCardProps) {
   const href = `/dashboard/properties/${property.id}`;
   const getStatusColor = (status: string) => {
     switch (status) {
