@@ -149,6 +149,7 @@ export function Sidebar({ collapsed, onCollapsedChange }: SidebarProps) {
             <nav className="flex flex-col gap-1">
               {renderNavItems(mainNavItems)}
               
+              {/*
               {!collapsed && (
                 <div className="mt-4 mb-2">
                   <span className="px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
@@ -168,6 +169,7 @@ export function Sidebar({ collapsed, onCollapsedChange }: SidebarProps) {
               )}
               {collapsed && <Separator className="my-3" />}
               {renderNavItems(adminNavItems)}
+              */}
             </nav>
           </ScrollArea>
 

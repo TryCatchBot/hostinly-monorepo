@@ -4,7 +4,7 @@ import { Home, Users } from "lucide-react";
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 sm:pt-24 pb-16" style={{
-      backgroundImage: 'url(/hero-background.jpg)',
+      backgroundImage: 'url(/images/hero-background.jpeg)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundAttachment: 'fixed'

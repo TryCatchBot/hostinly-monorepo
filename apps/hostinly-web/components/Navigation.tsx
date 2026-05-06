@@ -50,7 +50,7 @@ export default function Navigation() {
         <div className="flex items-center justify-between h-14 sm:h-16">
           <Link href="/" className="flex items-center space-x-2 shrink-0">
             <Image
-              src="/hostinly-logo.png"
+              src="/images/hostinly-logo.png"
               alt="Hostinly"
               width={40}
               height={40}
@@ -120,15 +120,14 @@ export default function Navigation() {
                   Sign In
                 </Link>
                 <Link
-                  href="/dashboard"
-                  onClick={handleDashboardClick}
+                  href="/auth/signup"
                   className="btn-breathe rounded-lg border-0 min-w-0 px-5 py-2.5 text-sm font-medium inline-flex items-center justify-center transition-colors"
                   style={{
                     background: "linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))",
                     color: "#ffffff",
                   }}
                 >
-                  Dashboard
+                  Sign Up
                 </Link>
               </>
             )}

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Product, ProductFilter } from '@org/models';
-import { useProducts, useCategories } from '@org/shop-data';
+import { useProducts, useCategories } from '@org/hostinly-web-data';
 import {
   ProductGrid,
   LoadingSpinner,
   ErrorMessage,
-} from '@org/shop-shared-ui';
+} from '@org/hostinly-web-shared-ui';
 import styles from './product-list.module.css';
 
 export function ProductList() {
