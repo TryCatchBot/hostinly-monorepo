@@ -10,7 +10,6 @@ import {
   Briefcase,
   LogOut,
   LayoutDashboard,
-  ChevronRight,
   CreditCard,
 } from 'lucide-react';
 

@@ -57,6 +57,8 @@ export default function BillingPage() {
   }, [user, isLoading, router]);
 
   const subscription = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _ = subscriptionRevision;
     if (!user) return { plan: 'Free', expiresAt: null as string | null };
     if (typeof window === 'undefined')
       return { plan: 'Free', expiresAt: null as string | null };

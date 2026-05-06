@@ -1165,7 +1165,7 @@ function SignUpContent() {
                 </div>
 
                 <p className="text-sm text-muted-foreground italic">
-                  By clicking "Create Account", you agree to our Terms of
+                  By clicking &quot;Create Account&quot;, you agree to our Terms of
                   Service and Privacy Policy.
                 </p>
               </div>
