@@ -1,0 +1,44 @@
+services:
+  # Backend API
+  - type: web
+    name: hostinly-backend
+    env: docker
+    dockerContext: .
+    dockerfilePath: apps/hostinly-backend/Dockerfile
+    plan: free
+    healthCheckPath: /api/health # Assuming there's a health check, if not it will just check if port is open
+    envVars:
+      - key: PORT
+        value: 3333
+      - key: NODE_ENV
+        value: production
+      # These should be set in the Render dashboard for security, 
+      # but I'll list them here as placeholders if needed.
+      # - key: DATABASE_URL
+      #   fromGroup: hostinly-secrets
+
+  # Web Frontend
+  - type: web
+    name: hostinly-web
+    env: docker
+    dockerContext: .
+    dockerfilePath: apps/hostinly-web/Dockerfile
+    plan: free
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://hostinly-backend.onrender.com/api
+      - key: NODE_ENV
+        value: production
+
+  # Admin Frontend
+  - type: web
+    name: hostinly-admin
+    env: docker
+    dockerContext: .
+    dockerfilePath: apps/hostinly-admin/Dockerfile
+    plan: free
+    envVars:
+      - key: NEXT_PUBLIC_ADMIN_API_URL
+        value: https://hostinly-backend.onrender.com/api
+      - key: NODE_ENV
+        value: production
