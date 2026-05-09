@@ -4,13 +4,15 @@ WORKDIR /app
 
 RUN npm install -g pnpm
 
+# Disable Nx daemon and allow trusted dependencies
+ENV NX_DAEMON=false
+RUN pnpm config set only-allow-trusted-dependencies false
+
 # Copy monorepo config
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml nx.json tsconfig.base.json eslint.config.mjs ./
 
-# Copy shared libraries
+# Copy all apps and libs (required for Nx workspace to be valid during build)
 COPY libs ./libs
-
-# Copy the admin app
 COPY apps/hostinly-admin ./apps/hostinly-admin
 
 # Install dependencies

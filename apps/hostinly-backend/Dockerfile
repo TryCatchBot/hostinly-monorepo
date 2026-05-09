@@ -5,13 +5,15 @@ WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm
 
+# Disable Nx daemon and allow trusted dependencies
+ENV NX_DAEMON=false
+RUN pnpm config set only-allow-trusted-dependencies false
+
 # Copy root configurations
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml nx.json tsconfig.base.json eslint.config.mjs ./
 
-# Copy libraries (needed for build)
+# Copy all apps and libs (required for Nx workspace to be valid during build)
 COPY libs ./libs
-
-# Copy the backend app
 COPY apps/hostinly-backend ./apps/hostinly-backend
 
 # Install dependencies
