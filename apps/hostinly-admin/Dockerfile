@@ -5,7 +5,7 @@ WORKDIR /app
 RUN npm install -g pnpm
 
 # Copy monorepo config
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml nx.json tsconfig.base.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml nx.json tsconfig.base.json eslint.config.mjs ./
 
 # Copy shared libraries
 COPY libs ./libs
