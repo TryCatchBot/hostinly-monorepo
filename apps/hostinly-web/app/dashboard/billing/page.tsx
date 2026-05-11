@@ -1,103 +1,41 @@
 'use client';
+export const dynamic = "force-dynamic";
 
+import { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { CreditCard, Download, AlertCircle, CheckCircle, Globe } from 'lucide-react';
+
 
 interface Invoice {
   id: string;
   date: string;
   amount: number;
-  status: 'paid' | 'pending' | 'overdue';
-  description: string;
+  status: 'Paid' | 'Pending' | 'Failed';
+  plan: string;
 }
 
-interface BillingInfo {
-  cardType: string;
-  cardLast4: string;
-  cardExpiry: string;
-  totalPaid: number;
-  pendingBalance: number;
-  overdueBalance: number;
-}
-
-const CURRENCY_RATES: { [key: string]: number } = {
-  USD: 1,
-  EUR: 0.92,
-  GBP: 0.79,
-  CAD: 1.36,
-  AUD: 1.52,
-  JPY: 149.5,
-};
-
-const CURRENCY_SYMBOLS: { [key: string]: string } = {
-  USD: '$',
-  EUR: '€',
-  GBP: '£',
-  CAD: 'C$',
-  AUD: 'A$',
-  JPY: '¥',
-};
+const mockInvoices: Invoice[] = [
+  { id: 'INV-2024-001', date: '2024-03-01', amount: 29.00, status: 'Paid', plan: 'Professional' },
+  { id: 'INV-2024-002', date: '2024-02-01', amount: 29.00, status: 'Paid', plan: 'Professional' },
+  { id: 'INV-2024-003', date: '2024-01-01', amount: 29.00, status: 'Paid', plan: 'Professional' },
+];
 
 export default function BillingPage() {
   const { user, isLoading } = useAuth();
-  const router = useRouter();
-  const [currency, setCurrency] = useState(() => {
-    if (typeof window === 'undefined') return 'USD';
-    return localStorage.getItem('hostinly_currency') || 'USD';
-  });
-  const [subscriptionRevision, setSubscriptionRevision] = useState(0);
+  const [subscription, setSubscription] = useState({ plan: 'Free', status: 'Active', nextBilling: '2024-04-01' });
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      router.push('/login');
+    const emailKey = user?.email?.toLowerCase();
+    if (emailKey) {
+      const stored = localStorage.getItem(`hostinly_subscription_${emailKey}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        setSubscription(prev => ({ ...prev, plan: parsed.plan }));
+      }
     }
-  }, [user, isLoading, router]);
-
-  const subscription = useMemo(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const _ = subscriptionRevision;
-    if (!user) return { plan: 'Free', expiresAt: null as string | null };
-    if (typeof window === 'undefined')
-      return { plan: 'Free', expiresAt: null as string | null };
-    const key = `hostinly_subscription_${user.email.toLowerCase()}`;
-    const raw = localStorage.getItem(key);
-    if (!raw) {
-      const expiresAt = new Date();
-      expiresAt.setMonth(expiresAt.getMonth() + 1);
-      return { plan: 'Free', expiresAt: expiresAt.toISOString() };
-    }
-    try {
-      const parsed = JSON.parse(raw) as { plan?: string; expiresAt?: string };
-      return { plan: parsed.plan || 'Free', expiresAt: parsed.expiresAt || null };
-    } catch {
-      return { plan: 'Free', expiresAt: null };
-    }
-  }, [user, subscriptionRevision]);
-
-  const handlePlanChange = (plan: string) => {
-    if (!user) return;
-    const key = `hostinly_subscription_${user.email.toLowerCase()}`;
-    const expiresAt = new Date();
-    expiresAt.setMonth(expiresAt.getMonth() + 1);
-    localStorage.setItem(
-      key,
-      JSON.stringify({ plan, expiresAt: expiresAt.toISOString() })
-    );
-    setSubscriptionRevision((r) => r + 1);
-  };
-
-  const handleCurrencyChange = (newCurrency: string) => {
-    setCurrency(newCurrency);
-    localStorage.setItem('hostinly_currency', newCurrency);
-  };
-
-  const convertAmount = (amount: number) => {
-    const converted = amount * (CURRENCY_RATES[currency] || 1);
-    return currency === 'JPY' ? Math.round(converted) : converted.toFixed(2);
-  };
+  }, [user]);
 
   if (isLoading || !user) {
     return (
@@ -107,278 +45,136 @@ export default function BillingPage() {
     );
   }
 
-  // Mock billing data
-  const billingInfo: BillingInfo = {
-    cardType: 'Visa',
-    cardLast4: '4242',
-    cardExpiry: '12/26',
-    totalPaid: 15340,
-    pendingBalance: 1250,
-    overdueBalance: 0,
-  };
-
-  const invoices: Invoice[] = [
-    {
-      id: 'INV-001',
-      date: '2026-04-01',
-      amount: 1250.00,
-      status: 'pending',
-      description: 'Monthly hosting fees - April 2026',
-    },
-    {
-      id: 'INV-002',
-      date: '2026-03-01',
-      amount: 1150.00,
-      status: 'paid',
-      description: 'Monthly hosting fees - March 2026',
-    },
-    {
-      id: 'INV-003',
-      date: '2026-02-01',
-      amount: 1200.00,
-      status: 'paid',
-      description: 'Monthly hosting fees - February 2026',
-    },
-    {
-      id: 'INV-004',
-      date: '2026-01-01',
-      amount: 1100.00,
-      status: 'paid',
-      description: 'Monthly hosting fees - January 2026',
-    },
-    {
-      id: 'INV-005',
-      date: '2025-12-01',
-      amount: 1200.00,
-      status: 'paid',
-      description: 'Monthly hosting fees - December 2025',
-    },
-  ];
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'paid':
-        return 'bg-green-50 border-green-200 text-green-800';
-      case 'pending':
-        return 'bg-yellow-50 border-yellow-200 text-yellow-800';
-      case 'overdue':
-        return 'bg-red-50 border-red-200 text-red-800';
-      default:
-        return 'bg-gray-50 border-gray-200 text-gray-800';
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'paid':
-        return <CheckCircle className="w-5 h-5 text-green-600" />;
-      case 'pending':
-        return <AlertCircle className="w-5 h-5 text-yellow-600" />;
-      case 'overdue':
-        return <AlertCircle className="w-5 h-5 text-red-600" />;
-      default:
-        return null;
-    }
-  };
-
   return (
     <DashboardLayout>
-      <div>
-        {/* Header with Currency Selector */}
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold text-foreground mb-2">Billing & Payments</h1>
-            <p className="text-muted-foreground">Manage your payments, invoices, and billing information</p>
-            <div className="mt-3 flex flex-wrap items-center gap-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border bg-background text-sm font-medium text-foreground">
-                Plan: {subscription.plan}
-              </div>
-              <div className="text-sm text-muted-foreground">
-                Expires:{' '}
-                {subscription.expiresAt
-                  ? new Date(subscription.expiresAt).toLocaleDateString(
-                      undefined,
-                      {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      }
-                    )
-                  : '—'}
-              </div>
-              <div className="flex items-center gap-2">
-                <select
-                  value={subscription.plan}
-                  onChange={(e) => handlePlanChange(e.target.value)}
-                  className="px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="Free">Free</option>
-                  <option value="Pro">Pro</option>
-                  <option value="Business">Business</option>
-                </select>
-                <a
-                  href="/pricing"
-                  className="px-3 py-2 rounded-lg border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors"
-                >
-                  View pricing
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 bg-background border border-border rounded-lg p-3">
-            <Globe size={20} className="text-muted-foreground" />
-            <select
-              value={currency}
-              onChange={(e) => handleCurrencyChange(e.target.value)}
-              className="bg-background text-foreground font-medium focus:outline-none cursor-pointer"
-            >
-              <option value="USD">USD - US Dollar</option>
-              <option value="EUR">EUR - Euro</option>
-              <option value="GBP">GBP - British Pound</option>
-              <option value="CAD">CAD - Canadian Dollar</option>
-              <option value="AUD">AUD - Australian Dollar</option>
-              <option value="JPY">JPY - Japanese Yen</option>
-            </select>
-          </div>
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-foreground mb-2">Billing & Subscription</h1>
+          <p className="text-muted-foreground">Manage your payment methods and subscription plans</p>
         </div>
 
-        {/* Billing Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Total Paid */}
-          <div className="bg-background rounded-lg shadow-medium border border-border p-6">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Total Paid</p>
-                <p className="text-3xl font-bold text-foreground">{CURRENCY_SYMBOLS[currency]}{convertAmount(billingInfo.totalPaid)}</p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column - Current Plan & Payment */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Current Plan Card */}
+            <div className="bg-background rounded-xl shadow-medium border border-border overflow-hidden">
+              <div className="p-6 border-b border-border bg-muted/30">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold text-foreground">Current Plan</h2>
+                  <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium border border-primary/20">
+                    {subscription.status}
+                  </span>
+                </div>
               </div>
-              <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-green-600" />
+              <div className="p-6">
+                <div className="flex items-end gap-2 mb-6">
+                  <span className="text-4xl font-bold text-foreground">{subscription.plan}</span>
+                  <span className="text-muted-foreground mb-1">Plan</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
+                  <AlertCircle size={16} className="text-blue-500" />
+                  Your next billing date is {subscription.nextBilling}
+                </div>
+                <div className="flex gap-4">
+                  <Button variant="outline">Change Plan</Button>
+                  <Button variant="ghost" className="text-destructive hover:text-destructive hover:bg-destructive/10">Cancel Subscription</Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Payment Method */}
+            <div className="bg-background rounded-xl shadow-medium border border-border p-6">
+              <h2 className="text-xl font-semibold text-foreground mb-6">Payment Method</h2>
+              <div className="flex items-center gap-4 p-4 rounded-lg border border-border bg-muted/20">
+                <div className="w-12 h-8 bg-foreground/5 rounded flex items-center justify-center border border-border">
+                  <CreditCard className="text-foreground/40" size={20} />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-foreground">Visa ending in 4242</p>
+                  <p className="text-xs text-muted-foreground">Expires 12/26</p>
+                </div>
+                <Button variant="ghost" size="sm">Edit</Button>
+              </div>
+            </div>
+
+            {/* Billing History */}
+            <div className="bg-background rounded-xl shadow-medium border border-border overflow-hidden">
+              <div className="p-6 border-b border-border">
+                <h2 className="text-xl font-semibold text-foreground">Billing History</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-muted/30 border-b border-border text-left">
+                    <tr>
+                      <th className="px-6 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Invoice</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Date</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Amount</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider"></th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {mockInvoices.map((invoice) => (
+                      <tr key={invoice.id} className="hover:bg-muted/10 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">{invoice.id}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{invoice.date}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">${invoice.amount.toFixed(2)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                            invoice.status === 'Paid' 
+                              ? 'bg-green-100 text-green-800 border-green-200' 
+                              : invoice.status === 'Pending'
+                              ? 'bg-yellow-100 text-yellow-800 border-yellow-200'
+                              : 'bg-red-100 text-red-800 border-red-200'
+                          }`}>
+                            {invoice.status === 'Paid' && <CheckCircle size={12} />}
+                            {invoice.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                          <button className="text-primary hover:text-primary/80 font-medium flex items-center gap-1 ml-auto">
+                            <Download size={14} />
+                            PDF
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
 
-          {/* Pending Balance */}
-          <div className="bg-background rounded-lg shadow-medium border border-border p-6">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Pending Balance</p>
-                <p className="text-3xl font-bold text-foreground">{CURRENCY_SYMBOLS[currency]}{convertAmount(billingInfo.pendingBalance)}</p>
-              </div>
-              <div className="w-12 h-12 rounded-lg bg-yellow-100 flex items-center justify-center">
-                <AlertCircle className="w-6 h-6 text-yellow-600" />
-              </div>
-            </div>
-          </div>
-
-          {/* Overdue Balance */}
-          <div className="bg-background rounded-lg shadow-medium border border-border p-6">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Overdue Balance</p>
-                <p className="text-3xl font-bold text-foreground">{CURRENCY_SYMBOLS[currency]}{convertAmount(billingInfo.overdueBalance)}</p>
-              </div>
-              <div className="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center">
-                <AlertCircle className="w-6 h-6 text-red-600" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Payment Method */}
-        <div className="bg-background rounded-lg shadow-medium border border-border p-6 mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <CreditCard className="w-6 h-6" />
-              Payment Method
-            </h2>
-            <button className="px-4 py-2 rounded-lg border border-border text-foreground hover:bg-muted transition-colors">
-              Update Card
-            </button>
-          </div>
-
-          <div className="flex items-center gap-4 p-4 bg-muted rounded-lg">
-            <div className="w-12 h-12 rounded-lg bg-background flex items-center justify-center">
-              <CreditCard className="w-6 h-6 text-foreground" />
-            </div>
-            <div>
-              <p className="font-medium text-foreground">{billingInfo.cardType} ending in {billingInfo.cardLast4}</p>
-              <p className="text-sm text-muted-foreground">Expires {billingInfo.cardExpiry}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Invoices Section */}
-        <div className="bg-background rounded-lg shadow-medium border border-border p-6">
-          <h2 className="text-2xl font-bold text-foreground mb-6">Invoice History</h2>
-
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 font-semibold text-foreground">Invoice</th>
-                  <th className="text-left py-3 px-4 font-semibold text-foreground">Date</th>
-                  <th className="text-left py-3 px-4 font-semibold text-foreground">Description</th>
-                  <th className="text-right py-3 px-4 font-semibold text-foreground">Amount</th>
-                  <th className="text-center py-3 px-4 font-semibold text-foreground">Status</th>
-                  <th className="text-center py-3 px-4 font-semibold text-foreground">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {invoices.map((invoice) => (
-                  <tr key={invoice.id} className="border-b border-border hover:bg-muted transition-colors">
-                    <td className="py-3 px-4 text-foreground font-medium">{invoice.id}</td>
-                    <td className="py-3 px-4 text-foreground">
-                      {new Date(invoice.date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
-                    </td>
-                    <td className="py-3 px-4 text-muted-foreground">{invoice.description}</td>
-                    <td className="py-3 px-4 text-right text-foreground font-semibold">
-                      {CURRENCY_SYMBOLS[currency]}{convertAmount(invoice.amount)}
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center justify-center gap-2">
-                        {getStatusIcon(invoice.status)}
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                          invoice.status
-                        )}`}>
-                          {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <button className="flex items-center justify-center gap-2 px-3 py-1 rounded-lg hover:bg-muted transition-colors text-foreground">
-                        <Download className="w-4 h-4" />
-                        <span className="text-sm">Download</span>
-                      </button>
-                    </td>
-                  </tr>
+          {/* Right Column - Plan Comparison/Upgrade */}
+          <div className="space-y-6">
+            <div className="bg-primary/5 rounded-xl border border-primary/20 p-6">
+              <h3 className="font-bold text-foreground text-lg mb-4">Why upgrade?</h3>
+              <ul className="space-y-3">
+                {[
+                  'Unlimited property listings',
+                  'Verified badge on profile',
+                  'Priority search placement',
+                  'Automated message templates',
+                  'No commission on first 3 bookings'
+                ].map((feature, i) => (
+                  <li key={i} className="flex items-start gap-3 text-sm text-foreground/80">
+                    <CheckCircle className="text-primary shrink-0 mt-0.5" size={16} />
+                    {feature}
+                  </li>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+              </ul>
+            </div>
 
-        {/* Quick Pay Section */}
-        {billingInfo.pendingBalance > 0 && (
-          <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-bold text-blue-900 mb-2">Outstanding Balance</h3>
-                <p className="text-blue-800">You have a pending balance of {CURRENCY_SYMBOLS[currency]}{convertAmount(billingInfo.pendingBalance)}</p>
-              </div>
-              <button className="px-6 py-3 rounded-lg font-medium text-white transition-opacity hover:opacity-90"
-                style={{
-                  background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
-                }}
-              >
-                Pay Now
-              </button>
+            <div className="bg-background rounded-xl border border-border p-6 shadow-medium">
+              <Globe className="text-primary mb-4" size={32} />
+              <h3 className="font-bold text-foreground text-lg mb-2">Tax Information</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Update your business details and tax ID for correct invoicing across regions.
+              </p>
+              <Button variant="outline" className="w-full">Update Details</Button>
             </div>
           </div>
-        )}
+        </div>
       </div>
     </DashboardLayout>
   );

@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = "force-dynamic";
 
 import DashboardLayout from '@/components/DashboardLayout';
 import JobCard from '@/components/JobCard';
@@ -9,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+
 
 export default function JobsPage() {
   const { user, isLoading } = useAuth();

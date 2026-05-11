@@ -29,7 +29,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { icon: CreditCard, label: 'Billing', href: '/dashboard/billing' },
   ];
 
-  const isActive = (href: string) => pathname === href;
+  const isActive = (href: string) => pathname === href || (href !== '/dashboard' && pathname?.startsWith(href));
 
   return (
     <div className="flex h-screen bg-background">

@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = "force-dynamic";
 
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -27,10 +28,12 @@ export default function CoHostDetailPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const { user } = useAuth();
+
+  const id = params?.id;
   const isHost = user?.userType === 'host';
   const [hireRevision, setHireRevision] = useState(0);
   const [propertiesRevision, setPropertiesRevision] = useState(0);
-  const cohost = getCoHostById(params.id);
+  const cohost = id ? getCoHostById(id) : null;
 
   const hireKey = user ? `hostinly_hires_${user.email.toLowerCase()}` : null;
   const hires = useMemo(() => {
@@ -49,8 +52,8 @@ export default function CoHostDetailPage() {
   }, [hireKey, hireRevision]);
 
   const currentHire = useMemo(() => {
-    return hires.find((h) => h.cohostId === params.id) || null;
-  }, [hires, params.id]);
+    return id ? hires.find((h) => h.cohostId === id) || null : null;
+  }, [hires, id]);
 
   const hostProperties = useMemo(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -68,22 +71,23 @@ export default function CoHostDetailPage() {
   };
 
   const hireCohost = () => {
-    if (!hireKey) return;
+    if (!hireKey || !id) return;
     const now = new Date().toISOString();
-    const existing = hires.find((h) => h.cohostId === params.id);
+    const existing = hires.find((h) => h.cohostId === id);
     const nextRecord: HireRecord = {
-      cohostId: params.id,
+      cohostId: id,
       status: 'active',
       hiredAt: existing?.hiredAt || now,
     };
-    const next = [...hires.filter((h) => h.cohostId !== params.id), nextRecord];
+    const next = [...hires.filter((h) => h.cohostId !== id), nextRecord];
     writeHires(next);
   };
 
   const endEngagement = () => {
+    if (!id) return;
     const now = new Date().toISOString();
     const next = hires.map((h) =>
-      h.cohostId === params.id
+      h.cohostId === id
         ? { ...h, status: 'ended' as const, endedAt: now }
         : h
     );
@@ -91,8 +95,9 @@ export default function CoHostDetailPage() {
   };
 
   const setProbation = (enabled: boolean) => {
+    if (!id) return;
     const next = hires.map((h) =>
-      h.cohostId === params.id
+      h.cohostId === id
         ? { ...h, status: enabled ? ('probation' as const) : ('active' as const) }
         : h
     );

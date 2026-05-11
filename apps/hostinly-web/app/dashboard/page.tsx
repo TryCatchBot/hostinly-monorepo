@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = "force-dynamic";
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -22,6 +23,7 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { Home, Users, Briefcase, TrendingUp, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
 
 export default function DashboardPage() {
   const router = useRouter();

@@ -38,7 +38,7 @@ export default function DashboardLayout({
       ["/settings", "settings"],
     ];
 
-    const matched = routeMap.find(([prefix]) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+    const matched = routeMap.find(([prefix]) => pathname === prefix || pathname?.startsWith(`${prefix}/`));
     return matched ? matched[1] : null;
   })();
 
