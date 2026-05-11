@@ -17,6 +17,9 @@ COPY . .
 # Install dependencies with hoisted linker to avoid symlink issues in runner stage
 RUN pnpm install --frozen-lockfile --config.node-linker=hoisted
 
+# Generate Prisma Client for the correct platform (linux-musl)
+RUN pnpm exec prisma generate --schema=apps/hostinly-backend/prisma/schema.prisma
+
 # Build the backend - skipping cache and identifying exact target
 RUN pnpm nx build hostinly-backend --prod --skip-nx-cache
 
