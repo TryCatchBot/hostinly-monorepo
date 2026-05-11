@@ -27,7 +27,8 @@
             "sourcemap": true,
             "outExtension": {
               ".js": ".js"
-            }
+            },
+            "external": ["@prisma/client"]
           },
           "thirdParty": true
         },
