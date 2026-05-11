@@ -20,7 +20,7 @@ export default function Navigation() {
   const [roleModalOpen, setRoleModalOpen] = useState(false);
   const { user, logout } = useAuth();
   const pathname = usePathname();
-  const isDashboard = pathname.startsWith('/dashboard');
+  const isDashboard = pathname?.startsWith('/dashboard') ?? false;
   const router = useRouter();
 
   const handleDashboardClick = (e?: MouseEvent) => {

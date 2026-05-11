@@ -1,8 +1,7 @@
 'use client';
+export const dynamic = "force-dynamic";
 
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import ServicesSection from "@/components/ServicesSection";
@@ -11,8 +10,7 @@ import HowItWorksSection from "@/components/HowItWorksSection";
 import Footer from "@/components/Footer";
 
 export default function Home() {
-  const { user, isLoading } = useAuth();
-  const router = useRouter();
+  const { isLoading } = useAuth();
 
   // Show loading state while checking auth
   if (isLoading) {

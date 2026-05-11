@@ -8,14 +8,12 @@ RUN npm install -g pnpm
 # Brute force environment settings
 ENV NX_DAEMON=false
 ENV CI=true
-RUN pnpm config set only-allow-trusted-dependencies false
-RUN pnpm config set node-linker hoisted
 
 # Brute force: Copy EVERYTHING to ensure no missing config files or dependencies
 COPY . .
 
-# Install dependencies with hoisted linker to avoid symlink issues in runner stage
-RUN pnpm install --frozen-lockfile --config.node-linker=hoisted
+# Install dependencies
+RUN pnpm install --frozen-lockfile
 
 # Build the web app
 ARG NEXT_PUBLIC_API_URL=http://localhost:3333/api
@@ -30,10 +28,10 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Copy next.js build output from standalone folder
-COPY --from=builder /app/apps/hostinly-web/public ./public
+COPY --from=builder /app/apps/hostinly-web/public ./apps/hostinly-web/public
 COPY --from=builder /app/apps/hostinly-web/.next/standalone ./
-COPY --from=builder /app/apps/hostinly-web/.next/static ./.next/static
+COPY --from=builder /app/apps/hostinly-web/.next/static ./apps/hostinly-web/.next/static
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["node", "apps/hostinly-web/server.js"]

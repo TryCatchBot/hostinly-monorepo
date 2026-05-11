@@ -78,7 +78,7 @@ export function Sidebar({ collapsed, onCollapsedChange }: SidebarProps) {
 
   const renderNavItems = (items: NavItem[]) => {
     return items.filter((item) => canViewItem(item.permissionKey)).map((item) => {
-      const isActive = pathname === item.href;
+      const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
       const Icon = item.icon;
 
       if (collapsed) {

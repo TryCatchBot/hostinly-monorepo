@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = "force-dynamic";
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -19,7 +20,8 @@ import {
 export default function JobDetailPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
-  const job = getJobById(params.id);
+  const id = params?.id;
+  const job = id ? getJobById(id) : null;
   const [hasApplied, setHasApplied] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 

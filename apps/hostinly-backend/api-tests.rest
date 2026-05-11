@@ -3,6 +3,10 @@
 ### Health Check
 GET http://localhost:3333/
 
+
+@user = "test-user1@example.com"
+@password = "Password1*"
+
 ### --- Auth & Users ---
 
 # @name signup
@@ -10,8 +14,8 @@ POST {{baseUrl}}/auth/signup
 Content-Type: application/json
 
 {
-  "email": "test-user@example.com",
-  "password": "password123",
+  "email": {{user}},
+  "password": {{password}},
   "name": "Test User",
   "userType": "host"
 }
@@ -23,8 +27,8 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "super@hostinly.com",
-  "password": "password123"
+  "email": {{user}},
+  "password": {{password}}
 }
 
 ### Get Current User

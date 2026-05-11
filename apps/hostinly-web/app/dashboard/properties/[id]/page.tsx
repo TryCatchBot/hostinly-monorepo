@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = "force-dynamic";
 
 import { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -11,14 +12,15 @@ import { ArrowLeft, Star, MapPin, Bed, Bath, Edit2, Trash2 } from 'lucide-react'
 export default function PropertyDetailPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
+  const id = params?.id;
   const [revision, setRevision] = useState(0);
   const property = useMemo(
     () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const _ = revision;
-      return getPropertyById(params.id);
+      return id ? getPropertyById(id) : null;
     },
-    [params.id, revision]
+    [id, revision]
   );
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [statusOverride, setStatusOverride] = useState<Property['status'] | null>(
