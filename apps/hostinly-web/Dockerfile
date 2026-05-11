@@ -9,12 +9,13 @@ RUN npm install -g pnpm
 ENV NX_DAEMON=false
 ENV CI=true
 RUN pnpm config set only-allow-trusted-dependencies false
+RUN pnpm config set node-linker hoisted
 
 # Brute force: Copy EVERYTHING to ensure no missing config files or dependencies
 COPY . .
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install dependencies with hoisted linker to avoid symlink issues in runner stage
+RUN pnpm install --frozen-lockfile --config.node-linker=hoisted
 
 # Build the web app
 ARG NEXT_PUBLIC_API_URL=http://localhost:3333/api

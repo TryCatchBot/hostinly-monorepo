@@ -28,7 +28,8 @@
             "outExtension": {
               ".js": ".js"
             }
-          }
+          },
+          "thirdParty": true
         },
         "configurations": {
           "development": {},
