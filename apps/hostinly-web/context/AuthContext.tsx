@@ -1,7 +1,6 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { initializeDemoAccounts } from '@/lib/initializeAuth';
 
 export interface User {
   id: string;
@@ -30,11 +29,13 @@ export interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, name: string, userType: 'host' | 'cohost') => Promise<void>;
+  signup: (email: string, password: string, name: string, userType: 'host' | 'cohost', additionalData?: any) => Promise<void>;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/api';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -42,89 +43,93 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize auth state from localStorage
   useEffect(() => {
-    // Initialize demo accounts first
-    initializeDemoAccounts();
-
     const storedUser = localStorage.getItem('hostinly_user');
+    const storedToken = localStorage.getItem('hostinly_token');
     
     // Use a microtask to move the state updates out of the synchronous effect body
     // to avoid "cascading render" warnings and satisfy strict lint rules.
     queueMicrotask(() => {
-      if (storedUser) {
+      if (storedUser && storedToken) {
         try {
           setUser(JSON.parse(storedUser));
         } catch {
           localStorage.removeItem('hostinly_user');
+          localStorage.removeItem('hostinly_token');
         }
       }
       setIsLoading(false);
     });
   }, []);
 
-  type StoredUser = User & { password: string };
-
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-      // Check if user exists in localStorage
-      const users = JSON.parse(localStorage.getItem('hostinly_users') || '[]') as StoredUser[];
-      const foundUser = users.find((u) => u.email === email && u.password === password);
+      const result = await response.json();
 
-      if (!foundUser) {
-        throw new Error('Invalid email or password');
+      if (!result.success) {
+        throw new Error(result.error || 'Invalid email or password');
       }
 
-      const loggedInUser: User = {
-        id: foundUser.id,
-        email: foundUser.email,
-        name: foundUser.name,
-        userType: foundUser.userType,
+      const { user: loggedInUser, token } = result.data;
+
+      // Normalize userType to lowercase for frontend consistency
+      const normalizedUser = {
+        ...loggedInUser,
+        userType: loggedInUser.userType.toLowerCase() as 'host' | 'cohost',
       };
 
-      setUser(loggedInUser);
-      localStorage.setItem('hostinly_user', JSON.stringify(loggedInUser));
+      setUser(normalizedUser);
+      localStorage.setItem('hostinly_user', JSON.stringify(normalizedUser));
+      localStorage.setItem('hostinly_token', token);
+    } catch (error: any) {
+      throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const signup = async (email: string, password: string, name: string, userType: 'host' | 'cohost') => {
+  const signup = async (email: string, password: string, name: string, userType: 'host' | 'cohost', additionalData: any = {}) => {
     setIsLoading(true);
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const payload = {
+        email,
+        password,
+        name,
+        userType: userType.toUpperCase(),
+        ...additionalData,
+      };
 
-      // Check if user already exists
-      const users = JSON.parse(localStorage.getItem('hostinly_users') || '[]') as StoredUser[];
-      if (users.some((u) => u.email === email)) {
-        throw new Error('Email already exists');
+      const response = await fetch(`${API_URL}/auth/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Email already exists');
       }
 
-      // Create new user
-      const newUser: StoredUser = {
-        id: Math.random().toString(36).substring(7),
-        email,
-        password, // In production, this would be hashed on the backend
-        name,
-        userType,
+      const { user: newUser, token } = result.data;
+
+      // Normalize userType to lowercase for frontend consistency
+      const normalizedUser = {
+        ...newUser,
+        userType: newUser.userType.toLowerCase() as 'host' | 'cohost',
       };
 
-      users.push(newUser);
-      localStorage.setItem('hostinly_users', JSON.stringify(users));
-
-      // Log the user in
-      const loggedInUser: User = {
-        id: newUser.id,
-        email: newUser.email,
-        name: newUser.name,
-        userType: newUser.userType,
-      };
-
-      setUser(loggedInUser);
-      localStorage.setItem('hostinly_user', JSON.stringify(loggedInUser));
+      setUser(normalizedUser);
+      localStorage.setItem('hostinly_user', JSON.stringify(normalizedUser));
+      localStorage.setItem('hostinly_token', token);
+    } catch (error: any) {
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -133,6 +138,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('hostinly_user');
+    localStorage.removeItem('hostinly_token');
   };
 
   return (

@@ -8,6 +8,8 @@ import authRoutes from './routes/auth';
 import userRoutes from './routes/users';
 import propertyRoutes from './routes/properties';
 import cohostRoutes from './routes/cohosts';
+import jobRoutes from './routes/jobs';
+import adminRoutes from './routes/admin';
 
 dotenv.config();
 
@@ -27,6 +29,8 @@ app.use(`${API_PREFIX}/auth`, authRoutes);
 app.use(`${API_PREFIX}/users`, userRoutes);
 app.use(`${API_PREFIX}/properties`, propertyRoutes);
 app.use(`${API_PREFIX}/cohosts`, cohostRoutes);
+app.use(`${API_PREFIX}/jobs`, jobRoutes);
+app.use(`${API_PREFIX}/admin`, adminRoutes);
 
 app.listen(port, host, () => {
   console.log(`[ ready ] http://${host}:${port}`);

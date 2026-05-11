@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff, Check } from 'lucide-react';
+import { toast } from 'sonner';
 
 type PropertyOwnerRegistrationForm = {
   full_name: string;
@@ -114,7 +115,6 @@ export function SignUpForm() {
     });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState('');
 
   const validatePassword = (password: string) => {
     return password.length >= 8;
@@ -135,8 +135,6 @@ export function SignUpForm() {
   };
 
   const handleNext = () => {
-    setError('');
-
     if (step === 0) {
       setStep(1);
       return;
@@ -150,17 +148,17 @@ export function SignUpForm() {
         !account.password ||
         !account.confirmPassword
       ) {
-        setError('Please fill in all fields');
+        toast.error('Please fill in all fields');
         return;
       }
 
       if (!validatePassword(account.password)) {
-        setError('Password must be at least 8 characters');
+        toast.error('Password must be at least 8 characters');
         return;
       }
 
       if (account.password !== account.confirmPassword) {
-        setError('Passwords do not match');
+        toast.error('Passwords do not match');
         return;
       }
 
@@ -204,12 +202,12 @@ export function SignUpForm() {
           !f.proof_of_property_ownership ||
           !f.confirm_information_accuracy
         ) {
-          setError('Please complete all required fields');
+          toast.error('Please complete all required fields');
           return;
         }
 
         if (!f.agree_to_terms) {
-          setError('You must agree to the Terms of Service and Privacy Policy');
+          toast.error('You must agree to the Terms of Service and Privacy Policy');
           return;
         }
       } else {
@@ -233,12 +231,12 @@ export function SignUpForm() {
           !f.approval_reason ||
           !f.agree_to_background_checks
         ) {
-          setError('Please complete all required fields');
+          toast.error('Please complete all required fields');
           return;
         }
 
         if (!f.agree_to_terms) {
-          setError('You must agree to the Terms of Service and Privacy Policy');
+          toast.error('You must agree to the Terms of Service and Privacy Policy');
           return;
         }
       }
@@ -248,7 +246,6 @@ export function SignUpForm() {
   };
 
   const handleBack = () => {
-    setError('');
     if (step === 0) return;
     if (step === 1 && roleParam) {
       router.push('/login');
@@ -264,7 +261,6 @@ export function SignUpForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
 
     if (step !== 3) {
       handleNext();
@@ -272,39 +268,44 @@ export function SignUpForm() {
     }
 
     try {
+      const additionalData = account.userType === 'host' 
+        ? {
+            dateOfBirth: propertyOwnerRegistrationForm.date_of_birth,
+            numberOfProperties: parseInt(propertyOwnerRegistrationForm.number_of_properties_owned),
+            hostingExperience: parseInt(propertyOwnerRegistrationForm.years_hosting_experience),
+            propertyLocations: propertyOwnerRegistrationForm.property_locations,
+            propertyTypes: propertyOwnerRegistrationForm.type_of_properties,
+            platformsUsed: propertyOwnerRegistrationForm.current_platforms_used,
+            monthlyIncomeTarget: propertyOwnerRegistrationForm.monthly_income_target,
+            usesCoHost: propertyOwnerRegistrationForm.uses_co_host === 'yes',
+            supportRequired: propertyOwnerRegistrationForm.support_required,
+            address: propertyOwnerRegistrationForm.residential_address,
+            phone: account.phone_number,
+          }
+        : {
+            city: coHostApplicationForm.city,
+            postcode: coHostApplicationForm.postcode,
+            hasAirbnbExperience: coHostApplicationForm.has_airbnb_experience === 'yes',
+            yearsOfExperience: parseInt(coHostApplicationForm.years_of_experience),
+            propertiesManaged: parseInt(coHostApplicationForm.number_of_properties_managed),
+            servicesOffered: coHostApplicationForm.services_offered,
+            availability: coHostApplicationForm.availability,
+            areasCovered: coHostApplicationForm.areas_covered,
+            phone: account.phone_number,
+          };
+
       await signup(
         account.email_address,
         account.password,
         account.full_name,
-        account.userType
+        account.userType,
+        additionalData
       );
 
-      const emailKey = account.email_address.toLowerCase();
-      if (account.userType === 'host') {
-        localStorage.setItem(
-          `hostinly_property_owner_registration_${emailKey}`,
-          JSON.stringify(propertyOwnerRegistrationForm)
-        );
-      } else {
-        localStorage.setItem(
-          `hostinly_cohost_application_${emailKey}`,
-          JSON.stringify(coHostApplicationForm)
-        );
-      }
-
-      const subscriptionKey = `hostinly_subscription_${emailKey}`;
-      if (!localStorage.getItem(subscriptionKey)) {
-        const expiresAt = new Date();
-        expiresAt.setMonth(expiresAt.getMonth() + 1);
-        localStorage.setItem(
-          subscriptionKey,
-          JSON.stringify({ plan: 'Free', expiresAt: expiresAt.toISOString() })
-        );
-      }
-
+      toast.success('Account created successfully!');
       router.push('/dashboard');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Sign up failed');
+      toast.error(err instanceof Error ? err.message : 'Sign up failed');
     }
   };
 
@@ -353,13 +354,6 @@ export function SignUpForm() {
               ? 'A few details to personalize your experience.'
               : 'Confirm your details before creating your account.'}
           </p>
-
-          {/* Error Message */}
-          {error && (
-            <div className="mb-4 p-3 bg-destructive/10 border border-destructive/30 rounded text-destructive text-sm">
-              {error}
-            </div>
-          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {step === 0 && (

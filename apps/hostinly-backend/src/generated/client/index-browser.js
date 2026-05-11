@@ -125,6 +125,7 @@ exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
   name: 'name',
+  passwordHash: 'passwordHash',
   userType: 'userType',
   avatar: 'avatar',
   phone: 'phone',
@@ -136,68 +137,84 @@ exports.Prisma.UserScalarFieldEnum = {
   status: 'status',
   verificationStatus: 'verificationStatus',
   createdAt: 'createdAt',
-  lastActive: 'lastActive'
+  lastActive: 'lastActive',
+  dateOfBirth: 'dateOfBirth',
+  numberOfProperties: 'numberOfProperties',
+  hostingExperience: 'hostingExperience',
+  propertyLocations: 'propertyLocations',
+  propertyTypes: 'propertyTypes',
+  platformsUsed: 'platformsUsed',
+  monthlyIncomeTarget: 'monthlyIncomeTarget',
+  usesCoHost: 'usesCoHost',
+  supportRequired: 'supportRequired',
+  uploadId: 'uploadId',
+  proofOfOwnership: 'proofOfOwnership',
+  businessRegistration: 'businessRegistration',
+  postcode: 'postcode',
+  hasAirbnbExperience: 'hasAirbnbExperience',
+  yearsOfExperience: 'yearsOfExperience',
+  propertiesManaged: 'propertiesManaged',
+  averageRating: 'averageRating',
+  servicesOffered: 'servicesOffered',
+  availability: 'availability',
+  areasCovered: 'areasCovered',
+  proofOfAddress: 'proofOfAddress',
+  references: 'references',
+  insurance: 'insurance',
+  approvalReason: 'approvalReason'
 };
 
 exports.Prisma.PropertyScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
-  type: 'type',
-  location: 'location',
   address: 'address',
   city: 'city',
-  country: 'country',
   price: 'price',
-  nightlyRate: 'nightlyRate',
-  currency: 'currency',
-  bedrooms: 'bedrooms',
-  bathrooms: 'bathrooms',
-  maxGuests: 'maxGuests',
-  image: 'image',
-  images: 'images',
-  rating: 'rating',
-  reviews: 'reviews',
   status: 'status',
   ownerId: 'ownerId',
-  ownerName: 'ownerName',
-  amenities: 'amenities',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  images: 'images',
+  amenities: 'amenities',
+  bedrooms: 'bedrooms',
+  bathrooms: 'bathrooms',
+  guests: 'guests'
 };
 
-exports.Prisma.CohostScalarFieldEnum = {
+exports.Prisma.CoHostScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  name: 'name',
-  title: 'title',
-  email: 'email',
-  phone: 'phone',
+  bio: 'bio',
+  experience: 'experience',
   rating: 'rating',
-  reviews: 'reviews',
-  specialties: 'specialties',
-  image: 'image',
+  totalReviews: 'totalReviews',
+  location: 'location',
   hourlyRate: 'hourlyRate',
-  commissionRate: 'commissionRate',
-  activeProperties: 'activeProperties',
-  completedBookings: 'completedBookings',
-  responseTime: 'responseTime',
-  status: 'status',
-  joinedAt: 'joinedAt',
-  lastActive: 'lastActive'
+  languages: 'languages',
+  specialties: 'specialties',
+  availabilityStatus: 'availabilityStatus'
 };
 
-exports.Prisma.JobScalarFieldEnum = {
+exports.Prisma.JobPostingScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
-  propertyLocation: 'propertyLocation',
   budget: 'budget',
-  duration: 'duration',
-  experience: 'experience',
   status: 'status',
-  applications: 'applications',
-  ownerId: 'ownerId',
+  authorId: 'authorId',
+  propertyId: 'propertyId',
+  location: 'location',
+  type: 'type',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ReviewScalarFieldEnum = {
+  id: 'id',
+  rating: 'rating',
+  comment: 'comment',
+  reviewerId: 'reviewerId',
+  revieweeId: 'revieweeId',
   createdAt: 'createdAt'
 };
 
@@ -268,59 +285,34 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 exports.UserType = exports.$Enums.UserType = {
-  host: 'host',
-  cohost: 'cohost',
-  guest: 'guest',
-  admin: 'admin',
-  super_admin: 'super_admin',
-  supervisor: 'supervisor'
+  HOST: 'HOST',
+  COHOST: 'COHOST',
+  ADMIN: 'ADMIN'
 };
 
 exports.UserStatus = exports.$Enums.UserStatus = {
-  active: 'active',
-  suspended: 'suspended',
-  pending: 'pending',
-  banned: 'banned'
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  SUSPENDED: 'SUSPENDED'
 };
 
 exports.VerificationStatus = exports.$Enums.VerificationStatus = {
-  verified: 'verified',
-  pending: 'pending',
-  rejected: 'rejected',
-  unverified: 'unverified'
-};
-
-exports.PropertyType = exports.$Enums.PropertyType = {
-  apartment: 'apartment',
-  house: 'house',
-  villa: 'villa',
-  condo: 'condo',
-  studio: 'studio',
-  penthouse: 'penthouse'
+  PENDING: 'PENDING',
+  VERIFIED: 'VERIFIED',
+  REJECTED: 'REJECTED'
 };
 
 exports.PropertyStatus = exports.$Enums.PropertyStatus = {
-  available: 'available',
-  managing: 'managing',
-  pending: 'pending',
-  active: 'active',
-  inactive: 'inactive',
-  under_review: 'under_review',
-  rejected: 'rejected'
-};
-
-exports.CohostStatus = exports.$Enums.CohostStatus = {
-  active: 'active',
-  pending: 'pending',
-  suspended: 'suspended',
-  banned: 'banned'
+  AVAILABLE: 'AVAILABLE',
+  MANAGED: 'MANAGED',
+  INACTIVE: 'INACTIVE'
 };
 
 exports.JobStatus = exports.$Enums.JobStatus = {
-  open: 'open',
-  closed: 'closed',
-  in_progress: 'in_progress',
-  completed: 'completed'
+  OPEN: 'OPEN',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
 };
 
 exports.BookingStatus = exports.$Enums.BookingStatus = {
@@ -352,8 +344,9 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
 exports.Prisma.ModelName = {
   User: 'User',
   Property: 'Property',
-  Cohost: 'Cohost',
-  Job: 'Job',
+  CoHost: 'CoHost',
+  JobPosting: 'JobPosting',
+  Review: 'Review',
   Booking: 'Booking',
   ContactMessage: 'ContactMessage',
   PricingPlan: 'PricingPlan',

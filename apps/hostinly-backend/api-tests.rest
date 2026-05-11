@@ -1,126 +1,149 @@
 @baseUrl = http://localhost:3333/api
 
-### Health Check
-GET http://localhost:3333/
-
-
-@user = "test-user1@example.com"
+@userId = "7c6d8823-245d-4495-96f8-056b9d2e4986"
+@propertyId = "12345678901234567890123456789012"
+@jobId = "12345678901234567890123456789012"
+@cohostId = "12345678901234567890123456789012"
+@token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3YzZkODgyMy0yNDVkLTQ0OTUtOTZmOC0wNTZiOWQyZTQ5ODYiLCJlbWFpbCI6Imhvc3RAeW9wbWFpbC5jb20iLCJ1c2VyVHlwZSI6IkhPU1QiLCJpYXQiOjE3Nzg1MTk5NDUsImV4cCI6MTc3ODYwNjM0NX0.h3lwjWIaXaSriWH4fKJ2rluxKqGGCB_H8oYaPWGkQXM"
+@email = "host@yopmail.com"
 @password = "Password1*"
 
-### --- Auth & Users ---
 
-# @name signup
+
+# --- AUTH ---
+
+### Signup (Host)
 POST {{baseUrl}}/auth/signup
 Content-Type: application/json
 
 {
-  "email": {{user}},
-  "password": {{password}},
-  "name": "Test User",
-  "userType": "host"
+  "email": "huang@yopmail.com",
+  "password": "Password1*",
+  "name": "Joan  Huang",
+  "userType": "HOST",
+  "phone": "+44 7700 900000",
+  "address": "123 Host Lane",
+  "city": "London",
+  "state": "Greater London",
+  "zipCode": "SW1A 1AA",
+  "country": "United Kingdom",
+  "dateOfBirth": "1985-05-15",
+  "numberOfProperties": 3,
+  "hostingExperience": 5,
+  "propertyLocations": "London, Manchester",
+  "propertyTypes": "Apartment, House",
+  "platformsUsed": "Airbnb, Booking.com",
+  "monthlyIncomeTarget": "5000",
+  "usesCoHost": true,
+  "supportRequired": "Cleaning, Maintenance"
 }
 
-###
+### Signup (Co-Host)
+POST {{baseUrl}}/auth/signup
+Content-Type: application/json
 
-# @name login
+{
+  "email": "cohost1@yopmail.com",
+  "password": "Password1*",
+  "name": "Jane CoHost",
+  "userType": "COHOST",
+  "phone": "+44 7700 900001",
+  "address": "456 CoHost Way",
+  "city": "Manchester",
+  "state": "Greater Manchester",
+  "zipCode": "M1 1AA",
+  "country": "United Kingdom",
+  "postcode": "M1 1AA",
+  "hasAirbnbExperience": true,
+  "yearsOfExperience": 3,
+  "propertiesManaged": 10,
+  "servicesOffered": "Check-in, Cleaning, Communication",
+  "availability": "Full-time",
+  "areasCovered": "Manchester City Centre, Salford"
+}
+
+### Login
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": {{user}},
-  "password": {{password}}
+  "email": "{{email}}",
+  "password": "{{password}}"
 }
 
-### Get Current User
-GET {{baseUrl}}/users/me
+# --- USERS ---
 
-### Get All Users (Admin)
+### Get All Users
 GET {{baseUrl}}/users
 
-### --- Properties ---
+### Get User Profile
+GET {{baseUrl}}/users/{{userId}}
+
+### Update User Profile
+PUT {{baseUrl}}/users/{{userId}}
+Content-Type: application/json
+
+{
+  "phone": "+44 123 456 789",
+  "city": "London"
+}
+
+# --- PROPERTIES ---
 
 ### Get All Properties
 GET {{baseUrl}}/properties
-
-### Get Single Property
-GET {{baseUrl}}/properties/1
 
 ### Create Property
 POST {{baseUrl}}/properties
 Content-Type: application/json
 
 {
-  "title": "Modern Beach House",
-  "description": "Stunning views and private beach access.",
-  "location": "Malibu, CA",
-  "price": 850,
-  "bedrooms": 4,
-  "bathrooms": 3,
-  "status": "available",
-  "type": "villa"
+  "title": "Modern Apartment in City Centre",
+  "description": "A beautiful 2-bedroom apartment with great views.",
+  "address": "123 Main St",
+  "city": "London",
+  "price": 150.0,
+  "ownerId": "{{userId}}",
+  "amenities": ["WiFi", "Kitchen", "AC"]
 }
 
-### Update Property
-PUT {{baseUrl}}/properties/1
-Content-Type: application/json
+### Get Property Detail
+GET {{baseUrl}}/properties/{{propertyId}}
 
-{
-  "price": 900,
-  "status": "managing"
-}
+# --- CO-HOSTS ---
 
-### Delete Property
-DELETE {{baseUrl}}/properties/1
-
-### --- Co-hosts ---
-
-### Get All Co-hosts
+### Get All Co-Hosts
 GET {{baseUrl}}/cohosts
 
-### Get Single Co-host
-GET {{baseUrl}}/cohosts/1
+### Get Co-Host Detail
+GET {{baseUrl}}/cohosts/{{cohostId}}
 
-### --- Jobs ---
+# --- JOBS ---
 
 ### Get All Jobs
 GET {{baseUrl}}/jobs
 
-### Post a New Job
+### Create Job Posting
 POST {{baseUrl}}/jobs
 Content-Type: application/json
 
 {
-  "title": "Cleaning & Maintenance",
-  "description": "Looking for help with property turnovers.",
-  "propertyLocation": "Austin, TX",
-  "budget": 1200,
-  "duration": "Part-time",
-  "experience": "1 year",
-  "status": "open"
+  "title": "Need Cleaning Service",
+  "description": "Professional cleaning needed for 2-bed apartment.",
+  "budget": "£50 - £100",
+  "location": "London",
+  "type": "Cleaning",
+  "authorId": "{{userId}}",
+  "propertyId": "{{propertyId}}"
 }
 
-### --- Payments & Billing ---
+### Get Job Detail
+GET {{baseUrl}}/jobs/{{jobId}}
 
-### Get All Payments (Admin)
-GET {{baseUrl}}/payments
+# --- ADMIN ---
 
-### Get Pricing Plans
-GET {{baseUrl}}/pricing
+### Get Admin Stats
+GET {{baseUrl}}/admin/stats
 
-### --- Services ---
-
-### Get All Services
-GET {{baseUrl}}/services
-
-### --- Contact ---
-
-### Send Contact Message
-POST {{baseUrl}}/contact
-Content-Type: application/json
-
-{
-  "name": "Interested Guest",
-  "email": "guest@example.com",
-  "subject": "Booking Inquiry",
-  "message": "I would like to know more about the Malibu property."
-}
+### Get Recent Activity
+GET {{baseUrl}}/admin/recent-activity
