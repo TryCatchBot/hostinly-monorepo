@@ -5,28 +5,26 @@ WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm
 
-# Disable Nx daemon and allow trusted dependencies
+# Brute force environment settings
 ENV NX_DAEMON=false
+ENV CI=true
 RUN pnpm config set only-allow-trusted-dependencies false
 
-# Copy root configurations
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml nx.json tsconfig.base.json eslint.config.mjs ./
-
-# Copy all apps and libs (required for Nx workspace to be valid during build)
-COPY libs ./libs
-COPY apps/hostinly-backend ./apps/hostinly-backend
+# Brute force: Copy EVERYTHING to ensure no missing config files or dependencies
+COPY . .
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
-# Build the backend using Nx
-RUN pnpm nx build hostinly-backend --prod
+# Build the backend - skipping cache and identifying exact target
+RUN pnpm nx build hostinly-backend --prod --skip-nx-cache
 
 FROM node:20-alpine AS runner
 
 WORKDIR /app
 
 # Copy built assets from builder
+# Nx usually builds to apps/hostinly-backend/dist based on the project config
 COPY --from=builder /app/apps/hostinly-backend/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
