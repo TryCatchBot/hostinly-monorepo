@@ -10,32 +10,28 @@ datasource db {
 }
 
 enum UserType {
-  host
-  cohost
-  guest
-  admin
-  super_admin
-  supervisor
+  HOST
+  COHOST
+  ADMIN
 }
 
 enum UserStatus {
-  active
-  suspended
-  pending
-  banned
+  ACTIVE
+  INACTIVE
+  SUSPENDED
 }
 
 enum VerificationStatus {
-  verified
-  pending
-  rejected
-  unverified
+  PENDING
+  VERIFIED
+  REJECTED
 }
 
 model User {
   id                 String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email              String             @unique
   name               String
+  passwordHash       String             @map("password_hash")
   userType           UserType           @map("user_type")
   avatar             String?
   phone              String?
@@ -44,28 +40,54 @@ model User {
   state              String?
   zipCode            String?            @map("zip_code")
   country            String?
-  status             UserStatus         @default(active)
-  verificationStatus VerificationStatus @default(unverified) @map("verification_status")
+  status             UserStatus         @default(ACTIVE)
+  verificationStatus VerificationStatus @default(PENDING) @map("verification_status")
   createdAt          DateTime           @default(now()) @map("created_at")
   lastActive         DateTime           @default(now()) @map("last_active")
 
-  properties    Property[]
-  cohostProfile Cohost?
-  jobs          Job[]
-  bookings      Booking[]
-  payments      Payment[]
+  // Host specific fields
+  dateOfBirth          DateTime? @map("date_of_birth")
+  numberOfProperties   Int?      @map("number_of_properties")
+  hostingExperience    Int?      @map("hosting_experience")
+  propertyLocations    String?   @map("property_locations")
+  propertyTypes        String?   @map("property_types")
+  platformsUsed        String?   @map("platforms_used")
+  monthlyIncomeTarget  String?   @map("monthly_income_target")
+  usesCoHost           Boolean?  @map("uses_co_host")
+  supportRequired      String?   @map("support_required")
+  uploadId             String?   @map("upload_id")
+  proofOfOwnership     String?   @map("proof_of_ownership")
+  businessRegistration String?   @map("business_registration")
+
+  // Co-Host specific fields
+  postcode            String?  @map("postcode")
+  hasAirbnbExperience Boolean? @map("has_airbnb_experience")
+  yearsOfExperience   Int?     @map("years_of_experience")
+  propertiesManaged   Int?     @map("properties_managed")
+  averageRating       Float?   @map("average_rating")
+  servicesOffered     String?  @map("services_offered")
+  availability        String?  @map("availability")
+  areasCovered        String?  @map("areas_covered")
+  proofOfAddress      String?  @map("proof_of_address")
+  references          String?  @map("references")
+  insurance           String?  @map("insurance")
+  approvalReason      String?  @map("approval_reason")
+
+  properties      Property[]
+  cohostProfile   CoHost?
+  jobs            JobPosting[]
+  reviewsWritten  Review[]     @relation("Reviewer")
+  reviewsReceived Review[]     @relation("Reviewee")
+  bookings        Booking[]
+  payments        Payment[]
 
   @@map("users")
 }
 
 enum PropertyStatus {
-  available
-  managing
-  pending
-  active
-  inactive
-  under_review
-  rejected
+  AVAILABLE
+  MANAGED
+  INACTIVE
 }
 
 enum PropertyType {
@@ -78,92 +100,84 @@ enum PropertyType {
 }
 
 model Property {
-  id          BigInt         @id @default(autoincrement())
+  id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title       String
-  description String?
-  type        PropertyType?
-  location    String
-  address     String?
-  city        String?
-  country     String?
-  price       Decimal        @db.Decimal
-  nightlyRate Decimal?       @map("nightly_rate") @db.Decimal
-  currency    String         @default("USD")
+  description String
+  address     String
+  city        String
+  price       Float
+  status      PropertyStatus @default(AVAILABLE)
+  ownerId     String         @map("owner_id") @db.Uuid
+  owner       User           @relation(fields: [ownerId], references: [id])
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  images      String[]
+  amenities   String[]
   bedrooms    Int            @default(1)
   bathrooms   Int            @default(1)
-  maxGuests   Int            @default(2) @map("max_guests")
-  image       String?
-  images      String[]
-  rating      Decimal        @default(0) @db.Decimal
-  reviews     Int            @default(0)
-  status      PropertyStatus @default(available)
-  ownerId     String?        @map("owner_id") @db.Uuid
-  ownerName   String?        @map("owner_name")
-  amenities   String[]
-  createdAt   DateTime       @default(now()) @map("created_at")
-  updatedAt   DateTime       @default(now()) @map("updated_at")
+  guests      Int            @default(2)
 
-  owner    User?     @relation(fields: [ownerId], references: [id])
+  cohosts  CoHost[]
+  jobs     JobPosting[]
   bookings Booking[]
 
   @@map("properties")
 }
 
-enum CohostStatus {
-  active
-  pending
-  suspended
-  banned
-}
+model CoHost {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId             String   @unique @map("user_id") @db.Uuid
+  user               User     @relation(fields: [userId], references: [id])
+  bio                String?
+  experience         Int      @default(0)
+  rating             Float    @default(5.0)
+  totalReviews       Int      @default(0) @map("total_reviews")
+  location           String?
+  hourlyRate         Float?   @map("hourly_rate")
+  languages          String[]
+  specialties        String[]
+  availabilityStatus String   @default("Available") @map("availability_status")
 
-model Cohost {
-  id                BigInt       @id @default(autoincrement())
-  userId            String?      @unique @map("user_id") @db.Uuid
-  name              String
-  title             String?
-  email             String?
-  phone             String?
-  rating            Decimal      @default(0) @db.Decimal
-  reviews           Int          @default(0)
-  specialties       String[]
-  image             String?
-  hourlyRate        Decimal?     @map("hourly_rate") @db.Decimal
-  commissionRate    Decimal?     @map("commission_rate") @db.Decimal
-  activeProperties  Int          @default(0) @map("active_properties")
-  completedBookings Int          @default(0) @map("completed_bookings")
-  responseTime      Int          @default(0) @map("response_time")
-  status            CohostStatus @default(active)
-  joinedAt          DateTime     @default(now()) @map("joined_at")
-  lastActive        DateTime     @default(now()) @map("last_active")
-
-  user User? @relation(fields: [userId], references: [id])
+  properties Property[]
 
   @@map("cohosts")
 }
 
 enum JobStatus {
-  open
-  closed
-  in_progress
-  completed
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
 }
 
-model Job {
-  id               BigInt    @id @default(autoincrement())
-  title            String
-  description      String?
-  propertyLocation String?   @map("property_location")
-  budget           Decimal?  @db.Decimal
-  duration         String?
-  experience       String?
-  status           JobStatus @default(open)
-  applications     Int       @default(0)
-  ownerId          String?   @map("owner_id") @db.Uuid
-  createdAt        DateTime  @default(now()) @map("created_at")
+model JobPosting {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String
+  description String
+  budget      String
+  status      JobStatus @default(OPEN)
+  authorId    String    @map("author_id") @db.Uuid
+  author      User      @relation(fields: [authorId], references: [id])
+  propertyId  String?   @map("property_id") @db.Uuid
+  property    Property? @relation(fields: [propertyId], references: [id])
+  location    String
+  type        String
+  createdAt   DateTime  @default(now()) @map("created_at")
 
-  owner User? @relation(fields: [ownerId], references: [id])
+  @@map("job_postings")
+}
 
-  @@map("jobs")
+model Review {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  rating     Int
+  comment    String
+  reviewerId String   @map("reviewer_id") @db.Uuid
+  reviewer   User     @relation("Reviewer", fields: [reviewerId], references: [id])
+  revieweeId String   @map("reviewee_id") @db.Uuid
+  reviewee   User     @relation("Reviewee", fields: [revieweeId], references: [id])
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("reviews")
 }
 
 enum BookingStatus {
@@ -175,8 +189,8 @@ enum BookingStatus {
 }
 
 model Booking {
-  id            String        @id
-  propertyId    BigInt?       @map("property_id")
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  propertyId    String?       @map("property_id") @db.Uuid
   propertyTitle String?       @map("property_title")
   guestId       String?       @map("guest_id") @db.Uuid
   guestName     String?       @map("guest_name")

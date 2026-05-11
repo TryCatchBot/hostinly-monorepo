@@ -6,7 +6,9 @@ const router: Router = Router();
 
 router.get('/', async (req, res) => {
   try {
-    const data = await prisma.cohost.findMany();
+    const data = await prisma.coHost.findMany({
+      include: { user: true }
+    });
     sendSuccess(res, data);
   } catch (error: any) {
     sendError(res, error.message);
@@ -15,8 +17,9 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const data = await prisma.cohost.findUnique({
-      where: { id: BigInt(req.params.id) },
+    const data = await prisma.coHost.findUnique({
+      where: { id: req.params.id },
+      include: { user: true, properties: true }
     });
     if (!data) return sendError(res, 'Co-host not found', 404);
     sendSuccess(res, data);

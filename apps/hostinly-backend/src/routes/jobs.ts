@@ -4,10 +4,11 @@ import { sendSuccess, sendError } from '../middleware';
 
 const router: Router = Router();
 
-// --- Properties ---
 router.get('/', async (req, res) => {
   try {
-    const data = await prisma.property.findMany();
+    const data = await prisma.jobPosting.findMany({
+      include: { author: true, property: true }
+    });
     sendSuccess(res, data);
   } catch (error: any) {
     sendError(res, error.message);
@@ -16,11 +17,11 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const data = await prisma.property.findUnique({
+    const data = await prisma.jobPosting.findUnique({
       where: { id: req.params.id },
-      include: { owner: true, cohosts: true, jobs: true }
+      include: { author: true, property: true }
     });
-    if (!data) return sendError(res, 'Property not found', 404);
+    if (!data) return sendError(res, 'Job not found', 404);
     sendSuccess(res, data);
   } catch (error: any) {
     sendError(res, error.message);
@@ -29,12 +30,12 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const { ownerId, price, ...rest } = req.body;
-    const data = await prisma.property.create({
+    const { authorId, propertyId, ...rest } = req.body;
+    const data = await prisma.jobPosting.create({
       data: {
         ...rest,
-        price: parseFloat(price),
-        owner: { connect: { id: ownerId } }
+        author: { connect: { id: authorId } },
+        property: propertyId ? { connect: { id: propertyId } } : undefined
       }
     });
     sendSuccess(res, data);
@@ -45,13 +46,9 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   try {
-    const { price, ...rest } = req.body;
-    const data = await prisma.property.update({
+    const data = await prisma.jobPosting.update({
       where: { id: req.params.id },
-      data: {
-        ...rest,
-        price: price ? parseFloat(price) : undefined
-      },
+      data: req.body,
     });
     sendSuccess(res, data);
   } catch (error: any) {
@@ -61,7 +58,7 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    await prisma.property.delete({
+    await prisma.jobPosting.delete({
       where: { id: req.params.id },
     });
     sendSuccess(res, null);

@@ -97,6 +97,7 @@ exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
   name: 'name',
+  passwordHash: 'passwordHash',
   userType: 'userType',
   avatar: 'avatar',
   phone: 'phone',
@@ -108,68 +109,84 @@ exports.Prisma.UserScalarFieldEnum = {
   status: 'status',
   verificationStatus: 'verificationStatus',
   createdAt: 'createdAt',
-  lastActive: 'lastActive'
+  lastActive: 'lastActive',
+  dateOfBirth: 'dateOfBirth',
+  numberOfProperties: 'numberOfProperties',
+  hostingExperience: 'hostingExperience',
+  propertyLocations: 'propertyLocations',
+  propertyTypes: 'propertyTypes',
+  platformsUsed: 'platformsUsed',
+  monthlyIncomeTarget: 'monthlyIncomeTarget',
+  usesCoHost: 'usesCoHost',
+  supportRequired: 'supportRequired',
+  uploadId: 'uploadId',
+  proofOfOwnership: 'proofOfOwnership',
+  businessRegistration: 'businessRegistration',
+  postcode: 'postcode',
+  hasAirbnbExperience: 'hasAirbnbExperience',
+  yearsOfExperience: 'yearsOfExperience',
+  propertiesManaged: 'propertiesManaged',
+  averageRating: 'averageRating',
+  servicesOffered: 'servicesOffered',
+  availability: 'availability',
+  areasCovered: 'areasCovered',
+  proofOfAddress: 'proofOfAddress',
+  references: 'references',
+  insurance: 'insurance',
+  approvalReason: 'approvalReason'
 };
 
 exports.Prisma.PropertyScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
-  type: 'type',
-  location: 'location',
   address: 'address',
   city: 'city',
-  country: 'country',
   price: 'price',
-  nightlyRate: 'nightlyRate',
-  currency: 'currency',
-  bedrooms: 'bedrooms',
-  bathrooms: 'bathrooms',
-  maxGuests: 'maxGuests',
-  image: 'image',
-  images: 'images',
-  rating: 'rating',
-  reviews: 'reviews',
   status: 'status',
   ownerId: 'ownerId',
-  ownerName: 'ownerName',
-  amenities: 'amenities',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  images: 'images',
+  amenities: 'amenities',
+  bedrooms: 'bedrooms',
+  bathrooms: 'bathrooms',
+  guests: 'guests'
 };
 
-exports.Prisma.CohostScalarFieldEnum = {
+exports.Prisma.CoHostScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  name: 'name',
-  title: 'title',
-  email: 'email',
-  phone: 'phone',
+  bio: 'bio',
+  experience: 'experience',
   rating: 'rating',
-  reviews: 'reviews',
-  specialties: 'specialties',
-  image: 'image',
+  totalReviews: 'totalReviews',
+  location: 'location',
   hourlyRate: 'hourlyRate',
-  commissionRate: 'commissionRate',
-  activeProperties: 'activeProperties',
-  completedBookings: 'completedBookings',
-  responseTime: 'responseTime',
-  status: 'status',
-  joinedAt: 'joinedAt',
-  lastActive: 'lastActive'
+  languages: 'languages',
+  specialties: 'specialties',
+  availabilityStatus: 'availabilityStatus'
 };
 
-exports.Prisma.JobScalarFieldEnum = {
+exports.Prisma.JobPostingScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
-  propertyLocation: 'propertyLocation',
   budget: 'budget',
-  duration: 'duration',
-  experience: 'experience',
   status: 'status',
-  applications: 'applications',
-  ownerId: 'ownerId',
+  authorId: 'authorId',
+  propertyId: 'propertyId',
+  location: 'location',
+  type: 'type',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ReviewScalarFieldEnum = {
+  id: 'id',
+  rating: 'rating',
+  comment: 'comment',
+  reviewerId: 'reviewerId',
+  revieweeId: 'revieweeId',
   createdAt: 'createdAt'
 };
 
@@ -240,36 +257,27 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 exports.UserType = exports.$Enums.UserType = {
-  host: 'host',
-  cohost: 'cohost',
-  guest: 'guest',
-  admin: 'admin',
-  super_admin: 'super_admin',
-  supervisor: 'supervisor'
+  HOST: 'HOST',
+  COHOST: 'COHOST',
+  ADMIN: 'ADMIN'
 };
 
 exports.UserStatus = exports.$Enums.UserStatus = {
-  active: 'active',
-  suspended: 'suspended',
-  pending: 'pending',
-  banned: 'banned'
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  SUSPENDED: 'SUSPENDED'
 };
 
 exports.VerificationStatus = exports.$Enums.VerificationStatus = {
-  verified: 'verified',
-  pending: 'pending',
-  rejected: 'rejected',
-  unverified: 'unverified'
+  PENDING: 'PENDING',
+  VERIFIED: 'VERIFIED',
+  REJECTED: 'REJECTED'
 };
 
 exports.PropertyStatus = exports.$Enums.PropertyStatus = {
-  available: 'available',
-  managing: 'managing',
-  pending: 'pending',
-  active: 'active',
-  inactive: 'inactive',
-  under_review: 'under_review',
-  rejected: 'rejected'
+  AVAILABLE: 'AVAILABLE',
+  MANAGED: 'MANAGED',
+  INACTIVE: 'INACTIVE'
 };
 
 exports.PropertyType = exports.$Enums.PropertyType = {
@@ -281,18 +289,11 @@ exports.PropertyType = exports.$Enums.PropertyType = {
   penthouse: 'penthouse'
 };
 
-exports.CohostStatus = exports.$Enums.CohostStatus = {
-  active: 'active',
-  pending: 'pending',
-  suspended: 'suspended',
-  banned: 'banned'
-};
-
 exports.JobStatus = exports.$Enums.JobStatus = {
-  open: 'open',
-  closed: 'closed',
-  in_progress: 'in_progress',
-  completed: 'completed'
+  OPEN: 'OPEN',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
 };
 
 exports.BookingStatus = exports.$Enums.BookingStatus = {
@@ -324,8 +325,9 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
 exports.Prisma.ModelName = {
   User: 'User',
   Property: 'Property',
-  Cohost: 'Cohost',
-  Job: 'Job',
+  CoHost: 'CoHost',
+  JobPosting: 'JobPosting',
+  Review: 'Review',
   Booking: 'Booking',
   ContactMessage: 'ContactMessage',
   PricingPlan: 'PricingPlan',
@@ -375,6 +377,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -383,13 +386,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../src/generated/client\"\n  binaryTargets = [\"native\", \"linux-musl-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum UserType {\n  host\n  cohost\n  guest\n  admin\n  super_admin\n  supervisor\n}\n\nenum UserStatus {\n  active\n  suspended\n  pending\n  banned\n}\n\nenum VerificationStatus {\n  verified\n  pending\n  rejected\n  unverified\n}\n\nmodel User {\n  id                 String             @id @default(dbgenerated(\"gen_random_uuid()\")) @db.Uuid\n  email              String             @unique\n  name               String\n  userType           UserType           @map(\"user_type\")\n  avatar             String?\n  phone              String?\n  address            String?\n  city               String?\n  state              String?\n  zipCode            String?            @map(\"zip_code\")\n  country            String?\n  status             UserStatus         @default(active)\n  verificationStatus VerificationStatus @default(unverified) @map(\"verification_status\")\n  createdAt          DateTime           @default(now()) @map(\"created_at\")\n  lastActive         DateTime           @default(now()) @map(\"last_active\")\n\n  properties    Property[]\n  cohostProfile Cohost?\n  jobs          Job[]\n  bookings      Booking[]\n  payments      Payment[]\n\n  @@map(\"users\")\n}\n\nenum PropertyStatus {\n  available\n  managing\n  pending\n  active\n  inactive\n  under_review\n  rejected\n}\n\nenum PropertyType {\n  apartment\n  house\n  villa\n  condo\n  studio\n  penthouse\n}\n\nmodel Property {\n  id          BigInt         @id @default(autoincrement())\n  title       String\n  description String?\n  type        PropertyType?\n  location    String\n  address     String?\n  city        String?\n  country     String?\n  price       Decimal        @db.Decimal\n  nightlyRate Decimal?       @map(\"nightly_rate\") @db.Decimal\n  currency    String         @default(\"USD\")\n  bedrooms    Int            @default(1)\n  bathrooms   Int            @default(1)\n  maxGuests   Int            @default(2) @map(\"max_guests\")\n  image       String?\n  images      String[]\n  rating      Decimal        @default(0) @db.Decimal\n  reviews     Int            @default(0)\n  status      PropertyStatus @default(available)\n  ownerId     String?        @map(\"owner_id\") @db.Uuid\n  ownerName   String?        @map(\"owner_name\")\n  amenities   String[]\n  createdAt   DateTime       @default(now()) @map(\"created_at\")\n  updatedAt   DateTime       @default(now()) @map(\"updated_at\")\n\n  owner    User?     @relation(fields: [ownerId], references: [id])\n  bookings Booking[]\n\n  @@map(\"properties\")\n}\n\nenum CohostStatus {\n  active\n  pending\n  suspended\n  banned\n}\n\nmodel Cohost {\n  id                BigInt       @id @default(autoincrement())\n  userId            String?      @unique @map(\"user_id\") @db.Uuid\n  name              String\n  title             String?\n  email             String?\n  phone             String?\n  rating            Decimal      @default(0) @db.Decimal\n  reviews           Int          @default(0)\n  specialties       String[]\n  image             String?\n  hourlyRate        Decimal?     @map(\"hourly_rate\") @db.Decimal\n  commissionRate    Decimal?     @map(\"commission_rate\") @db.Decimal\n  activeProperties  Int          @default(0) @map(\"active_properties\")\n  completedBookings Int          @default(0) @map(\"completed_bookings\")\n  responseTime      Int          @default(0) @map(\"response_time\")\n  status            CohostStatus @default(active)\n  joinedAt          DateTime     @default(now()) @map(\"joined_at\")\n  lastActive        DateTime     @default(now()) @map(\"last_active\")\n\n  user User? @relation(fields: [userId], references: [id])\n\n  @@map(\"cohosts\")\n}\n\nenum JobStatus {\n  open\n  closed\n  in_progress\n  completed\n}\n\nmodel Job {\n  id               BigInt    @id @default(autoincrement())\n  title            String\n  description      String?\n  propertyLocation String?   @map(\"property_location\")\n  budget           Decimal?  @db.Decimal\n  duration         String?\n  experience       String?\n  status           JobStatus @default(open)\n  applications     Int       @default(0)\n  ownerId          String?   @map(\"owner_id\") @db.Uuid\n  createdAt        DateTime  @default(now()) @map(\"created_at\")\n\n  owner User? @relation(fields: [ownerId], references: [id])\n\n  @@map(\"jobs\")\n}\n\nenum BookingStatus {\n  confirmed\n  pending\n  cancelled\n  completed\n  no_show\n}\n\nmodel Booking {\n  id            String        @id\n  propertyId    BigInt?       @map(\"property_id\")\n  propertyTitle String?       @map(\"property_title\")\n  guestId       String?       @map(\"guest_id\") @db.Uuid\n  guestName     String?       @map(\"guest_name\")\n  checkIn       DateTime      @map(\"check_in\") @db.Date\n  checkOut      DateTime      @map(\"check_out\") @db.Date\n  amount        Decimal       @db.Decimal\n  status        BookingStatus @default(pending)\n  createdAt     DateTime      @default(now()) @map(\"created_at\")\n\n  property Property? @relation(fields: [propertyId], references: [id])\n  guest    User?     @relation(fields: [guestId], references: [id])\n\n  @@map(\"bookings\")\n}\n\nenum MessageStatus {\n  unread\n  read\n  archived\n}\n\nmodel ContactMessage {\n  id        BigInt        @id @default(autoincrement())\n  name      String\n  email     String\n  subject   String?\n  message   String\n  status    MessageStatus @default(unread)\n  createdAt DateTime      @default(now()) @map(\"created_at\")\n\n  @@map(\"contact_messages\")\n}\n\nenum PlanInterval {\n  month\n  year\n}\n\nmodel PricingPlan {\n  id        String       @id\n  name      String\n  price     Decimal      @db.Decimal\n  interval  PlanInterval\n  features  String[]\n  createdAt DateTime     @default(now()) @map(\"created_at\")\n\n  @@map(\"pricing_plans\")\n}\n\nenum PaymentStatus {\n  succeeded\n  pending\n  failed\n  refunded\n}\n\nmodel Payment {\n  id            BigInt        @id @default(autoincrement())\n  userId        String?       @map(\"user_id\") @db.Uuid\n  amount        Decimal       @db.Decimal\n  currency      String        @default(\"USD\")\n  status        PaymentStatus\n  paymentMethod String?       @map(\"payment_method\")\n  description   String?\n  createdAt     DateTime      @default(now()) @map(\"created_at\")\n\n  user User? @relation(fields: [userId], references: [id])\n\n  @@map(\"payments\")\n}\n\nmodel Service {\n  id          BigInt   @id @default(autoincrement())\n  name        String\n  description String?\n  price       Decimal? @db.Decimal\n  category    String?\n  createdAt   DateTime @default(now()) @map(\"created_at\")\n\n  @@map(\"services\")\n}\n",
-  "inlineSchemaHash": "bf99fb91462781c06523c563430cd93ce4a6a0747057a1398c59cad6c494b3be",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../src/generated/client\"\n  binaryTargets = [\"native\", \"linux-musl-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum UserType {\n  HOST\n  COHOST\n  ADMIN\n}\n\nenum UserStatus {\n  ACTIVE\n  INACTIVE\n  SUSPENDED\n}\n\nenum VerificationStatus {\n  PENDING\n  VERIFIED\n  REJECTED\n}\n\nmodel User {\n  id                 String             @id @default(dbgenerated(\"gen_random_uuid()\")) @db.Uuid\n  email              String             @unique\n  name               String\n  passwordHash       String             @map(\"password_hash\")\n  userType           UserType           @map(\"user_type\")\n  avatar             String?\n  phone              String?\n  address            String?\n  city               String?\n  state              String?\n  zipCode            String?            @map(\"zip_code\")\n  country            String?\n  status             UserStatus         @default(ACTIVE)\n  verificationStatus VerificationStatus @default(PENDING) @map(\"verification_status\")\n  createdAt          DateTime           @default(now()) @map(\"created_at\")\n  lastActive         DateTime           @default(now()) @map(\"last_active\")\n\n  // Host specific fields\n  dateOfBirth          DateTime? @map(\"date_of_birth\")\n  numberOfProperties   Int?      @map(\"number_of_properties\")\n  hostingExperience    Int?      @map(\"hosting_experience\")\n  propertyLocations    String?   @map(\"property_locations\")\n  propertyTypes        String?   @map(\"property_types\")\n  platformsUsed        String?   @map(\"platforms_used\")\n  monthlyIncomeTarget  String?   @map(\"monthly_income_target\")\n  usesCoHost           Boolean?  @map(\"uses_co_host\")\n  supportRequired      String?   @map(\"support_required\")\n  uploadId             String?   @map(\"upload_id\")\n  proofOfOwnership     String?   @map(\"proof_of_ownership\")\n  businessRegistration String?   @map(\"business_registration\")\n\n  // Co-Host specific fields\n  postcode            String?  @map(\"postcode\")\n  hasAirbnbExperience Boolean? @map(\"has_airbnb_experience\")\n  yearsOfExperience   Int?     @map(\"years_of_experience\")\n  propertiesManaged   Int?     @map(\"properties_managed\")\n  averageRating       Float?   @map(\"average_rating\")\n  servicesOffered     String?  @map(\"services_offered\")\n  availability        String?  @map(\"availability\")\n  areasCovered        String?  @map(\"areas_covered\")\n  proofOfAddress      String?  @map(\"proof_of_address\")\n  references          String?  @map(\"references\")\n  insurance           String?  @map(\"insurance\")\n  approvalReason      String?  @map(\"approval_reason\")\n\n  properties      Property[]\n  cohostProfile   CoHost?\n  jobs            JobPosting[]\n  reviewsWritten  Review[]     @relation(\"Reviewer\")\n  reviewsReceived Review[]     @relation(\"Reviewee\")\n  bookings        Booking[]\n  payments        Payment[]\n\n  @@map(\"users\")\n}\n\nenum PropertyStatus {\n  AVAILABLE\n  MANAGED\n  INACTIVE\n}\n\nenum PropertyType {\n  apartment\n  house\n  villa\n  condo\n  studio\n  penthouse\n}\n\nmodel Property {\n  id          String         @id @default(dbgenerated(\"gen_random_uuid()\")) @db.Uuid\n  title       String\n  description String\n  address     String\n  city        String\n  price       Float\n  status      PropertyStatus @default(AVAILABLE)\n  ownerId     String         @map(\"owner_id\") @db.Uuid\n  owner       User           @relation(fields: [ownerId], references: [id])\n  createdAt   DateTime       @default(now()) @map(\"created_at\")\n  updatedAt   DateTime       @updatedAt @map(\"updated_at\")\n  images      String[]\n  amenities   String[]\n  bedrooms    Int            @default(1)\n  bathrooms   Int            @default(1)\n  guests      Int            @default(2)\n\n  cohosts  CoHost[]\n  jobs     JobPosting[]\n  bookings Booking[]\n\n  @@map(\"properties\")\n}\n\nmodel CoHost {\n  id                 String   @id @default(dbgenerated(\"gen_random_uuid()\")) @db.Uuid\n  userId             String   @unique @map(\"user_id\") @db.Uuid\n  user               User     @relation(fields: [userId], references: [id])\n  bio                String?\n  experience         Int      @default(0)\n  rating             Float    @default(5.0)\n  totalReviews       Int      @default(0) @map(\"total_reviews\")\n  location           String?\n  hourlyRate         Float?   @map(\"hourly_rate\")\n  languages          String[]\n  specialties        String[]\n  availabilityStatus String   @default(\"Available\") @map(\"availability_status\")\n\n  properties Property[]\n\n  @@map(\"cohosts\")\n}\n\nenum JobStatus {\n  OPEN\n  IN_PROGRESS\n  COMPLETED\n  CANCELLED\n}\n\nmodel JobPosting {\n  id          String    @id @default(dbgenerated(\"gen_random_uuid()\")) @db.Uuid\n  title       String\n  description String\n  budget      String\n  status      JobStatus @default(OPEN)\n  authorId    String    @map(\"author_id\") @db.Uuid\n  author      User      @relation(fields: [authorId], references: [id])\n  propertyId  String?   @map(\"property_id\") @db.Uuid\n  property    Property? @relation(fields: [propertyId], references: [id])\n  location    String\n  type        String\n  createdAt   DateTime  @default(now()) @map(\"created_at\")\n\n  @@map(\"job_postings\")\n}\n\nmodel Review {\n  id         String   @id @default(dbgenerated(\"gen_random_uuid()\")) @db.Uuid\n  rating     Int\n  comment    String\n  reviewerId String   @map(\"reviewer_id\") @db.Uuid\n  reviewer   User     @relation(\"Reviewer\", fields: [reviewerId], references: [id])\n  revieweeId String   @map(\"reviewee_id\") @db.Uuid\n  reviewee   User     @relation(\"Reviewee\", fields: [revieweeId], references: [id])\n  createdAt  DateTime @default(now()) @map(\"created_at\")\n\n  @@map(\"reviews\")\n}\n\nenum BookingStatus {\n  confirmed\n  pending\n  cancelled\n  completed\n  no_show\n}\n\nmodel Booking {\n  id            String        @id @default(dbgenerated(\"gen_random_uuid()\")) @db.Uuid\n  propertyId    String?       @map(\"property_id\") @db.Uuid\n  propertyTitle String?       @map(\"property_title\")\n  guestId       String?       @map(\"guest_id\") @db.Uuid\n  guestName     String?       @map(\"guest_name\")\n  checkIn       DateTime      @map(\"check_in\") @db.Date\n  checkOut      DateTime      @map(\"check_out\") @db.Date\n  amount        Decimal       @db.Decimal\n  status        BookingStatus @default(pending)\n  createdAt     DateTime      @default(now()) @map(\"created_at\")\n\n  property Property? @relation(fields: [propertyId], references: [id])\n  guest    User?     @relation(fields: [guestId], references: [id])\n\n  @@map(\"bookings\")\n}\n\nenum MessageStatus {\n  unread\n  read\n  archived\n}\n\nmodel ContactMessage {\n  id        BigInt        @id @default(autoincrement())\n  name      String\n  email     String\n  subject   String?\n  message   String\n  status    MessageStatus @default(unread)\n  createdAt DateTime      @default(now()) @map(\"created_at\")\n\n  @@map(\"contact_messages\")\n}\n\nenum PlanInterval {\n  month\n  year\n}\n\nmodel PricingPlan {\n  id        String       @id\n  name      String\n  price     Decimal      @db.Decimal\n  interval  PlanInterval\n  features  String[]\n  createdAt DateTime     @default(now()) @map(\"created_at\")\n\n  @@map(\"pricing_plans\")\n}\n\nenum PaymentStatus {\n  succeeded\n  pending\n  failed\n  refunded\n}\n\nmodel Payment {\n  id            BigInt        @id @default(autoincrement())\n  userId        String?       @map(\"user_id\") @db.Uuid\n  amount        Decimal       @db.Decimal\n  currency      String        @default(\"USD\")\n  status        PaymentStatus\n  paymentMethod String?       @map(\"payment_method\")\n  description   String?\n  createdAt     DateTime      @default(now()) @map(\"created_at\")\n\n  user User? @relation(fields: [userId], references: [id])\n\n  @@map(\"payments\")\n}\n\nmodel Service {\n  id          BigInt   @id @default(autoincrement())\n  name        String\n  description String?\n  price       Decimal? @db.Decimal\n  category    String?\n  createdAt   DateTime @default(now()) @map(\"created_at\")\n\n  @@map(\"services\")\n}\n",
+  "inlineSchemaHash": "a3a6b6fb38b0856452773ce1a32793793f5ba7f8378092b93fa78677ee38634b",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userType\",\"kind\":\"enum\",\"type\":\"UserType\",\"dbName\":\"user_type\"},{\"name\":\"avatar\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"state\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"zipCode\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"zip_code\"},{\"name\":\"country\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"UserStatus\"},{\"name\":\"verificationStatus\",\"kind\":\"enum\",\"type\":\"VerificationStatus\",\"dbName\":\"verification_status\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"lastActive\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"last_active\"},{\"name\":\"properties\",\"kind\":\"object\",\"type\":\"Property\",\"relationName\":\"PropertyToUser\"},{\"name\":\"cohostProfile\",\"kind\":\"object\",\"type\":\"Cohost\",\"relationName\":\"CohostToUser\"},{\"name\":\"jobs\",\"kind\":\"object\",\"type\":\"Job\",\"relationName\":\"JobToUser\"},{\"name\":\"bookings\",\"kind\":\"object\",\"type\":\"Booking\",\"relationName\":\"BookingToUser\"},{\"name\":\"payments\",\"kind\":\"object\",\"type\":\"Payment\",\"relationName\":\"PaymentToUser\"}],\"dbName\":\"users\"},\"Property\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"PropertyType\"},{\"name\":\"location\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"country\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"nightlyRate\",\"kind\":\"scalar\",\"type\":\"Decimal\",\"dbName\":\"nightly_rate\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"bedrooms\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"bathrooms\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"maxGuests\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"max_guests\"},{\"name\":\"image\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"images\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"rating\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"reviews\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"PropertyStatus\"},{\"name\":\"ownerId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"owner_id\"},{\"name\":\"ownerName\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"owner_name\"},{\"name\":\"amenities\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"},{\"name\":\"owner\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PropertyToUser\"},{\"name\":\"bookings\",\"kind\":\"object\",\"type\":\"Booking\",\"relationName\":\"BookingToProperty\"}],\"dbName\":\"properties\"},\"Cohost\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_id\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"rating\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"reviews\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"specialties\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"image\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"hourlyRate\",\"kind\":\"scalar\",\"type\":\"Decimal\",\"dbName\":\"hourly_rate\"},{\"name\":\"commissionRate\",\"kind\":\"scalar\",\"type\":\"Decimal\",\"dbName\":\"commission_rate\"},{\"name\":\"activeProperties\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"active_properties\"},{\"name\":\"completedBookings\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"completed_bookings\"},{\"name\":\"responseTime\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"response_time\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"CohostStatus\"},{\"name\":\"joinedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"joined_at\"},{\"name\":\"lastActive\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"last_active\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CohostToUser\"}],\"dbName\":\"cohosts\"},\"Job\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"propertyLocation\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"property_location\"},{\"name\":\"budget\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"duration\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"experience\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"JobStatus\"},{\"name\":\"applications\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"ownerId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"owner_id\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"owner\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"JobToUser\"}],\"dbName\":\"jobs\"},\"Booking\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"propertyId\",\"kind\":\"scalar\",\"type\":\"BigInt\",\"dbName\":\"property_id\"},{\"name\":\"propertyTitle\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"property_title\"},{\"name\":\"guestId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"guest_id\"},{\"name\":\"guestName\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"guest_name\"},{\"name\":\"checkIn\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"check_in\"},{\"name\":\"checkOut\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"check_out\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"BookingStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"property\",\"kind\":\"object\",\"type\":\"Property\",\"relationName\":\"BookingToProperty\"},{\"name\":\"guest\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"BookingToUser\"}],\"dbName\":\"bookings\"},\"ContactMessage\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"subject\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"message\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"MessageStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"}],\"dbName\":\"contact_messages\"},\"PricingPlan\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"interval\",\"kind\":\"enum\",\"type\":\"PlanInterval\"},{\"name\":\"features\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"}],\"dbName\":\"pricing_plans\"},\"Payment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_id\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"PaymentStatus\"},{\"name\":\"paymentMethod\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"payment_method\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PaymentToUser\"}],\"dbName\":\"payments\"},\"Service\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"}],\"dbName\":\"services\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"passwordHash\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"password_hash\"},{\"name\":\"userType\",\"kind\":\"enum\",\"type\":\"UserType\",\"dbName\":\"user_type\"},{\"name\":\"avatar\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"state\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"zipCode\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"zip_code\"},{\"name\":\"country\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"UserStatus\"},{\"name\":\"verificationStatus\",\"kind\":\"enum\",\"type\":\"VerificationStatus\",\"dbName\":\"verification_status\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"lastActive\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"last_active\"},{\"name\":\"dateOfBirth\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"date_of_birth\"},{\"name\":\"numberOfProperties\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"number_of_properties\"},{\"name\":\"hostingExperience\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"hosting_experience\"},{\"name\":\"propertyLocations\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"property_locations\"},{\"name\":\"propertyTypes\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"property_types\"},{\"name\":\"platformsUsed\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"platforms_used\"},{\"name\":\"monthlyIncomeTarget\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"monthly_income_target\"},{\"name\":\"usesCoHost\",\"kind\":\"scalar\",\"type\":\"Boolean\",\"dbName\":\"uses_co_host\"},{\"name\":\"supportRequired\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"support_required\"},{\"name\":\"uploadId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"upload_id\"},{\"name\":\"proofOfOwnership\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"proof_of_ownership\"},{\"name\":\"businessRegistration\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"business_registration\"},{\"name\":\"postcode\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"postcode\"},{\"name\":\"hasAirbnbExperience\",\"kind\":\"scalar\",\"type\":\"Boolean\",\"dbName\":\"has_airbnb_experience\"},{\"name\":\"yearsOfExperience\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"years_of_experience\"},{\"name\":\"propertiesManaged\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"properties_managed\"},{\"name\":\"averageRating\",\"kind\":\"scalar\",\"type\":\"Float\",\"dbName\":\"average_rating\"},{\"name\":\"servicesOffered\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"services_offered\"},{\"name\":\"availability\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"availability\"},{\"name\":\"areasCovered\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"areas_covered\"},{\"name\":\"proofOfAddress\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"proof_of_address\"},{\"name\":\"references\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"references\"},{\"name\":\"insurance\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"insurance\"},{\"name\":\"approvalReason\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"approval_reason\"},{\"name\":\"properties\",\"kind\":\"object\",\"type\":\"Property\",\"relationName\":\"PropertyToUser\"},{\"name\":\"cohostProfile\",\"kind\":\"object\",\"type\":\"CoHost\",\"relationName\":\"CoHostToUser\"},{\"name\":\"jobs\",\"kind\":\"object\",\"type\":\"JobPosting\",\"relationName\":\"JobPostingToUser\"},{\"name\":\"reviewsWritten\",\"kind\":\"object\",\"type\":\"Review\",\"relationName\":\"Reviewer\"},{\"name\":\"reviewsReceived\",\"kind\":\"object\",\"type\":\"Review\",\"relationName\":\"Reviewee\"},{\"name\":\"bookings\",\"kind\":\"object\",\"type\":\"Booking\",\"relationName\":\"BookingToUser\"},{\"name\":\"payments\",\"kind\":\"object\",\"type\":\"Payment\",\"relationName\":\"PaymentToUser\"}],\"dbName\":\"users\"},\"Property\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"PropertyStatus\"},{\"name\":\"ownerId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"owner_id\"},{\"name\":\"owner\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PropertyToUser\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"},{\"name\":\"images\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amenities\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"bedrooms\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"bathrooms\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"guests\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"cohosts\",\"kind\":\"object\",\"type\":\"CoHost\",\"relationName\":\"CoHostToProperty\"},{\"name\":\"jobs\",\"kind\":\"object\",\"type\":\"JobPosting\",\"relationName\":\"JobPostingToProperty\"},{\"name\":\"bookings\",\"kind\":\"object\",\"type\":\"Booking\",\"relationName\":\"BookingToProperty\"}],\"dbName\":\"properties\"},\"CoHost\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_id\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CoHostToUser\"},{\"name\":\"bio\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"experience\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"rating\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"totalReviews\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"total_reviews\"},{\"name\":\"location\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"hourlyRate\",\"kind\":\"scalar\",\"type\":\"Float\",\"dbName\":\"hourly_rate\"},{\"name\":\"languages\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"specialties\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"availabilityStatus\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"availability_status\"},{\"name\":\"properties\",\"kind\":\"object\",\"type\":\"Property\",\"relationName\":\"CoHostToProperty\"}],\"dbName\":\"cohosts\"},\"JobPosting\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"budget\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"JobStatus\"},{\"name\":\"authorId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"author_id\"},{\"name\":\"author\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"JobPostingToUser\"},{\"name\":\"propertyId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"property_id\"},{\"name\":\"property\",\"kind\":\"object\",\"type\":\"Property\",\"relationName\":\"JobPostingToProperty\"},{\"name\":\"location\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"}],\"dbName\":\"job_postings\"},\"Review\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"rating\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"comment\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"reviewerId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"reviewer_id\"},{\"name\":\"reviewer\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"Reviewer\"},{\"name\":\"revieweeId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"reviewee_id\"},{\"name\":\"reviewee\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"Reviewee\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"}],\"dbName\":\"reviews\"},\"Booking\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"propertyId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"property_id\"},{\"name\":\"propertyTitle\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"property_title\"},{\"name\":\"guestId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"guest_id\"},{\"name\":\"guestName\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"guest_name\"},{\"name\":\"checkIn\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"check_in\"},{\"name\":\"checkOut\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"check_out\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"BookingStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"property\",\"kind\":\"object\",\"type\":\"Property\",\"relationName\":\"BookingToProperty\"},{\"name\":\"guest\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"BookingToUser\"}],\"dbName\":\"bookings\"},\"ContactMessage\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"subject\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"message\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"MessageStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"}],\"dbName\":\"contact_messages\"},\"PricingPlan\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"interval\",\"kind\":\"enum\",\"type\":\"PlanInterval\"},{\"name\":\"features\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"}],\"dbName\":\"pricing_plans\"},\"Payment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_id\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"PaymentStatus\"},{\"name\":\"paymentMethod\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"payment_method\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PaymentToUser\"}],\"dbName\":\"payments\"},\"Service\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"}],\"dbName\":\"services\"}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

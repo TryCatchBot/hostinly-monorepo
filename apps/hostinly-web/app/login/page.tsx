@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
+import { toast } from 'sonner';
 
 
 export default function LoginPage() {
@@ -16,22 +17,21 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
 
     if (!email || !password) {
-      setError('Please fill in all fields');
+      toast.error('Please fill in all fields');
       return;
     }
 
     try {
       await login(email, password);
+      toast.success('Login successful!');
       router.push('/dashboard');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      toast.error(err instanceof Error ? err.message : 'Login failed');
     }
   };
 
@@ -56,13 +56,6 @@ export default function LoginPage() {
         <div className="bg-background rounded-lg shadow-medium p-8 border border-border">
           <h1 className="text-2xl font-bold text-foreground mb-2">Welcome Back</h1>
           <p className="text-muted-foreground mb-6">Sign in to your account to continue</p>
-
-          {/* Error Message */}
-          {error && (
-            <div className="mb-4 p-3 bg-destructive/10 border border-destructive/30 rounded text-destructive text-sm">
-              {error}
-            </div>
-          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}
@@ -120,42 +113,8 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          {/* Divider */}
-          <div className="my-6 flex items-center gap-3">
-            <div className="flex-1 h-px bg-border" />
-            <span className="text-sm text-muted-foreground">or</span>
-            <div className="flex-1 h-px bg-border" />
-          </div>
-
-          {/* Demo Accounts */}
-          <div className="space-y-2 mb-6">
-            <p className="text-xs text-muted-foreground text-center">Demo Accounts:</p>
-            <button
-              type="button"
-              onClick={() => {
-                setEmail('host@example.com');
-                setPassword('password123');
-              }}
-              className="w-full px-3 py-2 text-xs bg-muted text-muted-foreground border border-border rounded hover:bg-primary/10 hover:text-primary transition"
-              disabled={isLoading}
-            >
-              Host Account: host@example.com
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setEmail('cohost@example.com');
-                setPassword('password123');
-              }}
-              className="w-full px-3 py-2 text-xs bg-muted text-muted-foreground border border-border rounded hover:bg-primary/10 hover:text-primary transition"
-              disabled={isLoading}
-            >
-              Co-Host Account: cohost@example.com
-            </button>
-          </div>
-
           {/* Sign Up Link */}
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-center text-sm text-muted-foreground mt-8">
             Do not have an account?{' '}
             <Link href="/auth/signup" className="text-primary hover:underline font-medium">
               Sign up
