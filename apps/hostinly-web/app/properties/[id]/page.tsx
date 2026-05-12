@@ -1,5 +1,6 @@
-export const dynamic = "force-dynamic";
-import { notFound } from "next/navigation";
+'use client';
+
+import { notFound, useParams } from "next/navigation";
 import Link from "next/link";
 import {
   MapPin,
@@ -16,17 +17,18 @@ import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import PropertyImageCarousel from "@/components/PropertyImageCarousel";
+import { useMemo } from "react";
 
-export default async function PropertyDetailsPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const propertyId = parseInt(id, 10);
-  const property = getPropertyById(propertyId);
+export default function PropertyDetailsPage() {
+  const { id } = useParams<{ id: string }>();
+  
+  const property = useMemo(() => {
+    if (!id) return null;
+    const propertyId = parseInt(id, 10);
+    return getPropertyById(propertyId);
+  }, [id]);
 
-  if (!property) notFound();
+  if (!property) return notFound();
 
   const allImages = property.images?.length
     ? property.images
