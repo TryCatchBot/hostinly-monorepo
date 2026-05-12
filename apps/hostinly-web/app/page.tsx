@@ -1,5 +1,4 @@
 'use client';
-export const dynamic = "force-dynamic";
 
 import { useAuth } from "@/context/AuthContext";
 import Navigation from "@/components/Navigation";

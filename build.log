@@ -1,0 +1,103 @@
+
+ NX   Running target build for 4 projects:
+
+- @org/hostinly-backend-products
+- hostinly-backend
+- @org/hostinly-admin
+- @org/hostinly-web
+
+
+
+> nx run @org/hostinly-backend-products:build  [existing outputs match the cache, left as is]
+
+> tsc --build tsconfig.lib.json
+
+
+> nx run hostinly-backend:build:production  [existing outputs match the cache, left as is]
+
+> nx run hostinly-backend:build:production
+
+
+> nx run @org/hostinly-admin:build
+
+
+> @org/hostinly-admin@0.1.0 build /Users/josh/Documents/dev/hostinly/hostinly-monorepo/apps/hostinly-admin
+> next build
+
+ [33m[1m⚠[22m[39m You are using a non-standard "NODE_ENV" value in your environment. This creates inconsistencies in the project and is strongly advised against. Read more: https://nextjs.org/docs/messages/non-standard-node-env
+   [1m[38;2;173;127;168m▲ Next.js 15.0.3[39m[22m
+
+ [37m[1m [22m[39m Creating an optimized production build ...
+ [32m[1m✓[22m[39m Compiled successfully
+ [37m[1m [22m[39m Skipping validation of types
+ [37m[1m [22m[39m Skipping linting
+ [37m[1m [22m[39m Collecting page data ...
+ [37m[1m [22m[39m Generating static pages (0/19) ...
+Error: <Html> should not be imported outside of pages/_document.
+Read more: https://nextjs.org/docs/messages/no-document-import-in-page
+    at K (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/[4m.pnpm[24m/next@15.0.3_@babel+core@7.29.0_@playwright+test@1.59.1_babel-plugin-macros@3.1.0_react-_0031f6a5bde1887f8eb6b3a2056a89d2/node_modules/[4mnext[24m/dist/compiled/next-server/pages.runtime.prod.js:16:5430)
+    at y [90m(/Users/josh/Documents/dev/hostinly/hostinly-monorepo/apps/hostinly-admin/[39m.next/server/chunks/511.js:6:1263[90m)[39m
+Error occurred prerendering page "/404". Read more: https://nextjs.org/docs/messages/prerender-error
+Error: <Html> should not be imported outside of pages/_document.
+Read more: https://nextjs.org/docs/messages/no-document-import-in-page
+    at K (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/next@15.0.3_@babel+core@7.29.0_@playwright+test@1.59.1_babel-plugin-macros@3.1.0_react-_0031f6a5bde1887f8eb6b3a2056a89d2/node_modules/next/dist/compiled/next-server/pages.runtime.prod.js:16:5430)
+    at y (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/apps/hostinly-admin/.next/server/chunks/511.js:6:1263)
+    at react-stack-bottom-frame (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/react-dom@19.0.0_react@19.0.0/node_modules/react-dom/cjs/react-dom-server.edge.development.js:8798:18)
+    at renderWithHooks (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/react-dom@19.0.0_react@19.0.0/node_modules/react-dom/cjs/react-dom-server.edge.development.js:4722:19)
+    at renderElement (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/react-dom@19.0.0_react@19.0.0/node_modules/react-dom/cjs/react-dom-server.edge.development.js:5157:23)
+    at retryNode (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/react-dom@19.0.0_react@19.0.0/node_modules/react-dom/cjs/react-dom-server.edge.development.js:5805:22)
+    at renderNodeDestructive (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/react-dom@19.0.0_react@19.0.0/node_modules/react-dom/cjs/react-dom-server.edge.development.js:5631:11)
+    at renderElement (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/react-dom@19.0.0_react@19.0.0/node_modules/react-dom/cjs/react-dom-server.edge.development.js:5143:11)
+    at retryNode (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/react-dom@19.0.0_react@19.0.0/node_modules/react-dom/cjs/react-dom-server.edge.development.js:5805:22)
+    at renderNodeDestructive (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/react-dom@19.0.0_react@19.0.0/node_modules/react-dom/cjs/react-dom-server.edge.development.js:5631:11)
+Export encountered an error on /_error: /404, exiting the build.
+ [31m[1m⨯[22m[39m Static worker exited with code: 1 and signal: null
+[41m[30m ELIFECYCLE [39m[49m [31mCommand failed with exit code 1.[39m
+
+> nx run @org/hostinly-web:build
+
+
+> @org/hostinly-web@0.1.0 build /Users/josh/Documents/dev/hostinly/hostinly-monorepo/apps/hostinly-web
+> next build
+
+ [33m[1m⚠[22m[39m You are using a non-standard "NODE_ENV" value in your environment. This creates inconsistencies in the project and is strongly advised against. Read more: https://nextjs.org/docs/messages/non-standard-node-env
+   [1m[38;2;173;127;168m▲ Next.js 15.0.3[39m[22m
+
+ [37m[1m [22m[39m Creating an optimized production build ...
+ [32m[1m✓[22m[39m Compiled successfully
+ [37m[1m [22m[39m Skipping validation of types
+ [37m[1m [22m[39m Skipping linting
+ [37m[1m [22m[39m Collecting page data ...
+ [37m[1m [22m[39m Generating static pages (0/13) ...
+Error: <Html> should not be imported outside of pages/_document.
+Read more: https://nextjs.org/docs/messages/no-document-import-in-page
+    at K (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/[4m.pnpm[24m/next@15.0.3_@babel+core@7.29.0_@playwright+test@1.59.1_babel-plugin-macros@3.1.0_react-_0031f6a5bde1887f8eb6b3a2056a89d2/node_modules/[4mnext[24m/dist/compiled/next-server/pages.runtime.prod.js:16:5430)
+    at y [90m(/Users/josh/Documents/dev/hostinly/hostinly-monorepo/apps/hostinly-web/[39m.next/server/chunks/511.js:6:1263[90m)[39m
+Error occurred prerendering page "/404". Read more: https://nextjs.org/docs/messages/prerender-error
+Error: <Html> should not be imported outside of pages/_document.
+Read more: https://nextjs.org/docs/messages/no-document-import-in-page
+    at K (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/next@15.0.3_@babel+core@7.29.0_@playwright+test@1.59.1_babel-plugin-macros@3.1.0_react-_0031f6a5bde1887f8eb6b3a2056a89d2/node_modules/next/dist/compiled/next-server/pages.runtime.prod.js:16:5430)
+    at y (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/apps/hostinly-web/.next/server/chunks/511.js:6:1263)
+    at react-stack-bottom-frame (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/react-dom@19.0.0_react@19.0.0/node_modules/react-dom/cjs/react-dom-server.edge.development.js:8798:18)
+    at renderWithHooks (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/react-dom@19.0.0_react@19.0.0/node_modules/react-dom/cjs/react-dom-server.edge.development.js:4722:19)
+    at renderElement (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/react-dom@19.0.0_react@19.0.0/node_modules/react-dom/cjs/react-dom-server.edge.development.js:5157:23)
+    at retryNode (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/react-dom@19.0.0_react@19.0.0/node_modules/react-dom/cjs/react-dom-server.edge.development.js:5805:22)
+    at renderNodeDestructive (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/react-dom@19.0.0_react@19.0.0/node_modules/react-dom/cjs/react-dom-server.edge.development.js:5631:11)
+    at renderElement (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/react-dom@19.0.0_react@19.0.0/node_modules/react-dom/cjs/react-dom-server.edge.development.js:5143:11)
+    at retryNode (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/react-dom@19.0.0_react@19.0.0/node_modules/react-dom/cjs/react-dom-server.edge.development.js:5805:22)
+    at renderNodeDestructive (/Users/josh/Documents/dev/hostinly/hostinly-monorepo/node_modules/.pnpm/react-dom@19.0.0_react@19.0.0/node_modules/react-dom/cjs/react-dom-server.edge.development.js:5631:11)
+Export encountered an error on /_error: /404, exiting the build.
+ [31m[1m⨯[22m[39m Static worker exited with code: 1 and signal: null
+[41m[30m ELIFECYCLE [39m[49m [31mCommand failed with exit code 1.[39m
+
+
+
+ NX   Running target build for 4 projects failed
+
+Failed tasks:
+
+- @org/hostinly-admin:build
+- @org/hostinly-web:build
+
+Your AI agent configuration is outdated. Run "nx configure-ai-agents" to update.
+

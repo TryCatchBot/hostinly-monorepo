@@ -1,11 +1,10 @@
 'use client';
-export const dynamic = "force-dynamic";
 
 import { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import DashboardLayout from '@/components/DashboardLayout';
-import { getPropertyById, updateProperty, type Property } from '@/lib/mockData';
+import { getPropertyById, type Property } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Star, MapPin, Bed, Bath, Edit2, Trash2 } from 'lucide-react';
 
