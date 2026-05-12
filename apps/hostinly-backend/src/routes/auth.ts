@@ -40,6 +40,10 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.post('/logout', (req, res) => {
+  sendSuccess(res, { message: 'Logged out successfully' });
+});
+
 router.post('/signup', async (req, res) => {
   try {
     const {
@@ -72,6 +76,11 @@ router.post('/signup', async (req, res) => {
       servicesOffered,
       availability,
       areasCovered,
+      // Uploaded Documents
+      uploadId,
+      proofOfOwnership,
+      businessRegistration,
+      proofOfAddress,
     } = req.body;
 
     const existingUser = await prisma.user.findUnique({
@@ -106,6 +115,9 @@ router.post('/signup', async (req, res) => {
         monthlyIncomeTarget,
         usesCoHost,
         supportRequired,
+        uploadId,
+        proofOfOwnership,
+        businessRegistration,
         postcode,
         hasAirbnbExperience,
         yearsOfExperience: yearsOfExperience ? parseInt(yearsOfExperience) : null,
@@ -113,6 +125,7 @@ router.post('/signup', async (req, res) => {
         servicesOffered: servicesOffered ? JSON.stringify(servicesOffered) : null,
         availability,
         areasCovered,
+        proofOfAddress,
       },
     });
 
