@@ -69,6 +69,8 @@ export function SignUpForm() {
     confirmPassword: '',
     userType: initialRole as 'host' | 'cohost',
   });
+  const isRoleFixed = !!roleParam;
+
   const [propertyOwnerRegistrationForm, setPropertyOwnerRegistrationForm] =
     useState<PropertyOwnerRegistrationForm>({
       full_name: '',
@@ -127,6 +129,23 @@ export function SignUpForm() {
       reader.onload = () => resolve(String(reader.result || ''));
       reader.readAsDataURL(file);
     });
+
+  const uploadFile = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/uploads/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await response.json();
+      if (!result.success) throw new Error(result.error);
+      return result.data.url;
+    } catch (error: any) {
+      toast.error('Upload failed: ' + error.message);
+      return null;
+    }
+  };
 
   const formatCurrency = (value: string) => {
     const number = value.replace(/\D/g, '');
@@ -281,6 +300,9 @@ export function SignUpForm() {
             supportRequired: propertyOwnerRegistrationForm.support_required,
             address: propertyOwnerRegistrationForm.residential_address,
             phone: account.phone_number,
+            uploadId: propertyOwnerRegistrationForm.upload_id,
+            proofOfOwnership: propertyOwnerRegistrationForm.proof_of_property_ownership,
+            businessRegistration: propertyOwnerRegistrationForm.business_registration,
           }
         : {
             city: coHostApplicationForm.city,
@@ -292,6 +314,8 @@ export function SignUpForm() {
             availability: coHostApplicationForm.availability,
             areasCovered: coHostApplicationForm.areas_covered,
             phone: account.phone_number,
+            uploadId: coHostApplicationForm.upload_id,
+            proofOfAddress: coHostApplicationForm.proof_of_address,
           };
 
       await signup(
@@ -453,25 +477,27 @@ export function SignUpForm() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Account Type
-                  </label>
-                  <select
-                    value={account.userType}
-                    onChange={(e) =>
-                      setAccount((p) => ({
-                        ...p,
-                        userType: e.target.value as 'host' | 'cohost',
-                      }))
-                    }
-                    className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
-                    disabled={isLoading}
-                  >
-                    <option value="host">Property Owner (Host)</option>
-                    <option value="cohost">Co-Host / Property Manager</option>
-                  </select>
-                </div>
+                {!isRoleFixed && (
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Account Type
+                    </label>
+                    <select
+                      value={account.userType}
+                      onChange={(e) =>
+                        setAccount((p) => ({
+                          ...p,
+                          userType: e.target.value as 'host' | 'cohost',
+                        }))
+                      }
+                      className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                      disabled={isLoading}
+                    >
+                      <option value="host">Property Owner (Host)</option>
+                      <option value="cohost">Co-Host / Property Manager</option>
+                    </select>
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
@@ -766,16 +792,21 @@ export function SignUpForm() {
                     onChange={async (e) => {
                       const file = e.target.files?.[0];
                       if (!file) return;
-                      const dataUrl = await readSingleFileAsDataUrl(file);
-                      setPropertyOwnerRegistrationForm((p) => ({
-                        ...p,
-                        upload_id: dataUrl,
-                      }));
+                      const url = await uploadFile(file);
+                      if (url) {
+                        setPropertyOwnerRegistrationForm((p) => ({
+                          ...p,
+                          upload_id: url,
+                        }));
+                      }
                       e.target.value = '';
                     }}
                     className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground"
                     disabled={isLoading}
                   />
+                  {propertyOwnerRegistrationForm.upload_id && (
+                    <p className="text-xs text-green-600 mt-1">✓ Uploaded</p>
+                  )}
                 </div>
 
                 <div>
@@ -788,16 +819,21 @@ export function SignUpForm() {
                     onChange={async (e) => {
                       const file = e.target.files?.[0];
                       if (!file) return;
-                      const dataUrl = await readSingleFileAsDataUrl(file);
-                      setPropertyOwnerRegistrationForm((p) => ({
-                        ...p,
-                        proof_of_property_ownership: dataUrl,
-                      }));
+                      const url = await uploadFile(file);
+                      if (url) {
+                        setPropertyOwnerRegistrationForm((p) => ({
+                          ...p,
+                          proof_of_property_ownership: url,
+                        }));
+                      }
                       e.target.value = '';
                     }}
                     className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground"
                     disabled={isLoading}
                   />
+                  {propertyOwnerRegistrationForm.proof_of_property_ownership && (
+                    <p className="text-xs text-green-600 mt-1">✓ Uploaded</p>
+                  )}
                 </div>
 
                 <div>
@@ -810,16 +846,21 @@ export function SignUpForm() {
                     onChange={async (e) => {
                       const file = e.target.files?.[0];
                       if (!file) return;
-                      const dataUrl = await readSingleFileAsDataUrl(file);
-                      setPropertyOwnerRegistrationForm((p) => ({
-                        ...p,
-                        business_registration: dataUrl,
-                      }));
+                      const url = await uploadFile(file);
+                      if (url) {
+                        setPropertyOwnerRegistrationForm((p) => ({
+                          ...p,
+                          business_registration: url,
+                        }));
+                      }
                       e.target.value = '';
                     }}
                     className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground"
                     disabled={isLoading}
                   />
+                  {propertyOwnerRegistrationForm.business_registration && (
+                    <p className="text-xs text-green-600 mt-1">✓ Uploaded</p>
+                  )}
                 </div>
 
                 <label className="flex items-start gap-3 text-sm text-foreground">

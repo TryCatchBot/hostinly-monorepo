@@ -35,7 +35,10 @@ Content-Type: application/json
   "platformsUsed": "Airbnb, Booking.com",
   "monthlyIncomeTarget": "5000",
   "usesCoHost": true,
-  "supportRequired": "Cleaning, Maintenance"
+  "supportRequired": "Cleaning, Maintenance",
+  "uploadId": "https://res.cloudinary.com/hostinly/image/upload/v1/id.jpg",
+  "proofOfOwnership": "https://res.cloudinary.com/hostinly/image/upload/v1/ownership.jpg",
+  "businessRegistration": "https://res.cloudinary.com/hostinly/image/upload/v1/business.jpg"
 }
 
 ### Signup (Co-Host)
@@ -59,7 +62,9 @@ Content-Type: application/json
   "propertiesManaged": 10,
   "servicesOffered": "Check-in, Cleaning, Communication",
   "availability": "Full-time",
-  "areasCovered": "Manchester City Centre, Salford"
+  "areasCovered": "Manchester City Centre, Salford",
+  "uploadId": "https://res.cloudinary.com/hostinly/image/upload/v1/id.jpg",
+  "proofOfAddress": "https://res.cloudinary.com/hostinly/image/upload/v1/address.jpg"
 }
 
 ### Login
@@ -70,6 +75,41 @@ Content-Type: application/json
   "email": "{{email}}",
   "password": "{{password}}"
 }
+
+### Logout
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{token}}
+
+
+# --- UPLOADS ---
+
+### Upload Single File
+POST {{baseUrl}}/uploads/upload
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< ./test-assets/test.jpg
+--boundary--
+
+### Upload Documents (Signup)
+POST {{baseUrl}}/uploads/upload-documents
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="uploadId"; filename="id.jpg"
+Content-Type: image/jpeg
+
+< ./test-assets/id.jpg
+--boundary
+Content-Disposition: form-data; name="proofOfOwnership"; filename="ownership.jpg"
+Content-Type: image/jpeg
+
+< ./test-assets/ownership.jpg
+--boundary--
+
 
 # --- USERS ---
 
