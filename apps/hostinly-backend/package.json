@@ -5,6 +5,12 @@
   "nx": {
     "projectType": "application",
     "targets": {
+      "prisma-studio": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "prisma studio --schema apps/hostinly-backend/prisma/schema.prisma"
+        }
+      },
       "build": {
         "executor": "@nx/esbuild:esbuild",
         "outputs": [
