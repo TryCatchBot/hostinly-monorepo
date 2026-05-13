@@ -46,26 +46,26 @@ export default function HowItWorksSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-12">
           {hostSteps.map((step) => (
             <Card
               key={step.step}
-              className="relative overflow-hidden bg-white border-1 !border-gray-200 shadow-sm rounded-xl"
+              className="relative overflow-hidden bg-white border border-gray-100 shadow-sm rounded-2xl transition-all hover:shadow-md"
             >
-              <CardContent className="p-6 text-center">
-                <div className="absolute top-0 right-0 text-7xl font-bold text-gray-200/80 -mr-2 -mt-2 select-none">
+              <CardContent className="p-6 sm:p-8 text-center">
+                <div className="absolute top-0 right-0 text-6xl sm:text-7xl font-bold text-gray-100 -mr-2 -mt-2 select-none">
                   {step.step}
                 </div>
 
                 <div className="relative z-10">
-                  <div className="w-16 h-16 bg-[#38B2AC] rounded-full flex items-center justify-center mx-auto mb-4 mt-4">
-                    <step.icon className="h-8 w-8 text-white" />
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#38B2AC] rounded-2xl flex items-center justify-center mx-auto mb-5 mt-2 rotate-3 hover:rotate-0 transition-transform">
+                    <step.icon className="h-7 w-7 sm:h-8 sm:w-8 text-white" />
                   </div>
 
-                  <h3 className="text-lg font-semibold mb-3 text-[#1A6653]">
+                  <h3 className="text-lg font-bold mb-3 text-[#1A6653]">
                     {step.title}
                   </h3>
-                  <p className="text-sm text-[#333333]">
+                  <p className="text-sm text-gray-600 leading-relaxed">
                     {step.description}
                   </p>
                 </div>

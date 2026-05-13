@@ -93,6 +93,8 @@ model User {
   availability        String?            @map("availability")
   areasCovered        String?            @map("areas_covered")
   proofOfAddress      String?            @map("proof_of_address")
+  resume              String?            @map("resume")
+  coverLetter         String?            @map("cover_letter")
   references          String?            @map("references")
   insurance           String?            @map("insurance")
   approvalReason      String?            @map("approval_reason")

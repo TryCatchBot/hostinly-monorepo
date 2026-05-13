@@ -28,54 +28,57 @@ export default function PropertyListingSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12">
           {sampleProperties.map((property) => (
             <Card
               key={property.id}
-              className="overflow-hidden bg-white border-1 !border-gray-200 shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-105 cursor-pointer"
+              className="overflow-hidden bg-white border border-gray-100 shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-[1.02] cursor-pointer rounded-2xl"
               onClick={() => router.push(`/properties/${property.id}`)}
             >
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative h-48 sm:h-56 overflow-hidden">
                   <Image
                     src={property.image}
                     alt={property.title}
                     fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-500 hover:scale-110"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
-                  <div className="absolute top-3 right-3 bg-primary text-primary-foreground px-3 py-1 rounded-lg text-sm font-medium">
+                  <div className="absolute top-3 right-3 bg-primary/90 backdrop-blur-sm text-white px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">
                     {property.status}
                   </div>
                 </div>
-                <CardContent className="p-5">
-                  <h3 className="text-lg font-semibold mb-2 text-[hsl(195,60%,25%)]">
+                <CardContent className="p-5 sm:p-6">
+                  <h3 className="text-lg font-bold mb-2 text-[hsl(195,60%,25%)] line-clamp-1">
                     {property.title}
                   </h3>
 
-                  <div className="flex items-center text-muted-foreground mb-3">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    <span className="text-sm">{property.location}</span>
+                  <div className="flex items-center text-muted-foreground mb-4">
+                    <MapPin className="h-4 w-4 mr-1.5 text-primary" />
+                    <span className="text-sm truncate">{property.location}</span>
                   </div>
 
-                  <div className="flex items-center gap-4 mb-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-4 mb-6 text-sm text-muted-foreground bg-muted/30 p-2.5 rounded-xl">
                     <div className="flex items-center">
-                      <Bed className="h-4 w-4 mr-1" />
-                      {property.bedrooms} beds
+                      <Bed className="h-4 w-4 mr-1.5 text-primary" />
+                      <span className="font-medium">{property.bedrooms} beds</span>
                     </div>
-                    <div className="flex items-center">
-                      <Bath className="h-4 w-4 mr-1" />
-                      {property.bathrooms} baths
+                    <div className="flex items-center border-l border-border pl-4">
+                      <Bath className="h-4 w-4 mr-1.5 text-primary" />
+                      <span className="font-medium">{property.bathrooms} baths</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center font-semibold shrink-0 text-primary">
-                      <DollarSign className="h-4 w-4 shrink-0" />
-                      <span>{property.expectedRevenue}</span>
+                  <div className="flex items-center justify-between gap-4 pt-2 border-t border-border/50">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Exp. Revenue</span>
+                      <div className="flex items-center font-bold text-lg text-primary">
+                        <DollarSign className="h-4 w-4 shrink-0" />
+                        <span>{property.expectedRevenue}</span>
+                      </div>
                     </div>
                     <button
                       type="button"
-                      className="bg-gradient-primary text-white hover:opacity-90 border-0 inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3"
+                      className="bg-gradient-primary text-white hover:opacity-90 shadow-md hover:shadow-lg transition-all border-0 inline-flex items-center justify-center rounded-xl text-sm font-bold h-10 px-5"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();

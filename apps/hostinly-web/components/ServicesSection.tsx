@@ -61,20 +61,22 @@ export default function ServicesSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {features.map((feature) => (
             <Card
               key={feature.title}
-              className="h-full bg-white border !border-gray-200 shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-105"
+              className="h-full bg-white border border-gray-100 shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-[1.02] rounded-2xl"
             >
-              <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4 mt-4">
-                  <feature.icon className="h-8 w-8 text-white" />
+              <CardContent className="p-6 sm:p-8 text-center">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6 mt-2 rotate-3 hover:rotate-0 transition-transform shadow-md">
+                  <feature.icon className="h-7 w-7 sm:h-8 sm:w-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-[hsl(195,60%,25%)]">
+                <h3 className="text-lg sm:text-xl font-bold mb-3 text-[hsl(195,60%,25%)]">
                   {feature.title}
                 </h3>
-                <p className="text-[hsl(195,60%,25%)]">{feature.description}</p>
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                  {feature.description}
+                </p>
               </CardContent>
             </Card>
           ))}

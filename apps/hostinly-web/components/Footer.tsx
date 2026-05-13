@@ -17,7 +17,7 @@ export default function Footer() {
               />
               <span className="text-xl font-bold">Hostinly</span>
             </div>
-            <p className="text-white mb-4">
+            <p className="text-white/80 mb-6 text-sm leading-relaxed">
               Connecting Airbnb hosts with trusted co-hosts for seamless property
               management.
             </p>

@@ -24,10 +24,10 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden w-full max-w-[100vw]">
       <Navigation />
       <HeroSection />
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-full overflow-hidden">
         <ServicesSection />
         <PropertyListingSection />
         <HowItWorksSection />
