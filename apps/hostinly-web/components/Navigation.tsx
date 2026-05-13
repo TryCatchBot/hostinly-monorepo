@@ -190,6 +190,7 @@ export default function Navigation() {
                   onClick={() => {
                     logout();
                     setMobileOpen(false);
+                    window.location.href = '/login';
                   }}
                   className="py-2 px-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md -mx-2 transition-colors flex items-center gap-2"
                 >

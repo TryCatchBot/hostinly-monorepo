@@ -14,8 +14,6 @@ export function SignUpForm() {
   const searchParams = useSearchParams();
   const { signup, isLoading } = useAuth();
   const roleParam = searchParams?.get('role');
-  const initialRole: 'host' | 'cohost' =
-    roleParam === 'cohost' ? 'cohost' : 'host';
   
   const [step, setStep] = useState<0 | 1>(roleParam ? 1 : 0);
   const [account, setAccount] = useState({
@@ -106,25 +104,25 @@ export function SignUpForm() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-subtle px-4 py-8">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="flex items-center justify-center mb-8">
+        <div className="flex items-center justify-center mb-6 sm:mb-8">
           <Link href="/" className="flex items-center space-x-2">
             <Image
               src="/images/hostinly-logo.png"
               alt="Hostinly"
               width={40}
               height={40}
-              className="h-10 w-auto"
+              className="h-8 sm:h-10 w-auto"
             />
-            <span className="text-2xl font-bold text-primary">Hostinly</span>
+            <span className="text-xl sm:text-2xl font-bold text-primary">Hostinly</span>
           </Link>
         </div>
 
         {/* Card */}
-        <div className="bg-background rounded-lg shadow-medium p-8 border border-border">
-          <h1 className="text-2xl font-bold text-foreground mb-2">
+        <div className="bg-background rounded-2xl shadow-medium p-6 sm:p-8 border border-border">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-1 sm:mb-2">
             {step === 0 ? 'Choose your role' : 'Create your account'}
           </h1>
-          <p className="text-muted-foreground mb-6">
+          <p className="text-sm sm:text-base text-muted-foreground mb-6">
             {step === 0
               ? 'Tell us what you want to do on Hostinly.'
               : 'Create your login details.'}
@@ -138,16 +136,16 @@ export function SignUpForm() {
                   onClick={() =>
                     setAccount((p) => ({ ...p, userType: 'host' }))
                   }
-                  className={`rounded-xl border p-4 text-left transition-colors ${
+                  className={`rounded-xl border p-4 text-left transition-all ${
                     account.userType === 'host'
-                      ? 'border-primary bg-primary/5'
+                      ? 'border-primary bg-primary/5 ring-1 ring-primary'
                       : 'border-border hover:bg-muted/40'
                   }`}
                 >
                   <div className="font-semibold text-foreground mb-1">
                     Property Owner
                   </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-xs sm:text-sm text-muted-foreground">
                     List a property and find trusted co-hosts.
                   </div>
                 </button>
@@ -156,16 +154,16 @@ export function SignUpForm() {
                   onClick={() =>
                     setAccount((p) => ({ ...p, userType: 'cohost' }))
                   }
-                  className={`rounded-xl border p-4 text-left transition-colors ${
+                  className={`rounded-xl border p-4 text-left transition-all ${
                     account.userType === 'cohost'
-                      ? 'border-primary bg-primary/5'
+                      ? 'border-primary bg-primary/5 ring-1 ring-primary'
                       : 'border-border hover:bg-muted/40'
                   }`}
                 >
                   <div className="font-semibold text-foreground mb-1">
                     Co-Host
                   </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-xs sm:text-sm text-muted-foreground">
                     Apply to manage properties and earn.
                   </div>
                 </button>
@@ -174,16 +172,16 @@ export function SignUpForm() {
                   onClick={() =>
                     setAccount((p) => ({ ...p, userType: 'cleaner' }))
                   }
-                  className={`rounded-xl border p-4 text-left transition-colors ${
+                  className={`rounded-xl border p-4 text-left transition-all ${
                     account.userType === 'cleaner'
-                      ? 'border-primary bg-primary/5'
+                      ? 'border-primary bg-primary/5 ring-1 ring-primary'
                       : 'border-border hover:bg-muted/40'
                   }`}
                 >
                   <div className="font-semibold text-foreground mb-1">
                     Cleaner
                   </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-xs sm:text-sm text-muted-foreground">
                     Offer cleaning services to property owners.
                   </div>
                 </button>
@@ -202,7 +200,7 @@ export function SignUpForm() {
                     onChange={(e) =>
                       setAccount((p) => ({ ...p, full_name: e.target.value }))
                     }
-                    className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                    className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition text-sm sm:text-base"
                     placeholder="John Doe"
                     disabled={isLoading}
                   />
@@ -221,7 +219,7 @@ export function SignUpForm() {
                         phone_number: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                    className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition text-sm sm:text-base"
                     placeholder="+44 7..."
                     disabled={isLoading}
                   />
@@ -240,7 +238,7 @@ export function SignUpForm() {
                         email_address: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                    className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition text-sm sm:text-base"
                     placeholder="you@example.com"
                     disabled={isLoading}
                   />
@@ -260,7 +258,7 @@ export function SignUpForm() {
                           password: e.target.value,
                         }))
                       }
-                      className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                      className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition text-sm sm:text-base"
                       placeholder="••••••••"
                       disabled={isLoading}
                     />
@@ -274,7 +272,7 @@ export function SignUpForm() {
                     </button>
                   </div>
                   <p
-                    className={`text-xs mt-1 flex items-center gap-1 ${
+                    className={`text-[10px] sm:text-xs mt-1 flex items-center gap-1 ${
                       passwordValid ? 'text-green-600' : 'text-muted-foreground'
                     }`}
                   >
@@ -297,7 +295,7 @@ export function SignUpForm() {
                           confirmPassword: e.target.value,
                         }))
                       }
-                      className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                      className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition text-sm sm:text-base"
                       placeholder="••••••••"
                       disabled={isLoading}
                     />
@@ -317,7 +315,7 @@ export function SignUpForm() {
                     </button>
                   </div>
                   <p
-                    className={`text-xs mt-1 flex items-center gap-1 ${
+                    className={`text-[10px] sm:text-xs mt-1 flex items-center gap-1 ${
                       passwordsMatch ? 'text-green-600' : 'text-muted-foreground'
                     }`}
                   >
@@ -354,7 +352,7 @@ export function SignUpForm() {
               <button
                 type="button"
                 onClick={handleBack}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2 text-center"
                 disabled={isLoading}
               >
                 {step === 0 ? (

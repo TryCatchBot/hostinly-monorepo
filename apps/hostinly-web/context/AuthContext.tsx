@@ -28,6 +28,9 @@ export interface User {
   proofOfOwnership?: string;
   businessRegistration?: string;
   proofOfAddress?: string;
+  createdAt?: string;
+  resume?: string;
+  coverLetter?: string;
 }
 
 export interface AuthContextType {

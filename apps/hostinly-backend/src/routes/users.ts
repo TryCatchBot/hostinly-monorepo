@@ -9,30 +9,29 @@ const router: Router = Router();
  */
 const checkOnboardingStatus = (user: any): boolean => {
   const commonFields = [
-    'name', 'phone', 'address', 'city', 'state', 'zipCode', 'country', 
+    'name', 'phone', 'address', 'city', 'state', 'country', 
     'dateOfBirth', 'uploadId'
   ];
   
-  const isCommonOnboarded = commonFields.every(field => user[field] !== null && user[field] !== undefined && user[field] !== '');
+  const isCommonOnboarded = commonFields.every(field => user[field] !== null && user[field] !== undefined && String(user[field]).trim() !== '');
   
   if (!isCommonOnboarded) return false;
 
   if (user.userType === 'HOST') {
     const hostFields = [
       'numberOfProperties', 'hostingExperience', 'propertyLocations', 
-      'propertyTypes', 'platformsUsed', 'monthlyIncomeTarget', 
-      'usesCoHost', 'supportRequired', 'proofOfOwnership'
+      'propertyTypes', 'monthlyIncomeTarget', 'proofOfOwnership'
     ];
-    return hostFields.every(field => user[field] !== null && user[field] !== undefined && user[field] !== '');
+    return hostFields.every(field => user[field] !== null && user[field] !== undefined && String(user[field]).trim() !== '');
   } 
   
   if (user.userType === 'COHOST' || user.userType === 'CLEANER') {
     const providerFields = [
-      'postcode', 'hasAirbnbExperience', 'yearsOfExperience', 
+      'hasAirbnbExperience', 'yearsOfExperience', 
       'propertiesManaged', 'servicesOffered', 'availability', 
       'areasCovered', 'proofOfAddress'
     ];
-    return providerFields.every(field => user[field] !== null && user[field] !== undefined && user[field] !== '');
+    return providerFields.every(field => user[field] !== null && user[field] !== undefined && String(user[field]).trim() !== '');
   }
 
   return false;
