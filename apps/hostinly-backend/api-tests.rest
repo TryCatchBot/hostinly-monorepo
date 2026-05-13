@@ -12,59 +12,16 @@
 
 # --- AUTH ---
 
-### Signup (Host)
+### Signup
 POST {{baseUrl}}/auth/signup
 Content-Type: application/json
 
 {
-  "email": "huang@yopmail.com",
-  "password": "Password1*",
-  "name": "Joan  Huang",
-  "userType": "HOST",
-  "phone": "+44 7700 900000",
-  "address": "123 Host Lane",
-  "city": "London",
-  "state": "Greater London",
-  "zipCode": "SW1A 1AA",
-  "country": "United Kingdom",
-  "dateOfBirth": "1985-05-15",
-  "numberOfProperties": 3,
-  "hostingExperience": 5,
-  "propertyLocations": "London, Manchester",
-  "propertyTypes": "Apartment, House",
-  "platformsUsed": "Airbnb, Booking.com",
-  "monthlyIncomeTarget": "5000",
-  "usesCoHost": true,
-  "supportRequired": "Cleaning, Maintenance",
-  "uploadId": "https://res.cloudinary.com/hostinly/image/upload/v1/id.jpg",
-  "proofOfOwnership": "https://res.cloudinary.com/hostinly/image/upload/v1/ownership.jpg",
-  "businessRegistration": "https://res.cloudinary.com/hostinly/image/upload/v1/business.jpg"
-}
-
-### Signup (Co-Host)
-POST {{baseUrl}}/auth/signup
-Content-Type: application/json
-
-{
-  "email": "cohost1@yopmail.com",
-  "password": "Password1*",
-  "name": "Jane CoHost",
-  "userType": "COHOST",
-  "phone": "+44 7700 900001",
-  "address": "456 CoHost Way",
-  "city": "Manchester",
-  "state": "Greater Manchester",
-  "zipCode": "M1 1AA",
-  "country": "United Kingdom",
-  "postcode": "M1 1AA",
-  "hasAirbnbExperience": true,
-  "yearsOfExperience": 3,
-  "propertiesManaged": 10,
-  "servicesOffered": "Check-in, Cleaning, Communication",
-  "availability": "Full-time",
-  "areasCovered": "Manchester City Centre, Salford",
-  "uploadId": "https://res.cloudinary.com/hostinly/image/upload/v1/id.jpg",
-  "proofOfAddress": "https://res.cloudinary.com/hostinly/image/upload/v1/address.jpg"
+  "email": "newuser@example.com",
+  "password": "password123",
+  "name": "New User",
+  "userType": "host",
+  "phone": "+447123456789"
 }
 
 ### Login
@@ -120,12 +77,28 @@ GET {{baseUrl}}/users
 GET {{baseUrl}}/users/{{userId}}
 
 ### Update User Profile
-PUT {{baseUrl}}/users/{{userId}}
+PATCH {{baseUrl}}/users/{{userId}}
 Content-Type: application/json
 
 {
   "phone": "+44 123 456 789",
-  "city": "London"
+  "address": "123 Host Lane",
+  "city": "London",
+  "state": "Greater London",
+  "zipCode": "SW1A 1AA",
+  "country": "United Kingdom",
+  "dateOfBirth": "1985-05-15",
+  "uploadId": "https://res.cloudinary.com/hostinly/image/upload/v1/id.jpg",
+  "numberOfProperties": 3,
+  "hostingExperience": 5,
+  "propertyLocations": "London, Manchester",
+  "propertyTypes": "Apartment, House",
+  "platformsUsed": "Airbnb, Booking.com",
+  "monthlyIncomeTarget": "5000",
+  "usesCoHost": true,
+  "supportRequired": "Cleaning, Maintenance",
+  "proofOfOwnership": "https://res.cloudinary.com/hostinly/image/upload/v1/ownership.jpg",
+  "businessRegistration": "https://res.cloudinary.com/hostinly/image/upload/v1/business.jpg"
 }
 
 # --- PROPERTIES ---

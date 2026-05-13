@@ -11,9 +11,10 @@ import {
   type Property,
 } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Star, MessageSquare, Mail, Phone, Badge } from 'lucide-react';
+import { ArrowLeft, Star, MessageSquare, Mail, Phone, Badge, Calendar } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 type HireStatus = 'active' | 'probation' | 'ended';
 type HireRecord = {
@@ -30,9 +31,49 @@ export default function CoHostDetailPage() {
 
   const id = params?.id;
   const isHost = user?.userType === 'host';
+  const [isHiring, setIsHiring] = useState(false);
+  const [isBooking, setIsBooking] = useState(false);
+
+  const cohost = id ? getCoHostById(id) : null;
+
   const [hireRevision, setHireRevision] = useState(0);
   const [propertiesRevision, setPropertiesRevision] = useState(0);
-  const cohost = id ? getCoHostById(id) : null;
+
+  const bookInterview = async () => {
+    if (!user || !id) return;
+    setIsBooking(true);
+    try {
+      const token = localStorage.getItem('hostinly_token');
+      // In a real app, you'd find the candidate's actual userId from the backend.
+      // For this demo, we'll assume a dummy UUID if one isn't found.
+      const candidateId = "c8b4b1a4-92e3-4d6a-8f7b-9c2e4f6a8b1a"; 
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          hostId: user.id,
+          candidateId: candidateId,
+          notes: `Interview request for ${cohost?.name}`
+        })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        toast.success('Interview request sent!');
+        router.push('/dashboard/interviews');
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (err: any) {
+      toast.error('Failed to book interview: ' + err.message);
+    } finally {
+      setIsBooking(false);
+    }
+  };
 
   const hireKey = user ? `hostinly_hires_${user.email.toLowerCase()}` : null;
   const hires = useMemo(() => {
@@ -305,16 +346,26 @@ export default function CoHostDetailPage() {
                 </div>
               )}
 
-              <Button
-                className="w-full py-3 flex items-center justify-center gap-2"
-                style={{
-                  background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
-                  color: '#ffffff',
-                }}
-              >
-                <MessageSquare size={18} />
-                Send Message
-              </Button>
+                <Button
+                  className="w-full py-3 flex items-center justify-center gap-2"
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
+                    color: '#ffffff',
+                  }}
+                  onClick={bookInterview}
+                  disabled={isBooking}
+                >
+                  <Calendar size={18} />
+                  {isBooking ? 'Booking...' : 'Book Interview'}
+                </Button>
+
+                <Button
+                  className="w-full py-3 flex items-center justify-center gap-2"
+                  variant="outline"
+                >
+                  <MessageSquare size={18} />
+                  Send Message
+                </Button>
 
               <Button variant="outline" className="w-full py-3 flex items-center justify-center gap-2">
                 <Mail size={18} />

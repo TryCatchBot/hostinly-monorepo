@@ -121,6 +121,17 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.InterviewScalarFieldEnum = {
+  id: 'id',
+  hostId: 'hostId',
+  candidateId: 'candidateId',
+  status: 'status',
+  date: 'date',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -138,6 +149,7 @@ exports.Prisma.UserScalarFieldEnum = {
   verificationStatus: 'verificationStatus',
   createdAt: 'createdAt',
   lastActive: 'lastActive',
+  isOnboardingCompleted: 'isOnboardingCompleted',
   dateOfBirth: 'dateOfBirth',
   numberOfProperties: 'numberOfProperties',
   hostingExperience: 'hostingExperience',
@@ -284,9 +296,17 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.InterviewStatus = exports.$Enums.InterviewStatus = {
+  PENDING: 'PENDING',
+  SCHEDULED: 'SCHEDULED',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
 exports.UserType = exports.$Enums.UserType = {
   HOST: 'HOST',
   COHOST: 'COHOST',
+  CLEANER: 'CLEANER',
   ADMIN: 'ADMIN'
 };
 
@@ -342,6 +362,7 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
 };
 
 exports.Prisma.ModelName = {
+  Interview: 'Interview',
   User: 'User',
   Property: 'Property',
   CoHost: 'CoHost',

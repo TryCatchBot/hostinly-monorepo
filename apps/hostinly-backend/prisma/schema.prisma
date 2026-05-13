@@ -12,6 +12,7 @@ datasource db {
 enum UserType {
   HOST
   COHOST
+  CLEANER
   ADMIN
 }
 
@@ -25,6 +26,28 @@ enum VerificationStatus {
   PENDING
   VERIFIED
   REJECTED
+}
+
+enum InterviewStatus {
+  PENDING
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+model Interview {
+  id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  hostId      String          @map("host_id") @db.Uuid
+  host        User            @relation("HostInterviews", fields: [hostId], references: [id])
+  candidateId String          @map("candidate_id") @db.Uuid
+  candidate   User            @relation("CandidateInterviews", fields: [candidateId], references: [id])
+  status      InterviewStatus @default(PENDING)
+  date        DateTime?
+  notes       String?
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  @@map("interviews")
 }
 
 model User {
@@ -44,6 +67,7 @@ model User {
   verificationStatus  VerificationStatus @default(PENDING) @map("verification_status")
   createdAt           DateTime           @default(now()) @map("created_at")
   lastActive          DateTime           @default(now()) @map("last_active")
+  isOnboardingCompleted Boolean          @default(false) @map("is_onboarding_completed")
 
   // Host specific fields
   dateOfBirth         DateTime?          @map("date_of_birth")
@@ -80,6 +104,9 @@ model User {
   reviewsReceived     Review[]           @relation("Reviewee")
   bookings            Booking[]
   payments            Payment[]
+
+  interviewsAsHost      Interview[] @relation("HostInterviews")
+  interviewsAsCandidate Interview[] @relation("CandidateInterviews")
 
   @@map("users")
 }
