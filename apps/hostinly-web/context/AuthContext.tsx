@@ -36,6 +36,7 @@ export interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, name: string, userType: 'host' | 'cohost' | 'cleaner', additionalData?: any) => Promise<void>;
   updateUser: (data: Partial<User>) => Promise<void>;
+  fetchUser: () => Promise<void>;
   logout: () => void;
 }
 
@@ -57,7 +58,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     queueMicrotask(() => {
       if (storedUser && storedToken) {
         try {
-          setUser(JSON.parse(storedUser));
+          const parsedUser = JSON.parse(storedUser);
+          parsedUser.userType = parsedUser.userType.toLowerCase() as 'host' | 'cohost' | 'cleaner';
+          setUser(parsedUser);
         } catch {
           localStorage.removeItem('hostinly_user');
           localStorage.removeItem('hostinly_token');
@@ -87,7 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Normalize userType to lowercase for frontend consistency
       const normalizedUser = {
         ...loggedInUser,
-        userType: loggedInUser.userType.toLowerCase() as 'host' | 'cohost',
+        userType: loggedInUser.userType.toLowerCase() as 'host' | 'cohost' | 'cleaner',
       };
 
       setUser(normalizedUser);
@@ -168,6 +171,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const fetchUser = async () => {
+    if (!user?.id) return;
+    
+    try {
+      const token = localStorage.getItem('hostinly_token');
+      const response = await fetch(`${API_URL}/users/${user.id}`, {
+        headers: { 
+          'Authorization': `Bearer ${token}`
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        const updatedUser = {
+          ...result.data,
+          userType: result.data.userType.toLowerCase() as 'host' | 'cohost' | 'cleaner',
+        };
+        setUser(updatedUser);
+        localStorage.setItem('hostinly_user', JSON.stringify(updatedUser));
+      }
+    } catch (error) {
+      console.error('Failed to fetch user:', error);
+    }
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('hostinly_user');
@@ -175,7 +204,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, signup, updateUser, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, signup, updateUser, fetchUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

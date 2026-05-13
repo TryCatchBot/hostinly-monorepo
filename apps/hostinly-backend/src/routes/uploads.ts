@@ -8,9 +8,9 @@ const router: Router = Router();
 
 // Cloudinary configuration
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY || '291416415584249',
+  api_secret: process.env.CLOUDINARY_API_SECRET || 'keSB-2ZO1umy0pEQAqMRtHB2gWI',
 });
 
 // Configure storage

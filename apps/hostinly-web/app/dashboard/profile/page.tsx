@@ -33,7 +33,7 @@ export default function ProfilePage() {
   const [numberOfProperties, setNumberOfProperties] = useState('');
   const [hostingExperience, setHostingExperience] = useState('');
   const [propertyLocations, setPropertyLocations] = useState('');
-  const [propertyTypes, setPropertyTypes] = useState('');
+  const [propertyTypes, setPropertyTypes] = useState<string[]>([]);
   const [platformsUsed, setPlatformsUsed] = useState('');
   const [monthlyIncomeTarget, setMonthlyIncomeTarget] = useState('');
   const [usesCoHost, setUsesCoHost] = useState('');
@@ -75,7 +75,21 @@ export default function ProfilePage() {
         setNumberOfProperties(u.numberOfProperties || '');
         setHostingExperience(u.hostingExperience || '');
         setPropertyLocations(u.propertyLocations || '');
-        setPropertyTypes(u.propertyTypes || '');
+        
+        // Handle propertyTypes as array
+        if (typeof u.propertyTypes === 'string') {
+          try {
+            const parsed = JSON.parse(u.propertyTypes);
+            setPropertyTypes(Array.isArray(parsed) ? parsed : [parsed]);
+          } catch {
+            setPropertyTypes(u.propertyTypes.split(',').map((s: string) => s.trim()).filter(Boolean));
+          }
+        } else if (Array.isArray(u.propertyTypes)) {
+          setPropertyTypes(u.propertyTypes);
+        } else {
+          setPropertyTypes([]);
+        }
+
         setPlatformsUsed(u.platformsUsed || '');
         setMonthlyIncomeTarget(u.monthlyIncomeTarget || '');
         setUsesCoHost(u.usesCoHost ? 'yes' : 'no');
@@ -133,7 +147,7 @@ export default function ProfilePage() {
         updatedData.numberOfProperties = parseInt(numberOfProperties) || 0;
         updatedData.hostingExperience = parseInt(hostingExperience) || 0;
         updatedData.propertyLocations = propertyLocations;
-        updatedData.propertyTypes = propertyTypes;
+        updatedData.propertyTypes = JSON.stringify(propertyTypes);
         updatedData.platformsUsed = platformsUsed;
         updatedData.monthlyIncomeTarget = monthlyIncomeTarget;
         updatedData.usesCoHost = usesCoHost === 'yes';
@@ -331,20 +345,36 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Type of properties</label>
-                  <select
-                    value={propertyTypes}
-                    onChange={(e) => setPropertyTypes(e.target.value)}
-                    className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    <option value="">Select type...</option>
-                    <option value="apartment">Apartment</option>
-                    <option value="house">House</option>
-                    <option value="villa">Villa</option>
-                    <option value="condo">Condo</option>
-                    <option value="studio">Studio</option>
-                    <option value="penthouse">Penthouse</option>
-                  </select>
+                  <label className="block text-sm font-medium text-foreground mb-2">Type of properties (Select all that apply)</label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {[
+                      { id: 'apartment', label: 'Apartment' },
+                      { id: 'house', label: 'House' },
+                      { id: 'villa', label: 'Villa' },
+                      { id: 'condo', label: 'Condo' },
+                      { id: 'studio', label: 'Studio' },
+                      { id: 'penthouse', label: 'Penthouse' },
+                    ].map((type) => (
+                      <button
+                        key={type.id}
+                        type="button"
+                        onClick={() => {
+                          setPropertyTypes(prev => 
+                            prev.includes(type.id) 
+                              ? prev.filter(t => t !== type.id)
+                              : [...prev, type.id]
+                          );
+                        }}
+                        className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors ${
+                          propertyTypes.includes(type.id)
+                            ? 'bg-primary/10 border-primary text-primary'
+                            : 'bg-background border-border text-muted-foreground hover:border-primary/50'
+                        }`}
+                      >
+                        {type.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">Current platforms used</label>

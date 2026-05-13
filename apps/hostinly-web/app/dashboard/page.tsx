@@ -26,7 +26,7 @@ import { Button } from '@/components/ui/button';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, fetchUser } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [showAddPropertyModal, setShowAddPropertyModal] = useState(false);
   const [showPostJobModal, setShowPostJobModal] = useState(false);
@@ -34,6 +34,8 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/login');
+    } else if (user) {
+      fetchUser();
     }
   }, [user, isLoading, router]);
 
