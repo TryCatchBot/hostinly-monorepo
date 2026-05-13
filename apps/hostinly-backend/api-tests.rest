@@ -4,8 +4,8 @@
 @propertyId = "12345678901234567890123456789012"
 @jobId = "12345678901234567890123456789012"
 @cohostId = "12345678901234567890123456789012"
-@token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3YzZkODgyMy0yNDVkLTQ0OTUtOTZmOC0wNTZiOWQyZTQ5ODYiLCJlbWFpbCI6Imhvc3RAeW9wbWFpbC5jb20iLCJ1c2VyVHlwZSI6IkhPU1QiLCJpYXQiOjE3Nzg1MTk5NDUsImV4cCI6MTc3ODYwNjM0NX0.h3lwjWIaXaSriWH4fKJ2rluxKqGGCB_H8oYaPWGkQXM"
-@email = "host@yopmail.com"
+@token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxZjM1ZWM1Zi0yNDYyLTQ4MmUtOGMzNy1mMGY4ZGQ1YjM4MzkiLCJlbWFpbCI6ImRlZW5AeW9wbWFpbC5jb20iLCJ1c2VyVHlwZSI6IkhPU1QiLCJpYXQiOjE3Nzg2NjE2MjUsImV4cCI6MTc3ODc0ODAyNX0.4ftcdAowtcOBPGbeL3MRqevKACzPk4zPee0O3CtVmEw"
+@email = "deen@yopmail.com"
 @password = "Password1*"
 
 
@@ -17,21 +17,29 @@ POST {{baseUrl}}/auth/signup
 Content-Type: application/json
 
 {
-  "email": "newuser@example.com",
-  "password": "password123",
-  "name": "New User",
+  "email": "deen@yopmail.com",
+  "password": "Password1*",
+  "name": "Hayatudeen Adeolu",
   "userType": "host",
   "phone": "+447123456789"
 }
+
+
+
 
 ### Login
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "{{email}}",
-  "password": "{{password}}"
+  # "email": "{{email}}",
+  # "password": "{{password}}",
+  "email": "deen@yopmail.com",
+  "password": "Password1*"
 }
+
+
+
 
 ### Logout
 POST {{baseUrl}}/auth/logout
@@ -74,7 +82,11 @@ Content-Type: image/jpeg
 GET {{baseUrl}}/users
 
 ### Get User Profile
-GET {{baseUrl}}/users/{{userId}}
+# GET {{baseUrl}}/users/{{userId}}
+GET {{baseUrl}}/users/7c6d8823-245d-4495-96f8-056b9d2e4986
+
+
+
 
 ### Update User Profile
 PATCH {{baseUrl}}/users/{{userId}}

@@ -93,6 +93,12 @@ router.post('/signup', async (req, res) => {
 
     const passwordHash = await bcrypt.hash(password, 10);
     const userType = (rawUserType || 'HOST').toUpperCase();
+    
+    // Validate userType against Enum
+    const validTypes = ['HOST', 'COHOST', 'CLEANER', 'ADMIN'];
+    if (!validTypes.includes(userType)) {
+      return sendError(res, `Invalid userType: ${rawUserType}. Expected one of: ${validTypes.join(', ')}`, 400);
+    }
 
     const user = await prisma.user.create({
       data: {

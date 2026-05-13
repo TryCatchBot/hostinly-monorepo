@@ -40,20 +40,13 @@ const checkOnboardingStatus = (user: any): boolean => {
 
 router.get('/', async (req, res) => {
   try {
-    const data = await prisma.user.findMany({
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        userType: true,
-        status: true,
-        verificationStatus: true,
-        createdAt: true,
-        lastActive: true,
-        isOnboardingCompleted: true,
-      }
+    const data = await prisma.user.findMany();
+    // Filter to return only public fields
+    const safeData = data.map(user => {
+      const { passwordHash, ...userWithoutPassword } = user;
+      return userWithoutPassword;
     });
-    sendSuccess(res, data);
+    sendSuccess(res, safeData);
   } catch (error: any) {
     sendError(res, error.message);
   }
@@ -70,6 +63,7 @@ router.get('/:id', async (req, res) => {
       }
     });
     if (!user) return sendError(res, 'User not found', 404);
+    
     const { passwordHash, ...userWithoutPassword } = user;
     sendSuccess(res, userWithoutPassword);
   } catch (error: any) {
