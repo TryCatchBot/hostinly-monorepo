@@ -11,6 +11,7 @@ import cohostRoutes from './routes/cohosts';
 import jobRoutes from './routes/jobs';
 import adminRoutes from './routes/admin';
 import uploadRoutes from './routes/uploads';
+import interviewRoutes from './routes/interviews';
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use(`${API_PREFIX}/cohosts`, cohostRoutes);
 app.use(`${API_PREFIX}/jobs`, jobRoutes);
 app.use(`${API_PREFIX}/admin`, adminRoutes);
 app.use(`${API_PREFIX}/uploads`, uploadRoutes);
+app.use(`${API_PREFIX}/interviews`, interviewRoutes);
 
 app.listen(port, host, () => {
   console.log(`[ ready ] http://${host}:${port}`);

@@ -11,6 +11,7 @@ import {
   LogOut,
   LayoutDashboard,
   CreditCard,
+  MessageSquare,
 } from 'lucide-react';
 
 interface DashboardLayoutProps {
@@ -22,9 +23,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname();
 
   const navItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
+    { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard', alwaysEnabled: true },
     { icon: Home, label: 'Properties', href: '/dashboard/properties' },
     { icon: Users, label: 'Co-Hosts', href: '/dashboard/cohosts' },
+    { icon: MessageSquare, label: 'Interviews', href: '/dashboard/interviews' },
     { icon: Briefcase, label: 'Jobs', href: '/dashboard/jobs' },
     { icon: CreditCard, label: 'Billing', href: '/dashboard/billing' },
   ];
@@ -57,17 +59,27 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <nav className="p-4 space-y-2">
           {navItems.map((item) => {
             const Icon = item.icon;
+            const isDisabled = !user?.isOnboardingCompleted && !item.alwaysEnabled;
+
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={isDisabled ? '#' : item.href}
+                onClick={(e) => {
+                  if (isDisabled) {
+                    e.preventDefault();
+                    // Optional: show a toast or message
+                  }
+                }}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium ${
-                  isActive(item.href)
+                  isDisabled
+                    ? 'opacity-50 cursor-not-allowed text-muted-foreground'
+                    : isActive(item.href)
                     ? 'text-white'
                     : 'text-muted-foreground hover:text-white hover:bg-muted'
                 }`}
                 style={
-                  isActive(item.href)
+                  isActive(item.href) && !isDisabled
                     ? {
                         background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
                         color: '#ffffff',

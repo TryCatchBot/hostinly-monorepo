@@ -6,7 +6,8 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  userType: 'host' | 'cohost'; // host = property owner, cohost = co-host provider
+  userType: 'host' | 'cohost' | 'cleaner'; // host = property owner, cohost = co-host provider, cleaner = cleaning provider
+  isOnboardingCompleted?: boolean;
   phone?: string;
   address?: string;
   city?: string;
@@ -23,13 +24,18 @@ export interface User {
   businessName?: string;
   businessLicense?: string;
   taxId?: string;
+  uploadId?: string;
+  proofOfOwnership?: string;
+  businessRegistration?: string;
+  proofOfAddress?: string;
 }
 
 export interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, name: string, userType: 'host' | 'cohost', additionalData?: any) => Promise<void>;
+  signup: (email: string, password: string, name: string, userType: 'host' | 'cohost' | 'cleaner', additionalData?: any) => Promise<void>;
+  updateUser: (data: Partial<User>) => Promise<void>;
   logout: () => void;
 }
 
@@ -94,7 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signup = async (email: string, password: string, name: string, userType: 'host' | 'cohost', additionalData: any = {}) => {
+  const signup = async (email: string, password: string, name: string, userType: 'host' | 'cohost' | 'cleaner', additionalData: any = {}) => {
     setIsLoading(true);
     try {
       const payload = {
@@ -117,17 +123,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(result.error || 'Email already exists');
       }
 
-      const { user: newUser, token } = result.data;
+      // After signup success, we don't set user state here anymore since we want redirect to login
+      // But we can return result for the component to handle redirect
+      return result.data;
+    } catch (error: any) {
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-      // Normalize userType to lowercase for frontend consistency
-      const normalizedUser = {
-        ...newUser,
-        userType: newUser.userType.toLowerCase() as 'host' | 'cohost',
+  const updateUser = async (data: Partial<User>) => {
+    if (!user) throw new Error('Not authenticated');
+    
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem('hostinly_token');
+      const response = await fetch(`${API_URL}/users/${user.id}`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to update profile');
+      }
+
+      const updatedUser = {
+        ...result.data,
+        userType: result.data.userType.toLowerCase() as 'host' | 'cohost' | 'cleaner',
       };
 
-      setUser(normalizedUser);
-      localStorage.setItem('hostinly_user', JSON.stringify(normalizedUser));
-      localStorage.setItem('hostinly_token', token);
+      setUser(updatedUser);
+      localStorage.setItem('hostinly_user', JSON.stringify(updatedUser));
     } catch (error: any) {
       throw error;
     } finally {
@@ -142,7 +175,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, signup, updateUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

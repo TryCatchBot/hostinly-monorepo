@@ -94,6 +94,8 @@ export default function DashboardPage() {
     },
   ];
 
+  const isOnboarded = !!user?.isOnboardingCompleted;
+
   return (
     <DashboardLayout>
       {/* Subtitle */}
@@ -104,6 +106,25 @@ export default function DashboardPage() {
             : 'Explore properties and co-hosting opportunities'}
         </p>
       </div>
+
+      {!isOnboarded && (
+        <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-xl flex items-center justify-between">
+          <div className="flex items-center gap-3 text-yellow-800">
+            <TrendingUp size={20} className="flex-shrink-0" />
+            <p className="text-sm font-medium">
+              Please complete your profile to enable all dashboard features like adding properties and jobs.
+            </p>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="border-yellow-300 text-yellow-800 hover:bg-yellow-100"
+            onClick={() => router.push('/dashboard/profile')}
+          >
+            Complete Profile
+          </Button>
+        </div>
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -146,6 +167,7 @@ export default function DashboardPage() {
                     ? 'border-primary text-primary'
                     : 'border-transparent text-muted-foreground hover:text-foreground'
                 }`}
+                disabled={!isOnboarded}
               >
                 <Users className="inline mr-2 h-4 w-4" />
                 Find Co-Hosts
@@ -157,6 +179,7 @@ export default function DashboardPage() {
                     ? 'border-primary text-primary'
                     : 'border-transparent text-muted-foreground hover:text-foreground'
                 }`}
+                disabled={!isOnboarded}
               >
                 <Briefcase className="inline mr-2 h-4 w-4" />
                 Job Postings
@@ -200,11 +223,12 @@ export default function DashboardPage() {
                 <Button
                   variant="default"
                   className="py-2 px-4 rounded-lg text-sm font-medium"
-                  style={{
+                  style={isOnboarded ? {
                     background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
                     color: '#ffffff',
-                  }}
+                  } : {}}
                   onClick={() => setShowAddPropertyModal(true)}
+                  disabled={!isOnboarded}
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Add Property
@@ -241,11 +265,12 @@ export default function DashboardPage() {
                   <Button
                     variant="default"
                     className="py-2 px-4 rounded-lg text-sm font-medium"
-                    style={{
+                    style={isOnboarded ? {
                       background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
                       color: '#ffffff',
-                    }}
+                    } : {}}
                     onClick={() => setShowPostJobModal(true)}
+                    disabled={!isOnboarded}
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Post Job
