@@ -24,6 +24,11 @@ export type Interview = $Result.DefaultSelection<Prisma.$InterviewPayload>
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model Engagement
+ * 
+ */
+export type Engagement = $Result.DefaultSelection<Prisma.$EngagementPayload>
+/**
  * Model Property
  * 
  */
@@ -111,6 +116,15 @@ export const InterviewStatus: {
 export type InterviewStatus = (typeof InterviewStatus)[keyof typeof InterviewStatus]
 
 
+export const EngagementStatus: {
+  ACTIVE: 'ACTIVE',
+  PROBATION: 'PROBATION',
+  ENDED: 'ENDED'
+};
+
+export type EngagementStatus = (typeof EngagementStatus)[keyof typeof EngagementStatus]
+
+
 export const PropertyStatus: {
   AVAILABLE: 'AVAILABLE',
   MANAGED: 'MANAGED',
@@ -196,6 +210,10 @@ export const VerificationStatus: typeof $Enums.VerificationStatus
 export type InterviewStatus = $Enums.InterviewStatus
 
 export const InterviewStatus: typeof $Enums.InterviewStatus
+
+export type EngagementStatus = $Enums.EngagementStatus
+
+export const EngagementStatus: typeof $Enums.EngagementStatus
 
 export type PropertyStatus = $Enums.PropertyStatus
 
@@ -362,6 +380,16 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.engagement`: Exposes CRUD operations for the **Engagement** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Engagements
+    * const engagements = await prisma.engagement.findMany()
+    * ```
+    */
+  get engagement(): Prisma.EngagementDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.property`: Exposes CRUD operations for the **Property** model.
@@ -895,6 +923,7 @@ export namespace Prisma {
   export const ModelName: {
     Interview: 'Interview',
     User: 'User',
+    Engagement: 'Engagement',
     Property: 'Property',
     CoHost: 'CoHost',
     JobPosting: 'JobPosting',
@@ -922,7 +951,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "interview" | "user" | "property" | "coHost" | "jobPosting" | "review" | "booking" | "contactMessage" | "pricingPlan" | "payment" | "service"
+      modelProps: "interview" | "user" | "engagement" | "property" | "coHost" | "jobPosting" | "review" | "booking" | "contactMessage" | "pricingPlan" | "payment" | "service"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1071,6 +1100,80 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
+          }
+        }
+      }
+      Engagement: {
+        payload: Prisma.$EngagementPayload<ExtArgs>
+        fields: Prisma.EngagementFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EngagementFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EngagementPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EngagementFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EngagementPayload>
+          }
+          findFirst: {
+            args: Prisma.EngagementFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EngagementPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EngagementFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EngagementPayload>
+          }
+          findMany: {
+            args: Prisma.EngagementFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EngagementPayload>[]
+          }
+          create: {
+            args: Prisma.EngagementCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EngagementPayload>
+          }
+          createMany: {
+            args: Prisma.EngagementCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EngagementCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EngagementPayload>[]
+          }
+          delete: {
+            args: Prisma.EngagementDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EngagementPayload>
+          }
+          update: {
+            args: Prisma.EngagementUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EngagementPayload>
+          }
+          deleteMany: {
+            args: Prisma.EngagementDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EngagementUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EngagementUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EngagementPayload>[]
+          }
+          upsert: {
+            args: Prisma.EngagementUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EngagementPayload>
+          }
+          aggregate: {
+            args: Prisma.EngagementAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEngagement>
+          }
+          groupBy: {
+            args: Prisma.EngagementGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EngagementGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EngagementCountArgs<ExtArgs>
+            result: $Utils.Optional<EngagementCountAggregateOutputType> | number
           }
         }
       }
@@ -1838,6 +1941,7 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     interview?: InterviewOmit
     user?: UserOmit
+    engagement?: EngagementOmit
     property?: PropertyOmit
     coHost?: CoHostOmit
     jobPosting?: JobPostingOmit
@@ -1935,6 +2039,8 @@ export namespace Prisma {
     payments: number
     interviewsAsHost: number
     interviewsAsCandidate: number
+    engagementsAsHost: number
+    engagementsAsStaff: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1946,6 +2052,8 @@ export namespace Prisma {
     payments?: boolean | UserCountOutputTypeCountPaymentsArgs
     interviewsAsHost?: boolean | UserCountOutputTypeCountInterviewsAsHostArgs
     interviewsAsCandidate?: boolean | UserCountOutputTypeCountInterviewsAsCandidateArgs
+    engagementsAsHost?: boolean | UserCountOutputTypeCountEngagementsAsHostArgs
+    engagementsAsStaff?: boolean | UserCountOutputTypeCountEngagementsAsStaffArgs
   }
 
   // Custom InputTypes
@@ -2013,6 +2121,20 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountInterviewsAsCandidateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: InterviewWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountEngagementsAsHostArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EngagementWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountEngagementsAsStaffArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EngagementWhereInput
   }
 
 
@@ -3272,6 +3394,8 @@ export namespace Prisma {
     availability: string | null
     areasCovered: string | null
     proofOfAddress: string | null
+    resume: string | null
+    coverLetter: string | null
     references: string | null
     insurance: string | null
     approvalReason: string | null
@@ -3316,6 +3440,8 @@ export namespace Prisma {
     availability: string | null
     areasCovered: string | null
     proofOfAddress: string | null
+    resume: string | null
+    coverLetter: string | null
     references: string | null
     insurance: string | null
     approvalReason: string | null
@@ -3360,6 +3486,8 @@ export namespace Prisma {
     availability: number
     areasCovered: number
     proofOfAddress: number
+    resume: number
+    coverLetter: number
     references: number
     insurance: number
     approvalReason: number
@@ -3422,6 +3550,8 @@ export namespace Prisma {
     availability?: true
     areasCovered?: true
     proofOfAddress?: true
+    resume?: true
+    coverLetter?: true
     references?: true
     insurance?: true
     approvalReason?: true
@@ -3466,6 +3596,8 @@ export namespace Prisma {
     availability?: true
     areasCovered?: true
     proofOfAddress?: true
+    resume?: true
+    coverLetter?: true
     references?: true
     insurance?: true
     approvalReason?: true
@@ -3510,6 +3642,8 @@ export namespace Prisma {
     availability?: true
     areasCovered?: true
     proofOfAddress?: true
+    resume?: true
+    coverLetter?: true
     references?: true
     insurance?: true
     approvalReason?: true
@@ -3641,6 +3775,8 @@ export namespace Prisma {
     availability: string | null
     areasCovered: string | null
     proofOfAddress: string | null
+    resume: string | null
+    coverLetter: string | null
     references: string | null
     insurance: string | null
     approvalReason: string | null
@@ -3704,6 +3840,8 @@ export namespace Prisma {
     availability?: boolean
     areasCovered?: boolean
     proofOfAddress?: boolean
+    resume?: boolean
+    coverLetter?: boolean
     references?: boolean
     insurance?: boolean
     approvalReason?: boolean
@@ -3716,6 +3854,8 @@ export namespace Prisma {
     payments?: boolean | User$paymentsArgs<ExtArgs>
     interviewsAsHost?: boolean | User$interviewsAsHostArgs<ExtArgs>
     interviewsAsCandidate?: boolean | User$interviewsAsCandidateArgs<ExtArgs>
+    engagementsAsHost?: boolean | User$engagementsAsHostArgs<ExtArgs>
+    engagementsAsStaff?: boolean | User$engagementsAsStaffArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -3758,6 +3898,8 @@ export namespace Prisma {
     availability?: boolean
     areasCovered?: boolean
     proofOfAddress?: boolean
+    resume?: boolean
+    coverLetter?: boolean
     references?: boolean
     insurance?: boolean
     approvalReason?: boolean
@@ -3802,6 +3944,8 @@ export namespace Prisma {
     availability?: boolean
     areasCovered?: boolean
     proofOfAddress?: boolean
+    resume?: boolean
+    coverLetter?: boolean
     references?: boolean
     insurance?: boolean
     approvalReason?: boolean
@@ -3846,12 +3990,14 @@ export namespace Prisma {
     availability?: boolean
     areasCovered?: boolean
     proofOfAddress?: boolean
+    resume?: boolean
+    coverLetter?: boolean
     references?: boolean
     insurance?: boolean
     approvalReason?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "passwordHash" | "userType" | "avatar" | "phone" | "address" | "city" | "state" | "zipCode" | "country" | "status" | "verificationStatus" | "createdAt" | "lastActive" | "isOnboardingCompleted" | "dateOfBirth" | "numberOfProperties" | "hostingExperience" | "propertyLocations" | "propertyTypes" | "platformsUsed" | "monthlyIncomeTarget" | "usesCoHost" | "supportRequired" | "uploadId" | "proofOfOwnership" | "businessRegistration" | "postcode" | "hasAirbnbExperience" | "yearsOfExperience" | "propertiesManaged" | "averageRating" | "servicesOffered" | "availability" | "areasCovered" | "proofOfAddress" | "references" | "insurance" | "approvalReason", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "passwordHash" | "userType" | "avatar" | "phone" | "address" | "city" | "state" | "zipCode" | "country" | "status" | "verificationStatus" | "createdAt" | "lastActive" | "isOnboardingCompleted" | "dateOfBirth" | "numberOfProperties" | "hostingExperience" | "propertyLocations" | "propertyTypes" | "platformsUsed" | "monthlyIncomeTarget" | "usesCoHost" | "supportRequired" | "uploadId" | "proofOfOwnership" | "businessRegistration" | "postcode" | "hasAirbnbExperience" | "yearsOfExperience" | "propertiesManaged" | "averageRating" | "servicesOffered" | "availability" | "areasCovered" | "proofOfAddress" | "resume" | "coverLetter" | "references" | "insurance" | "approvalReason", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     properties?: boolean | User$propertiesArgs<ExtArgs>
     cohostProfile?: boolean | User$cohostProfileArgs<ExtArgs>
@@ -3862,6 +4008,8 @@ export namespace Prisma {
     payments?: boolean | User$paymentsArgs<ExtArgs>
     interviewsAsHost?: boolean | User$interviewsAsHostArgs<ExtArgs>
     interviewsAsCandidate?: boolean | User$interviewsAsCandidateArgs<ExtArgs>
+    engagementsAsHost?: boolean | User$engagementsAsHostArgs<ExtArgs>
+    engagementsAsStaff?: boolean | User$engagementsAsStaffArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3879,6 +4027,8 @@ export namespace Prisma {
       payments: Prisma.$PaymentPayload<ExtArgs>[]
       interviewsAsHost: Prisma.$InterviewPayload<ExtArgs>[]
       interviewsAsCandidate: Prisma.$InterviewPayload<ExtArgs>[]
+      engagementsAsHost: Prisma.$EngagementPayload<ExtArgs>[]
+      engagementsAsStaff: Prisma.$EngagementPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3919,6 +4069,8 @@ export namespace Prisma {
       availability: string | null
       areasCovered: string | null
       proofOfAddress: string | null
+      resume: string | null
+      coverLetter: string | null
       references: string | null
       insurance: string | null
       approvalReason: string | null
@@ -4325,6 +4477,8 @@ export namespace Prisma {
     payments<T extends User$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     interviewsAsHost<T extends User$interviewsAsHostArgs<ExtArgs> = {}>(args?: Subset<T, User$interviewsAsHostArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InterviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     interviewsAsCandidate<T extends User$interviewsAsCandidateArgs<ExtArgs> = {}>(args?: Subset<T, User$interviewsAsCandidateArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InterviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    engagementsAsHost<T extends User$engagementsAsHostArgs<ExtArgs> = {}>(args?: Subset<T, User$engagementsAsHostArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EngagementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    engagementsAsStaff<T extends User$engagementsAsStaffArgs<ExtArgs> = {}>(args?: Subset<T, User$engagementsAsStaffArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EngagementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4392,6 +4546,8 @@ export namespace Prisma {
     readonly availability: FieldRef<"User", 'String'>
     readonly areasCovered: FieldRef<"User", 'String'>
     readonly proofOfAddress: FieldRef<"User", 'String'>
+    readonly resume: FieldRef<"User", 'String'>
+    readonly coverLetter: FieldRef<"User", 'String'>
     readonly references: FieldRef<"User", 'String'>
     readonly insurance: FieldRef<"User", 'String'>
     readonly approvalReason: FieldRef<"User", 'String'>
@@ -4994,6 +5150,54 @@ export namespace Prisma {
   }
 
   /**
+   * User.engagementsAsHost
+   */
+  export type User$engagementsAsHostArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Engagement
+     */
+    select?: EngagementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Engagement
+     */
+    omit?: EngagementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EngagementInclude<ExtArgs> | null
+    where?: EngagementWhereInput
+    orderBy?: EngagementOrderByWithRelationInput | EngagementOrderByWithRelationInput[]
+    cursor?: EngagementWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EngagementScalarFieldEnum | EngagementScalarFieldEnum[]
+  }
+
+  /**
+   * User.engagementsAsStaff
+   */
+  export type User$engagementsAsStaffArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Engagement
+     */
+    select?: EngagementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Engagement
+     */
+    omit?: EngagementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EngagementInclude<ExtArgs> | null
+    where?: EngagementWhereInput
+    orderBy?: EngagementOrderByWithRelationInput | EngagementOrderByWithRelationInput[]
+    cursor?: EngagementWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EngagementScalarFieldEnum | EngagementScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5009,6 +5213,1111 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Engagement
+   */
+
+  export type AggregateEngagement = {
+    _count: EngagementCountAggregateOutputType | null
+    _min: EngagementMinAggregateOutputType | null
+    _max: EngagementMaxAggregateOutputType | null
+  }
+
+  export type EngagementMinAggregateOutputType = {
+    id: string | null
+    hostId: string | null
+    staffId: string | null
+    status: $Enums.EngagementStatus | null
+    startDate: Date | null
+    endDate: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type EngagementMaxAggregateOutputType = {
+    id: string | null
+    hostId: string | null
+    staffId: string | null
+    status: $Enums.EngagementStatus | null
+    startDate: Date | null
+    endDate: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type EngagementCountAggregateOutputType = {
+    id: number
+    hostId: number
+    staffId: number
+    status: number
+    startDate: number
+    endDate: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type EngagementMinAggregateInputType = {
+    id?: true
+    hostId?: true
+    staffId?: true
+    status?: true
+    startDate?: true
+    endDate?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type EngagementMaxAggregateInputType = {
+    id?: true
+    hostId?: true
+    staffId?: true
+    status?: true
+    startDate?: true
+    endDate?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type EngagementCountAggregateInputType = {
+    id?: true
+    hostId?: true
+    staffId?: true
+    status?: true
+    startDate?: true
+    endDate?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type EngagementAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Engagement to aggregate.
+     */
+    where?: EngagementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Engagements to fetch.
+     */
+    orderBy?: EngagementOrderByWithRelationInput | EngagementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EngagementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Engagements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Engagements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Engagements
+    **/
+    _count?: true | EngagementCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EngagementMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EngagementMaxAggregateInputType
+  }
+
+  export type GetEngagementAggregateType<T extends EngagementAggregateArgs> = {
+        [P in keyof T & keyof AggregateEngagement]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEngagement[P]>
+      : GetScalarType<T[P], AggregateEngagement[P]>
+  }
+
+
+
+
+  export type EngagementGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EngagementWhereInput
+    orderBy?: EngagementOrderByWithAggregationInput | EngagementOrderByWithAggregationInput[]
+    by: EngagementScalarFieldEnum[] | EngagementScalarFieldEnum
+    having?: EngagementScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EngagementCountAggregateInputType | true
+    _min?: EngagementMinAggregateInputType
+    _max?: EngagementMaxAggregateInputType
+  }
+
+  export type EngagementGroupByOutputType = {
+    id: string
+    hostId: string
+    staffId: string
+    status: $Enums.EngagementStatus
+    startDate: Date
+    endDate: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: EngagementCountAggregateOutputType | null
+    _min: EngagementMinAggregateOutputType | null
+    _max: EngagementMaxAggregateOutputType | null
+  }
+
+  type GetEngagementGroupByPayload<T extends EngagementGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EngagementGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EngagementGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EngagementGroupByOutputType[P]>
+            : GetScalarType<T[P], EngagementGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EngagementSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    hostId?: boolean
+    staffId?: boolean
+    status?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    host?: boolean | UserDefaultArgs<ExtArgs>
+    staff?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["engagement"]>
+
+  export type EngagementSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    hostId?: boolean
+    staffId?: boolean
+    status?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    host?: boolean | UserDefaultArgs<ExtArgs>
+    staff?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["engagement"]>
+
+  export type EngagementSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    hostId?: boolean
+    staffId?: boolean
+    status?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    host?: boolean | UserDefaultArgs<ExtArgs>
+    staff?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["engagement"]>
+
+  export type EngagementSelectScalar = {
+    id?: boolean
+    hostId?: boolean
+    staffId?: boolean
+    status?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type EngagementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "hostId" | "staffId" | "status" | "startDate" | "endDate" | "createdAt" | "updatedAt", ExtArgs["result"]["engagement"]>
+  export type EngagementInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    host?: boolean | UserDefaultArgs<ExtArgs>
+    staff?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type EngagementIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    host?: boolean | UserDefaultArgs<ExtArgs>
+    staff?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type EngagementIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    host?: boolean | UserDefaultArgs<ExtArgs>
+    staff?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $EngagementPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Engagement"
+    objects: {
+      host: Prisma.$UserPayload<ExtArgs>
+      staff: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      hostId: string
+      staffId: string
+      status: $Enums.EngagementStatus
+      startDate: Date
+      endDate: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["engagement"]>
+    composites: {}
+  }
+
+  type EngagementGetPayload<S extends boolean | null | undefined | EngagementDefaultArgs> = $Result.GetResult<Prisma.$EngagementPayload, S>
+
+  type EngagementCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EngagementFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EngagementCountAggregateInputType | true
+    }
+
+  export interface EngagementDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Engagement'], meta: { name: 'Engagement' } }
+    /**
+     * Find zero or one Engagement that matches the filter.
+     * @param {EngagementFindUniqueArgs} args - Arguments to find a Engagement
+     * @example
+     * // Get one Engagement
+     * const engagement = await prisma.engagement.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EngagementFindUniqueArgs>(args: SelectSubset<T, EngagementFindUniqueArgs<ExtArgs>>): Prisma__EngagementClient<$Result.GetResult<Prisma.$EngagementPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Engagement that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EngagementFindUniqueOrThrowArgs} args - Arguments to find a Engagement
+     * @example
+     * // Get one Engagement
+     * const engagement = await prisma.engagement.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EngagementFindUniqueOrThrowArgs>(args: SelectSubset<T, EngagementFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EngagementClient<$Result.GetResult<Prisma.$EngagementPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Engagement that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EngagementFindFirstArgs} args - Arguments to find a Engagement
+     * @example
+     * // Get one Engagement
+     * const engagement = await prisma.engagement.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EngagementFindFirstArgs>(args?: SelectSubset<T, EngagementFindFirstArgs<ExtArgs>>): Prisma__EngagementClient<$Result.GetResult<Prisma.$EngagementPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Engagement that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EngagementFindFirstOrThrowArgs} args - Arguments to find a Engagement
+     * @example
+     * // Get one Engagement
+     * const engagement = await prisma.engagement.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EngagementFindFirstOrThrowArgs>(args?: SelectSubset<T, EngagementFindFirstOrThrowArgs<ExtArgs>>): Prisma__EngagementClient<$Result.GetResult<Prisma.$EngagementPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Engagements that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EngagementFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Engagements
+     * const engagements = await prisma.engagement.findMany()
+     * 
+     * // Get first 10 Engagements
+     * const engagements = await prisma.engagement.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const engagementWithIdOnly = await prisma.engagement.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EngagementFindManyArgs>(args?: SelectSubset<T, EngagementFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EngagementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Engagement.
+     * @param {EngagementCreateArgs} args - Arguments to create a Engagement.
+     * @example
+     * // Create one Engagement
+     * const Engagement = await prisma.engagement.create({
+     *   data: {
+     *     // ... data to create a Engagement
+     *   }
+     * })
+     * 
+     */
+    create<T extends EngagementCreateArgs>(args: SelectSubset<T, EngagementCreateArgs<ExtArgs>>): Prisma__EngagementClient<$Result.GetResult<Prisma.$EngagementPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Engagements.
+     * @param {EngagementCreateManyArgs} args - Arguments to create many Engagements.
+     * @example
+     * // Create many Engagements
+     * const engagement = await prisma.engagement.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EngagementCreateManyArgs>(args?: SelectSubset<T, EngagementCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Engagements and returns the data saved in the database.
+     * @param {EngagementCreateManyAndReturnArgs} args - Arguments to create many Engagements.
+     * @example
+     * // Create many Engagements
+     * const engagement = await prisma.engagement.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Engagements and only return the `id`
+     * const engagementWithIdOnly = await prisma.engagement.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EngagementCreateManyAndReturnArgs>(args?: SelectSubset<T, EngagementCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EngagementPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Engagement.
+     * @param {EngagementDeleteArgs} args - Arguments to delete one Engagement.
+     * @example
+     * // Delete one Engagement
+     * const Engagement = await prisma.engagement.delete({
+     *   where: {
+     *     // ... filter to delete one Engagement
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EngagementDeleteArgs>(args: SelectSubset<T, EngagementDeleteArgs<ExtArgs>>): Prisma__EngagementClient<$Result.GetResult<Prisma.$EngagementPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Engagement.
+     * @param {EngagementUpdateArgs} args - Arguments to update one Engagement.
+     * @example
+     * // Update one Engagement
+     * const engagement = await prisma.engagement.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EngagementUpdateArgs>(args: SelectSubset<T, EngagementUpdateArgs<ExtArgs>>): Prisma__EngagementClient<$Result.GetResult<Prisma.$EngagementPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Engagements.
+     * @param {EngagementDeleteManyArgs} args - Arguments to filter Engagements to delete.
+     * @example
+     * // Delete a few Engagements
+     * const { count } = await prisma.engagement.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EngagementDeleteManyArgs>(args?: SelectSubset<T, EngagementDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Engagements.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EngagementUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Engagements
+     * const engagement = await prisma.engagement.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EngagementUpdateManyArgs>(args: SelectSubset<T, EngagementUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Engagements and returns the data updated in the database.
+     * @param {EngagementUpdateManyAndReturnArgs} args - Arguments to update many Engagements.
+     * @example
+     * // Update many Engagements
+     * const engagement = await prisma.engagement.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Engagements and only return the `id`
+     * const engagementWithIdOnly = await prisma.engagement.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EngagementUpdateManyAndReturnArgs>(args: SelectSubset<T, EngagementUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EngagementPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Engagement.
+     * @param {EngagementUpsertArgs} args - Arguments to update or create a Engagement.
+     * @example
+     * // Update or create a Engagement
+     * const engagement = await prisma.engagement.upsert({
+     *   create: {
+     *     // ... data to create a Engagement
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Engagement we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EngagementUpsertArgs>(args: SelectSubset<T, EngagementUpsertArgs<ExtArgs>>): Prisma__EngagementClient<$Result.GetResult<Prisma.$EngagementPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Engagements.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EngagementCountArgs} args - Arguments to filter Engagements to count.
+     * @example
+     * // Count the number of Engagements
+     * const count = await prisma.engagement.count({
+     *   where: {
+     *     // ... the filter for the Engagements we want to count
+     *   }
+     * })
+    **/
+    count<T extends EngagementCountArgs>(
+      args?: Subset<T, EngagementCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EngagementCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Engagement.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EngagementAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EngagementAggregateArgs>(args: Subset<T, EngagementAggregateArgs>): Prisma.PrismaPromise<GetEngagementAggregateType<T>>
+
+    /**
+     * Group by Engagement.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EngagementGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EngagementGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EngagementGroupByArgs['orderBy'] }
+        : { orderBy?: EngagementGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EngagementGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEngagementGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Engagement model
+   */
+  readonly fields: EngagementFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Engagement.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EngagementClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    host<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    staff<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Engagement model
+   */
+  interface EngagementFieldRefs {
+    readonly id: FieldRef<"Engagement", 'String'>
+    readonly hostId: FieldRef<"Engagement", 'String'>
+    readonly staffId: FieldRef<"Engagement", 'String'>
+    readonly status: FieldRef<"Engagement", 'EngagementStatus'>
+    readonly startDate: FieldRef<"Engagement", 'DateTime'>
+    readonly endDate: FieldRef<"Engagement", 'DateTime'>
+    readonly createdAt: FieldRef<"Engagement", 'DateTime'>
+    readonly updatedAt: FieldRef<"Engagement", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Engagement findUnique
+   */
+  export type EngagementFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Engagement
+     */
+    select?: EngagementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Engagement
+     */
+    omit?: EngagementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EngagementInclude<ExtArgs> | null
+    /**
+     * Filter, which Engagement to fetch.
+     */
+    where: EngagementWhereUniqueInput
+  }
+
+  /**
+   * Engagement findUniqueOrThrow
+   */
+  export type EngagementFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Engagement
+     */
+    select?: EngagementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Engagement
+     */
+    omit?: EngagementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EngagementInclude<ExtArgs> | null
+    /**
+     * Filter, which Engagement to fetch.
+     */
+    where: EngagementWhereUniqueInput
+  }
+
+  /**
+   * Engagement findFirst
+   */
+  export type EngagementFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Engagement
+     */
+    select?: EngagementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Engagement
+     */
+    omit?: EngagementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EngagementInclude<ExtArgs> | null
+    /**
+     * Filter, which Engagement to fetch.
+     */
+    where?: EngagementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Engagements to fetch.
+     */
+    orderBy?: EngagementOrderByWithRelationInput | EngagementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Engagements.
+     */
+    cursor?: EngagementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Engagements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Engagements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Engagements.
+     */
+    distinct?: EngagementScalarFieldEnum | EngagementScalarFieldEnum[]
+  }
+
+  /**
+   * Engagement findFirstOrThrow
+   */
+  export type EngagementFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Engagement
+     */
+    select?: EngagementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Engagement
+     */
+    omit?: EngagementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EngagementInclude<ExtArgs> | null
+    /**
+     * Filter, which Engagement to fetch.
+     */
+    where?: EngagementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Engagements to fetch.
+     */
+    orderBy?: EngagementOrderByWithRelationInput | EngagementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Engagements.
+     */
+    cursor?: EngagementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Engagements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Engagements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Engagements.
+     */
+    distinct?: EngagementScalarFieldEnum | EngagementScalarFieldEnum[]
+  }
+
+  /**
+   * Engagement findMany
+   */
+  export type EngagementFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Engagement
+     */
+    select?: EngagementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Engagement
+     */
+    omit?: EngagementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EngagementInclude<ExtArgs> | null
+    /**
+     * Filter, which Engagements to fetch.
+     */
+    where?: EngagementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Engagements to fetch.
+     */
+    orderBy?: EngagementOrderByWithRelationInput | EngagementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Engagements.
+     */
+    cursor?: EngagementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Engagements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Engagements.
+     */
+    skip?: number
+    distinct?: EngagementScalarFieldEnum | EngagementScalarFieldEnum[]
+  }
+
+  /**
+   * Engagement create
+   */
+  export type EngagementCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Engagement
+     */
+    select?: EngagementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Engagement
+     */
+    omit?: EngagementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EngagementInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Engagement.
+     */
+    data: XOR<EngagementCreateInput, EngagementUncheckedCreateInput>
+  }
+
+  /**
+   * Engagement createMany
+   */
+  export type EngagementCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Engagements.
+     */
+    data: EngagementCreateManyInput | EngagementCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Engagement createManyAndReturn
+   */
+  export type EngagementCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Engagement
+     */
+    select?: EngagementSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Engagement
+     */
+    omit?: EngagementOmit<ExtArgs> | null
+    /**
+     * The data used to create many Engagements.
+     */
+    data: EngagementCreateManyInput | EngagementCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EngagementIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Engagement update
+   */
+  export type EngagementUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Engagement
+     */
+    select?: EngagementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Engagement
+     */
+    omit?: EngagementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EngagementInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Engagement.
+     */
+    data: XOR<EngagementUpdateInput, EngagementUncheckedUpdateInput>
+    /**
+     * Choose, which Engagement to update.
+     */
+    where: EngagementWhereUniqueInput
+  }
+
+  /**
+   * Engagement updateMany
+   */
+  export type EngagementUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Engagements.
+     */
+    data: XOR<EngagementUpdateManyMutationInput, EngagementUncheckedUpdateManyInput>
+    /**
+     * Filter which Engagements to update
+     */
+    where?: EngagementWhereInput
+    /**
+     * Limit how many Engagements to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Engagement updateManyAndReturn
+   */
+  export type EngagementUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Engagement
+     */
+    select?: EngagementSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Engagement
+     */
+    omit?: EngagementOmit<ExtArgs> | null
+    /**
+     * The data used to update Engagements.
+     */
+    data: XOR<EngagementUpdateManyMutationInput, EngagementUncheckedUpdateManyInput>
+    /**
+     * Filter which Engagements to update
+     */
+    where?: EngagementWhereInput
+    /**
+     * Limit how many Engagements to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EngagementIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Engagement upsert
+   */
+  export type EngagementUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Engagement
+     */
+    select?: EngagementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Engagement
+     */
+    omit?: EngagementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EngagementInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Engagement to update in case it exists.
+     */
+    where: EngagementWhereUniqueInput
+    /**
+     * In case the Engagement found by the `where` argument doesn't exist, create a new Engagement with this data.
+     */
+    create: XOR<EngagementCreateInput, EngagementUncheckedCreateInput>
+    /**
+     * In case the Engagement was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EngagementUpdateInput, EngagementUncheckedUpdateInput>
+  }
+
+  /**
+   * Engagement delete
+   */
+  export type EngagementDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Engagement
+     */
+    select?: EngagementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Engagement
+     */
+    omit?: EngagementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EngagementInclude<ExtArgs> | null
+    /**
+     * Filter which Engagement to delete.
+     */
+    where: EngagementWhereUniqueInput
+  }
+
+  /**
+   * Engagement deleteMany
+   */
+  export type EngagementDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Engagements to delete
+     */
+    where?: EngagementWhereInput
+    /**
+     * Limit how many Engagements to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Engagement without action
+   */
+  export type EngagementDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Engagement
+     */
+    select?: EngagementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Engagement
+     */
+    omit?: EngagementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EngagementInclude<ExtArgs> | null
   }
 
 
@@ -15354,12 +16663,28 @@ export namespace Prisma {
     availability: 'availability',
     areasCovered: 'areasCovered',
     proofOfAddress: 'proofOfAddress',
+    resume: 'resume',
+    coverLetter: 'coverLetter',
     references: 'references',
     insurance: 'insurance',
     approvalReason: 'approvalReason'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+  export const EngagementScalarFieldEnum: {
+    id: 'id',
+    hostId: 'hostId',
+    staffId: 'staffId',
+    status: 'status',
+    startDate: 'startDate',
+    endDate: 'endDate',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type EngagementScalarFieldEnum = (typeof EngagementScalarFieldEnum)[keyof typeof EngagementScalarFieldEnum]
 
 
   export const PropertyScalarFieldEnum: {
@@ -15644,6 +16969,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'EngagementStatus'
+   */
+  export type EnumEngagementStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EngagementStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'EngagementStatus[]'
+   */
+  export type ListEnumEngagementStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EngagementStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'PropertyStatus'
    */
   export type EnumPropertyStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PropertyStatus'>
@@ -15873,6 +17212,8 @@ export namespace Prisma {
     availability?: StringNullableFilter<"User"> | string | null
     areasCovered?: StringNullableFilter<"User"> | string | null
     proofOfAddress?: StringNullableFilter<"User"> | string | null
+    resume?: StringNullableFilter<"User"> | string | null
+    coverLetter?: StringNullableFilter<"User"> | string | null
     references?: StringNullableFilter<"User"> | string | null
     insurance?: StringNullableFilter<"User"> | string | null
     approvalReason?: StringNullableFilter<"User"> | string | null
@@ -15885,6 +17226,8 @@ export namespace Prisma {
     payments?: PaymentListRelationFilter
     interviewsAsHost?: InterviewListRelationFilter
     interviewsAsCandidate?: InterviewListRelationFilter
+    engagementsAsHost?: EngagementListRelationFilter
+    engagementsAsStaff?: EngagementListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -15926,6 +17269,8 @@ export namespace Prisma {
     availability?: SortOrderInput | SortOrder
     areasCovered?: SortOrderInput | SortOrder
     proofOfAddress?: SortOrderInput | SortOrder
+    resume?: SortOrderInput | SortOrder
+    coverLetter?: SortOrderInput | SortOrder
     references?: SortOrderInput | SortOrder
     insurance?: SortOrderInput | SortOrder
     approvalReason?: SortOrderInput | SortOrder
@@ -15938,6 +17283,8 @@ export namespace Prisma {
     payments?: PaymentOrderByRelationAggregateInput
     interviewsAsHost?: InterviewOrderByRelationAggregateInput
     interviewsAsCandidate?: InterviewOrderByRelationAggregateInput
+    engagementsAsHost?: EngagementOrderByRelationAggregateInput
+    engagementsAsStaff?: EngagementOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -15982,6 +17329,8 @@ export namespace Prisma {
     availability?: StringNullableFilter<"User"> | string | null
     areasCovered?: StringNullableFilter<"User"> | string | null
     proofOfAddress?: StringNullableFilter<"User"> | string | null
+    resume?: StringNullableFilter<"User"> | string | null
+    coverLetter?: StringNullableFilter<"User"> | string | null
     references?: StringNullableFilter<"User"> | string | null
     insurance?: StringNullableFilter<"User"> | string | null
     approvalReason?: StringNullableFilter<"User"> | string | null
@@ -15994,6 +17343,8 @@ export namespace Prisma {
     payments?: PaymentListRelationFilter
     interviewsAsHost?: InterviewListRelationFilter
     interviewsAsCandidate?: InterviewListRelationFilter
+    engagementsAsHost?: EngagementListRelationFilter
+    engagementsAsStaff?: EngagementListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -16035,6 +17386,8 @@ export namespace Prisma {
     availability?: SortOrderInput | SortOrder
     areasCovered?: SortOrderInput | SortOrder
     proofOfAddress?: SortOrderInput | SortOrder
+    resume?: SortOrderInput | SortOrder
+    coverLetter?: SortOrderInput | SortOrder
     references?: SortOrderInput | SortOrder
     insurance?: SortOrderInput | SortOrder
     approvalReason?: SortOrderInput | SortOrder
@@ -16087,9 +17440,84 @@ export namespace Prisma {
     availability?: StringNullableWithAggregatesFilter<"User"> | string | null
     areasCovered?: StringNullableWithAggregatesFilter<"User"> | string | null
     proofOfAddress?: StringNullableWithAggregatesFilter<"User"> | string | null
+    resume?: StringNullableWithAggregatesFilter<"User"> | string | null
+    coverLetter?: StringNullableWithAggregatesFilter<"User"> | string | null
     references?: StringNullableWithAggregatesFilter<"User"> | string | null
     insurance?: StringNullableWithAggregatesFilter<"User"> | string | null
     approvalReason?: StringNullableWithAggregatesFilter<"User"> | string | null
+  }
+
+  export type EngagementWhereInput = {
+    AND?: EngagementWhereInput | EngagementWhereInput[]
+    OR?: EngagementWhereInput[]
+    NOT?: EngagementWhereInput | EngagementWhereInput[]
+    id?: UuidFilter<"Engagement"> | string
+    hostId?: UuidFilter<"Engagement"> | string
+    staffId?: UuidFilter<"Engagement"> | string
+    status?: EnumEngagementStatusFilter<"Engagement"> | $Enums.EngagementStatus
+    startDate?: DateTimeFilter<"Engagement"> | Date | string
+    endDate?: DateTimeNullableFilter<"Engagement"> | Date | string | null
+    createdAt?: DateTimeFilter<"Engagement"> | Date | string
+    updatedAt?: DateTimeFilter<"Engagement"> | Date | string
+    host?: XOR<UserScalarRelationFilter, UserWhereInput>
+    staff?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type EngagementOrderByWithRelationInput = {
+    id?: SortOrder
+    hostId?: SortOrder
+    staffId?: SortOrder
+    status?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    host?: UserOrderByWithRelationInput
+    staff?: UserOrderByWithRelationInput
+  }
+
+  export type EngagementWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: EngagementWhereInput | EngagementWhereInput[]
+    OR?: EngagementWhereInput[]
+    NOT?: EngagementWhereInput | EngagementWhereInput[]
+    hostId?: UuidFilter<"Engagement"> | string
+    staffId?: UuidFilter<"Engagement"> | string
+    status?: EnumEngagementStatusFilter<"Engagement"> | $Enums.EngagementStatus
+    startDate?: DateTimeFilter<"Engagement"> | Date | string
+    endDate?: DateTimeNullableFilter<"Engagement"> | Date | string | null
+    createdAt?: DateTimeFilter<"Engagement"> | Date | string
+    updatedAt?: DateTimeFilter<"Engagement"> | Date | string
+    host?: XOR<UserScalarRelationFilter, UserWhereInput>
+    staff?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type EngagementOrderByWithAggregationInput = {
+    id?: SortOrder
+    hostId?: SortOrder
+    staffId?: SortOrder
+    status?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: EngagementCountOrderByAggregateInput
+    _max?: EngagementMaxOrderByAggregateInput
+    _min?: EngagementMinOrderByAggregateInput
+  }
+
+  export type EngagementScalarWhereWithAggregatesInput = {
+    AND?: EngagementScalarWhereWithAggregatesInput | EngagementScalarWhereWithAggregatesInput[]
+    OR?: EngagementScalarWhereWithAggregatesInput[]
+    NOT?: EngagementScalarWhereWithAggregatesInput | EngagementScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"Engagement"> | string
+    hostId?: UuidWithAggregatesFilter<"Engagement"> | string
+    staffId?: UuidWithAggregatesFilter<"Engagement"> | string
+    status?: EnumEngagementStatusWithAggregatesFilter<"Engagement"> | $Enums.EngagementStatus
+    startDate?: DateTimeWithAggregatesFilter<"Engagement"> | Date | string
+    endDate?: DateTimeNullableWithAggregatesFilter<"Engagement"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Engagement"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Engagement"> | Date | string
   }
 
   export type PropertyWhereInput = {
@@ -16899,6 +18327,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -16911,6 +18341,8 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutUserInput
     interviewsAsHost?: InterviewCreateNestedManyWithoutHostInput
     interviewsAsCandidate?: InterviewCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementCreateNestedManyWithoutStaffInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -16952,6 +18384,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -16964,6 +18398,8 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     interviewsAsHost?: InterviewUncheckedCreateNestedManyWithoutHostInput
     interviewsAsCandidate?: InterviewUncheckedCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementUncheckedCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementUncheckedCreateNestedManyWithoutStaffInput
   }
 
   export type UserUpdateInput = {
@@ -17005,6 +18441,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17017,6 +18455,8 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUpdateManyWithoutStaffNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -17058,6 +18498,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17070,6 +18512,8 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUncheckedUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUncheckedUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUncheckedUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUncheckedUpdateManyWithoutStaffNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -17111,6 +18555,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -17155,6 +18601,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17199,9 +18647,86 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type EngagementCreateInput = {
+    id?: string
+    status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    host: UserCreateNestedOneWithoutEngagementsAsHostInput
+    staff: UserCreateNestedOneWithoutEngagementsAsStaffInput
+  }
+
+  export type EngagementUncheckedCreateInput = {
+    id?: string
+    hostId: string
+    staffId: string
+    status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EngagementUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    host?: UserUpdateOneRequiredWithoutEngagementsAsHostNestedInput
+    staff?: UserUpdateOneRequiredWithoutEngagementsAsStaffNestedInput
+  }
+
+  export type EngagementUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    hostId?: StringFieldUpdateOperationsInput | string
+    staffId?: StringFieldUpdateOperationsInput | string
+    status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EngagementCreateManyInput = {
+    id?: string
+    hostId: string
+    staffId: string
+    status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EngagementUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EngagementUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    hostId?: StringFieldUpdateOperationsInput | string
+    staffId?: StringFieldUpdateOperationsInput | string
+    status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PropertyCreateInput = {
@@ -18232,6 +19757,12 @@ export namespace Prisma {
     none?: InterviewWhereInput
   }
 
+  export type EngagementListRelationFilter = {
+    every?: EngagementWhereInput
+    some?: EngagementWhereInput
+    none?: EngagementWhereInput
+  }
+
   export type PropertyOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -18253,6 +19784,10 @@ export namespace Prisma {
   }
 
   export type InterviewOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type EngagementOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -18295,6 +19830,8 @@ export namespace Prisma {
     availability?: SortOrder
     areasCovered?: SortOrder
     proofOfAddress?: SortOrder
+    resume?: SortOrder
+    coverLetter?: SortOrder
     references?: SortOrder
     insurance?: SortOrder
     approvalReason?: SortOrder
@@ -18347,6 +19884,8 @@ export namespace Prisma {
     availability?: SortOrder
     areasCovered?: SortOrder
     proofOfAddress?: SortOrder
+    resume?: SortOrder
+    coverLetter?: SortOrder
     references?: SortOrder
     insurance?: SortOrder
     approvalReason?: SortOrder
@@ -18391,6 +19930,8 @@ export namespace Prisma {
     availability?: SortOrder
     areasCovered?: SortOrder
     proofOfAddress?: SortOrder
+    resume?: SortOrder
+    coverLetter?: SortOrder
     references?: SortOrder
     insurance?: SortOrder
     approvalReason?: SortOrder
@@ -18498,6 +20039,56 @@ export namespace Prisma {
     _sum?: NestedFloatNullableFilter<$PrismaModel>
     _min?: NestedFloatNullableFilter<$PrismaModel>
     _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type EnumEngagementStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.EngagementStatus | EnumEngagementStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.EngagementStatus[] | ListEnumEngagementStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EngagementStatus[] | ListEnumEngagementStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumEngagementStatusFilter<$PrismaModel> | $Enums.EngagementStatus
+  }
+
+  export type EngagementCountOrderByAggregateInput = {
+    id?: SortOrder
+    hostId?: SortOrder
+    staffId?: SortOrder
+    status?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EngagementMaxOrderByAggregateInput = {
+    id?: SortOrder
+    hostId?: SortOrder
+    staffId?: SortOrder
+    status?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EngagementMinOrderByAggregateInput = {
+    id?: SortOrder
+    hostId?: SortOrder
+    staffId?: SortOrder
+    status?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumEngagementStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EngagementStatus | EnumEngagementStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.EngagementStatus[] | ListEnumEngagementStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EngagementStatus[] | ListEnumEngagementStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumEngagementStatusWithAggregatesFilter<$PrismaModel> | $Enums.EngagementStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumEngagementStatusFilter<$PrismaModel>
+    _max?: NestedEnumEngagementStatusFilter<$PrismaModel>
   }
 
   export type FloatFilter<$PrismaModel = never> = {
@@ -19290,6 +20881,20 @@ export namespace Prisma {
     connect?: InterviewWhereUniqueInput | InterviewWhereUniqueInput[]
   }
 
+  export type EngagementCreateNestedManyWithoutHostInput = {
+    create?: XOR<EngagementCreateWithoutHostInput, EngagementUncheckedCreateWithoutHostInput> | EngagementCreateWithoutHostInput[] | EngagementUncheckedCreateWithoutHostInput[]
+    connectOrCreate?: EngagementCreateOrConnectWithoutHostInput | EngagementCreateOrConnectWithoutHostInput[]
+    createMany?: EngagementCreateManyHostInputEnvelope
+    connect?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+  }
+
+  export type EngagementCreateNestedManyWithoutStaffInput = {
+    create?: XOR<EngagementCreateWithoutStaffInput, EngagementUncheckedCreateWithoutStaffInput> | EngagementCreateWithoutStaffInput[] | EngagementUncheckedCreateWithoutStaffInput[]
+    connectOrCreate?: EngagementCreateOrConnectWithoutStaffInput | EngagementCreateOrConnectWithoutStaffInput[]
+    createMany?: EngagementCreateManyStaffInputEnvelope
+    connect?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+  }
+
   export type PropertyUncheckedCreateNestedManyWithoutOwnerInput = {
     create?: XOR<PropertyCreateWithoutOwnerInput, PropertyUncheckedCreateWithoutOwnerInput> | PropertyCreateWithoutOwnerInput[] | PropertyUncheckedCreateWithoutOwnerInput[]
     connectOrCreate?: PropertyCreateOrConnectWithoutOwnerInput | PropertyCreateOrConnectWithoutOwnerInput[]
@@ -19350,6 +20955,20 @@ export namespace Prisma {
     connectOrCreate?: InterviewCreateOrConnectWithoutCandidateInput | InterviewCreateOrConnectWithoutCandidateInput[]
     createMany?: InterviewCreateManyCandidateInputEnvelope
     connect?: InterviewWhereUniqueInput | InterviewWhereUniqueInput[]
+  }
+
+  export type EngagementUncheckedCreateNestedManyWithoutHostInput = {
+    create?: XOR<EngagementCreateWithoutHostInput, EngagementUncheckedCreateWithoutHostInput> | EngagementCreateWithoutHostInput[] | EngagementUncheckedCreateWithoutHostInput[]
+    connectOrCreate?: EngagementCreateOrConnectWithoutHostInput | EngagementCreateOrConnectWithoutHostInput[]
+    createMany?: EngagementCreateManyHostInputEnvelope
+    connect?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+  }
+
+  export type EngagementUncheckedCreateNestedManyWithoutStaffInput = {
+    create?: XOR<EngagementCreateWithoutStaffInput, EngagementUncheckedCreateWithoutStaffInput> | EngagementCreateWithoutStaffInput[] | EngagementUncheckedCreateWithoutStaffInput[]
+    connectOrCreate?: EngagementCreateOrConnectWithoutStaffInput | EngagementCreateOrConnectWithoutStaffInput[]
+    createMany?: EngagementCreateManyStaffInputEnvelope
+    connect?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
   }
 
   export type EnumUserTypeFieldUpdateOperationsInput = {
@@ -19510,6 +21129,34 @@ export namespace Prisma {
     deleteMany?: InterviewScalarWhereInput | InterviewScalarWhereInput[]
   }
 
+  export type EngagementUpdateManyWithoutHostNestedInput = {
+    create?: XOR<EngagementCreateWithoutHostInput, EngagementUncheckedCreateWithoutHostInput> | EngagementCreateWithoutHostInput[] | EngagementUncheckedCreateWithoutHostInput[]
+    connectOrCreate?: EngagementCreateOrConnectWithoutHostInput | EngagementCreateOrConnectWithoutHostInput[]
+    upsert?: EngagementUpsertWithWhereUniqueWithoutHostInput | EngagementUpsertWithWhereUniqueWithoutHostInput[]
+    createMany?: EngagementCreateManyHostInputEnvelope
+    set?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+    disconnect?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+    delete?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+    connect?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+    update?: EngagementUpdateWithWhereUniqueWithoutHostInput | EngagementUpdateWithWhereUniqueWithoutHostInput[]
+    updateMany?: EngagementUpdateManyWithWhereWithoutHostInput | EngagementUpdateManyWithWhereWithoutHostInput[]
+    deleteMany?: EngagementScalarWhereInput | EngagementScalarWhereInput[]
+  }
+
+  export type EngagementUpdateManyWithoutStaffNestedInput = {
+    create?: XOR<EngagementCreateWithoutStaffInput, EngagementUncheckedCreateWithoutStaffInput> | EngagementCreateWithoutStaffInput[] | EngagementUncheckedCreateWithoutStaffInput[]
+    connectOrCreate?: EngagementCreateOrConnectWithoutStaffInput | EngagementCreateOrConnectWithoutStaffInput[]
+    upsert?: EngagementUpsertWithWhereUniqueWithoutStaffInput | EngagementUpsertWithWhereUniqueWithoutStaffInput[]
+    createMany?: EngagementCreateManyStaffInputEnvelope
+    set?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+    disconnect?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+    delete?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+    connect?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+    update?: EngagementUpdateWithWhereUniqueWithoutStaffInput | EngagementUpdateWithWhereUniqueWithoutStaffInput[]
+    updateMany?: EngagementUpdateManyWithWhereWithoutStaffInput | EngagementUpdateManyWithWhereWithoutStaffInput[]
+    deleteMany?: EngagementScalarWhereInput | EngagementScalarWhereInput[]
+  }
+
   export type PropertyUncheckedUpdateManyWithoutOwnerNestedInput = {
     create?: XOR<PropertyCreateWithoutOwnerInput, PropertyUncheckedCreateWithoutOwnerInput> | PropertyCreateWithoutOwnerInput[] | PropertyUncheckedCreateWithoutOwnerInput[]
     connectOrCreate?: PropertyCreateOrConnectWithoutOwnerInput | PropertyCreateOrConnectWithoutOwnerInput[]
@@ -19630,6 +21277,66 @@ export namespace Prisma {
     update?: InterviewUpdateWithWhereUniqueWithoutCandidateInput | InterviewUpdateWithWhereUniqueWithoutCandidateInput[]
     updateMany?: InterviewUpdateManyWithWhereWithoutCandidateInput | InterviewUpdateManyWithWhereWithoutCandidateInput[]
     deleteMany?: InterviewScalarWhereInput | InterviewScalarWhereInput[]
+  }
+
+  export type EngagementUncheckedUpdateManyWithoutHostNestedInput = {
+    create?: XOR<EngagementCreateWithoutHostInput, EngagementUncheckedCreateWithoutHostInput> | EngagementCreateWithoutHostInput[] | EngagementUncheckedCreateWithoutHostInput[]
+    connectOrCreate?: EngagementCreateOrConnectWithoutHostInput | EngagementCreateOrConnectWithoutHostInput[]
+    upsert?: EngagementUpsertWithWhereUniqueWithoutHostInput | EngagementUpsertWithWhereUniqueWithoutHostInput[]
+    createMany?: EngagementCreateManyHostInputEnvelope
+    set?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+    disconnect?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+    delete?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+    connect?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+    update?: EngagementUpdateWithWhereUniqueWithoutHostInput | EngagementUpdateWithWhereUniqueWithoutHostInput[]
+    updateMany?: EngagementUpdateManyWithWhereWithoutHostInput | EngagementUpdateManyWithWhereWithoutHostInput[]
+    deleteMany?: EngagementScalarWhereInput | EngagementScalarWhereInput[]
+  }
+
+  export type EngagementUncheckedUpdateManyWithoutStaffNestedInput = {
+    create?: XOR<EngagementCreateWithoutStaffInput, EngagementUncheckedCreateWithoutStaffInput> | EngagementCreateWithoutStaffInput[] | EngagementUncheckedCreateWithoutStaffInput[]
+    connectOrCreate?: EngagementCreateOrConnectWithoutStaffInput | EngagementCreateOrConnectWithoutStaffInput[]
+    upsert?: EngagementUpsertWithWhereUniqueWithoutStaffInput | EngagementUpsertWithWhereUniqueWithoutStaffInput[]
+    createMany?: EngagementCreateManyStaffInputEnvelope
+    set?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+    disconnect?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+    delete?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+    connect?: EngagementWhereUniqueInput | EngagementWhereUniqueInput[]
+    update?: EngagementUpdateWithWhereUniqueWithoutStaffInput | EngagementUpdateWithWhereUniqueWithoutStaffInput[]
+    updateMany?: EngagementUpdateManyWithWhereWithoutStaffInput | EngagementUpdateManyWithWhereWithoutStaffInput[]
+    deleteMany?: EngagementScalarWhereInput | EngagementScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutEngagementsAsHostInput = {
+    create?: XOR<UserCreateWithoutEngagementsAsHostInput, UserUncheckedCreateWithoutEngagementsAsHostInput>
+    connectOrCreate?: UserCreateOrConnectWithoutEngagementsAsHostInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutEngagementsAsStaffInput = {
+    create?: XOR<UserCreateWithoutEngagementsAsStaffInput, UserUncheckedCreateWithoutEngagementsAsStaffInput>
+    connectOrCreate?: UserCreateOrConnectWithoutEngagementsAsStaffInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumEngagementStatusFieldUpdateOperationsInput = {
+    set?: $Enums.EngagementStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutEngagementsAsHostNestedInput = {
+    create?: XOR<UserCreateWithoutEngagementsAsHostInput, UserUncheckedCreateWithoutEngagementsAsHostInput>
+    connectOrCreate?: UserCreateOrConnectWithoutEngagementsAsHostInput
+    upsert?: UserUpsertWithoutEngagementsAsHostInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutEngagementsAsHostInput, UserUpdateWithoutEngagementsAsHostInput>, UserUncheckedUpdateWithoutEngagementsAsHostInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutEngagementsAsStaffNestedInput = {
+    create?: XOR<UserCreateWithoutEngagementsAsStaffInput, UserUncheckedCreateWithoutEngagementsAsStaffInput>
+    connectOrCreate?: UserCreateOrConnectWithoutEngagementsAsStaffInput
+    upsert?: UserUpsertWithoutEngagementsAsStaffInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutEngagementsAsStaffInput, UserUpdateWithoutEngagementsAsStaffInput>, UserUncheckedUpdateWithoutEngagementsAsStaffInput>
   }
 
   export type PropertyCreateimagesInput = {
@@ -20331,6 +22038,23 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumEngagementStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.EngagementStatus | EnumEngagementStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.EngagementStatus[] | ListEnumEngagementStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EngagementStatus[] | ListEnumEngagementStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumEngagementStatusFilter<$PrismaModel> | $Enums.EngagementStatus
+  }
+
+  export type NestedEnumEngagementStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EngagementStatus | EnumEngagementStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.EngagementStatus[] | ListEnumEngagementStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EngagementStatus[] | ListEnumEngagementStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumEngagementStatusWithAggregatesFilter<$PrismaModel> | $Enums.EngagementStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumEngagementStatusFilter<$PrismaModel>
+    _max?: NestedEnumEngagementStatusFilter<$PrismaModel>
+  }
+
   export type NestedFloatFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -20621,6 +22345,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -20632,6 +22358,8 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutGuestInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     interviewsAsCandidate?: InterviewCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementCreateNestedManyWithoutStaffInput
   }
 
   export type UserUncheckedCreateWithoutInterviewsAsHostInput = {
@@ -20673,6 +22401,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -20684,6 +22414,8 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutGuestInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     interviewsAsCandidate?: InterviewUncheckedCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementUncheckedCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementUncheckedCreateNestedManyWithoutStaffInput
   }
 
   export type UserCreateOrConnectWithoutInterviewsAsHostInput = {
@@ -20730,6 +22462,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -20741,6 +22475,8 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutGuestInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     interviewsAsHost?: InterviewCreateNestedManyWithoutHostInput
+    engagementsAsHost?: EngagementCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementCreateNestedManyWithoutStaffInput
   }
 
   export type UserUncheckedCreateWithoutInterviewsAsCandidateInput = {
@@ -20782,6 +22518,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -20793,6 +22531,8 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutGuestInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     interviewsAsHost?: InterviewUncheckedCreateNestedManyWithoutHostInput
+    engagementsAsHost?: EngagementUncheckedCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementUncheckedCreateNestedManyWithoutStaffInput
   }
 
   export type UserCreateOrConnectWithoutInterviewsAsCandidateInput = {
@@ -20850,6 +22590,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20861,6 +22603,8 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutGuestNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     interviewsAsCandidate?: InterviewUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUpdateManyWithoutStaffNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInterviewsAsHostInput = {
@@ -20902,6 +22646,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20913,6 +22659,8 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutGuestNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     interviewsAsCandidate?: InterviewUncheckedUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUncheckedUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUncheckedUpdateManyWithoutStaffNestedInput
   }
 
   export type UserUpsertWithoutInterviewsAsCandidateInput = {
@@ -20965,6 +22713,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20976,6 +22726,8 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutGuestNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUpdateManyWithoutHostNestedInput
+    engagementsAsHost?: EngagementUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUpdateManyWithoutStaffNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInterviewsAsCandidateInput = {
@@ -21017,6 +22769,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21028,6 +22782,8 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutGuestNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUncheckedUpdateManyWithoutHostNestedInput
+    engagementsAsHost?: EngagementUncheckedUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUncheckedUpdateManyWithoutStaffNestedInput
   }
 
   export type PropertyCreateWithoutOwnerInput = {
@@ -21323,6 +23079,66 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type EngagementCreateWithoutHostInput = {
+    id?: string
+    status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    staff: UserCreateNestedOneWithoutEngagementsAsStaffInput
+  }
+
+  export type EngagementUncheckedCreateWithoutHostInput = {
+    id?: string
+    staffId: string
+    status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EngagementCreateOrConnectWithoutHostInput = {
+    where: EngagementWhereUniqueInput
+    create: XOR<EngagementCreateWithoutHostInput, EngagementUncheckedCreateWithoutHostInput>
+  }
+
+  export type EngagementCreateManyHostInputEnvelope = {
+    data: EngagementCreateManyHostInput | EngagementCreateManyHostInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type EngagementCreateWithoutStaffInput = {
+    id?: string
+    status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    host: UserCreateNestedOneWithoutEngagementsAsHostInput
+  }
+
+  export type EngagementUncheckedCreateWithoutStaffInput = {
+    id?: string
+    hostId: string
+    status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EngagementCreateOrConnectWithoutStaffInput = {
+    where: EngagementWhereUniqueInput
+    create: XOR<EngagementCreateWithoutStaffInput, EngagementUncheckedCreateWithoutStaffInput>
+  }
+
+  export type EngagementCreateManyStaffInputEnvelope = {
+    data: EngagementCreateManyStaffInput | EngagementCreateManyStaffInput[]
+    skipDuplicates?: boolean
+  }
+
   export type PropertyUpsertWithWhereUniqueWithoutOwnerInput = {
     where: PropertyWhereUniqueInput
     update: XOR<PropertyUpdateWithoutOwnerInput, PropertyUncheckedUpdateWithoutOwnerInput>
@@ -21583,6 +23399,532 @@ export namespace Prisma {
     data: XOR<InterviewUpdateManyMutationInput, InterviewUncheckedUpdateManyWithoutCandidateInput>
   }
 
+  export type EngagementUpsertWithWhereUniqueWithoutHostInput = {
+    where: EngagementWhereUniqueInput
+    update: XOR<EngagementUpdateWithoutHostInput, EngagementUncheckedUpdateWithoutHostInput>
+    create: XOR<EngagementCreateWithoutHostInput, EngagementUncheckedCreateWithoutHostInput>
+  }
+
+  export type EngagementUpdateWithWhereUniqueWithoutHostInput = {
+    where: EngagementWhereUniqueInput
+    data: XOR<EngagementUpdateWithoutHostInput, EngagementUncheckedUpdateWithoutHostInput>
+  }
+
+  export type EngagementUpdateManyWithWhereWithoutHostInput = {
+    where: EngagementScalarWhereInput
+    data: XOR<EngagementUpdateManyMutationInput, EngagementUncheckedUpdateManyWithoutHostInput>
+  }
+
+  export type EngagementScalarWhereInput = {
+    AND?: EngagementScalarWhereInput | EngagementScalarWhereInput[]
+    OR?: EngagementScalarWhereInput[]
+    NOT?: EngagementScalarWhereInput | EngagementScalarWhereInput[]
+    id?: UuidFilter<"Engagement"> | string
+    hostId?: UuidFilter<"Engagement"> | string
+    staffId?: UuidFilter<"Engagement"> | string
+    status?: EnumEngagementStatusFilter<"Engagement"> | $Enums.EngagementStatus
+    startDate?: DateTimeFilter<"Engagement"> | Date | string
+    endDate?: DateTimeNullableFilter<"Engagement"> | Date | string | null
+    createdAt?: DateTimeFilter<"Engagement"> | Date | string
+    updatedAt?: DateTimeFilter<"Engagement"> | Date | string
+  }
+
+  export type EngagementUpsertWithWhereUniqueWithoutStaffInput = {
+    where: EngagementWhereUniqueInput
+    update: XOR<EngagementUpdateWithoutStaffInput, EngagementUncheckedUpdateWithoutStaffInput>
+    create: XOR<EngagementCreateWithoutStaffInput, EngagementUncheckedCreateWithoutStaffInput>
+  }
+
+  export type EngagementUpdateWithWhereUniqueWithoutStaffInput = {
+    where: EngagementWhereUniqueInput
+    data: XOR<EngagementUpdateWithoutStaffInput, EngagementUncheckedUpdateWithoutStaffInput>
+  }
+
+  export type EngagementUpdateManyWithWhereWithoutStaffInput = {
+    where: EngagementScalarWhereInput
+    data: XOR<EngagementUpdateManyMutationInput, EngagementUncheckedUpdateManyWithoutStaffInput>
+  }
+
+  export type UserCreateWithoutEngagementsAsHostInput = {
+    id?: string
+    email: string
+    name: string
+    passwordHash: string
+    userType: $Enums.UserType
+    avatar?: string | null
+    phone?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
+    country?: string | null
+    status?: $Enums.UserStatus
+    verificationStatus?: $Enums.VerificationStatus
+    createdAt?: Date | string
+    lastActive?: Date | string
+    isOnboardingCompleted?: boolean
+    dateOfBirth?: Date | string | null
+    numberOfProperties?: number | null
+    hostingExperience?: number | null
+    propertyLocations?: string | null
+    propertyTypes?: string | null
+    platformsUsed?: string | null
+    monthlyIncomeTarget?: string | null
+    usesCoHost?: boolean | null
+    supportRequired?: string | null
+    uploadId?: string | null
+    proofOfOwnership?: string | null
+    businessRegistration?: string | null
+    postcode?: string | null
+    hasAirbnbExperience?: boolean | null
+    yearsOfExperience?: number | null
+    propertiesManaged?: number | null
+    averageRating?: number | null
+    servicesOffered?: string | null
+    availability?: string | null
+    areasCovered?: string | null
+    proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
+    references?: string | null
+    insurance?: string | null
+    approvalReason?: string | null
+    properties?: PropertyCreateNestedManyWithoutOwnerInput
+    cohostProfile?: CoHostCreateNestedOneWithoutUserInput
+    jobs?: JobPostingCreateNestedManyWithoutAuthorInput
+    reviewsWritten?: ReviewCreateNestedManyWithoutReviewerInput
+    reviewsReceived?: ReviewCreateNestedManyWithoutRevieweeInput
+    bookings?: BookingCreateNestedManyWithoutGuestInput
+    payments?: PaymentCreateNestedManyWithoutUserInput
+    interviewsAsHost?: InterviewCreateNestedManyWithoutHostInput
+    interviewsAsCandidate?: InterviewCreateNestedManyWithoutCandidateInput
+    engagementsAsStaff?: EngagementCreateNestedManyWithoutStaffInput
+  }
+
+  export type UserUncheckedCreateWithoutEngagementsAsHostInput = {
+    id?: string
+    email: string
+    name: string
+    passwordHash: string
+    userType: $Enums.UserType
+    avatar?: string | null
+    phone?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
+    country?: string | null
+    status?: $Enums.UserStatus
+    verificationStatus?: $Enums.VerificationStatus
+    createdAt?: Date | string
+    lastActive?: Date | string
+    isOnboardingCompleted?: boolean
+    dateOfBirth?: Date | string | null
+    numberOfProperties?: number | null
+    hostingExperience?: number | null
+    propertyLocations?: string | null
+    propertyTypes?: string | null
+    platformsUsed?: string | null
+    monthlyIncomeTarget?: string | null
+    usesCoHost?: boolean | null
+    supportRequired?: string | null
+    uploadId?: string | null
+    proofOfOwnership?: string | null
+    businessRegistration?: string | null
+    postcode?: string | null
+    hasAirbnbExperience?: boolean | null
+    yearsOfExperience?: number | null
+    propertiesManaged?: number | null
+    averageRating?: number | null
+    servicesOffered?: string | null
+    availability?: string | null
+    areasCovered?: string | null
+    proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
+    references?: string | null
+    insurance?: string | null
+    approvalReason?: string | null
+    properties?: PropertyUncheckedCreateNestedManyWithoutOwnerInput
+    cohostProfile?: CoHostUncheckedCreateNestedOneWithoutUserInput
+    jobs?: JobPostingUncheckedCreateNestedManyWithoutAuthorInput
+    reviewsWritten?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    reviewsReceived?: ReviewUncheckedCreateNestedManyWithoutRevieweeInput
+    bookings?: BookingUncheckedCreateNestedManyWithoutGuestInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
+    interviewsAsHost?: InterviewUncheckedCreateNestedManyWithoutHostInput
+    interviewsAsCandidate?: InterviewUncheckedCreateNestedManyWithoutCandidateInput
+    engagementsAsStaff?: EngagementUncheckedCreateNestedManyWithoutStaffInput
+  }
+
+  export type UserCreateOrConnectWithoutEngagementsAsHostInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutEngagementsAsHostInput, UserUncheckedCreateWithoutEngagementsAsHostInput>
+  }
+
+  export type UserCreateWithoutEngagementsAsStaffInput = {
+    id?: string
+    email: string
+    name: string
+    passwordHash: string
+    userType: $Enums.UserType
+    avatar?: string | null
+    phone?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
+    country?: string | null
+    status?: $Enums.UserStatus
+    verificationStatus?: $Enums.VerificationStatus
+    createdAt?: Date | string
+    lastActive?: Date | string
+    isOnboardingCompleted?: boolean
+    dateOfBirth?: Date | string | null
+    numberOfProperties?: number | null
+    hostingExperience?: number | null
+    propertyLocations?: string | null
+    propertyTypes?: string | null
+    platformsUsed?: string | null
+    monthlyIncomeTarget?: string | null
+    usesCoHost?: boolean | null
+    supportRequired?: string | null
+    uploadId?: string | null
+    proofOfOwnership?: string | null
+    businessRegistration?: string | null
+    postcode?: string | null
+    hasAirbnbExperience?: boolean | null
+    yearsOfExperience?: number | null
+    propertiesManaged?: number | null
+    averageRating?: number | null
+    servicesOffered?: string | null
+    availability?: string | null
+    areasCovered?: string | null
+    proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
+    references?: string | null
+    insurance?: string | null
+    approvalReason?: string | null
+    properties?: PropertyCreateNestedManyWithoutOwnerInput
+    cohostProfile?: CoHostCreateNestedOneWithoutUserInput
+    jobs?: JobPostingCreateNestedManyWithoutAuthorInput
+    reviewsWritten?: ReviewCreateNestedManyWithoutReviewerInput
+    reviewsReceived?: ReviewCreateNestedManyWithoutRevieweeInput
+    bookings?: BookingCreateNestedManyWithoutGuestInput
+    payments?: PaymentCreateNestedManyWithoutUserInput
+    interviewsAsHost?: InterviewCreateNestedManyWithoutHostInput
+    interviewsAsCandidate?: InterviewCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementCreateNestedManyWithoutHostInput
+  }
+
+  export type UserUncheckedCreateWithoutEngagementsAsStaffInput = {
+    id?: string
+    email: string
+    name: string
+    passwordHash: string
+    userType: $Enums.UserType
+    avatar?: string | null
+    phone?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
+    country?: string | null
+    status?: $Enums.UserStatus
+    verificationStatus?: $Enums.VerificationStatus
+    createdAt?: Date | string
+    lastActive?: Date | string
+    isOnboardingCompleted?: boolean
+    dateOfBirth?: Date | string | null
+    numberOfProperties?: number | null
+    hostingExperience?: number | null
+    propertyLocations?: string | null
+    propertyTypes?: string | null
+    platformsUsed?: string | null
+    monthlyIncomeTarget?: string | null
+    usesCoHost?: boolean | null
+    supportRequired?: string | null
+    uploadId?: string | null
+    proofOfOwnership?: string | null
+    businessRegistration?: string | null
+    postcode?: string | null
+    hasAirbnbExperience?: boolean | null
+    yearsOfExperience?: number | null
+    propertiesManaged?: number | null
+    averageRating?: number | null
+    servicesOffered?: string | null
+    availability?: string | null
+    areasCovered?: string | null
+    proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
+    references?: string | null
+    insurance?: string | null
+    approvalReason?: string | null
+    properties?: PropertyUncheckedCreateNestedManyWithoutOwnerInput
+    cohostProfile?: CoHostUncheckedCreateNestedOneWithoutUserInput
+    jobs?: JobPostingUncheckedCreateNestedManyWithoutAuthorInput
+    reviewsWritten?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    reviewsReceived?: ReviewUncheckedCreateNestedManyWithoutRevieweeInput
+    bookings?: BookingUncheckedCreateNestedManyWithoutGuestInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
+    interviewsAsHost?: InterviewUncheckedCreateNestedManyWithoutHostInput
+    interviewsAsCandidate?: InterviewUncheckedCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementUncheckedCreateNestedManyWithoutHostInput
+  }
+
+  export type UserCreateOrConnectWithoutEngagementsAsStaffInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutEngagementsAsStaffInput, UserUncheckedCreateWithoutEngagementsAsStaffInput>
+  }
+
+  export type UserUpsertWithoutEngagementsAsHostInput = {
+    update: XOR<UserUpdateWithoutEngagementsAsHostInput, UserUncheckedUpdateWithoutEngagementsAsHostInput>
+    create: XOR<UserCreateWithoutEngagementsAsHostInput, UserUncheckedCreateWithoutEngagementsAsHostInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutEngagementsAsHostInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutEngagementsAsHostInput, UserUncheckedUpdateWithoutEngagementsAsHostInput>
+  }
+
+  export type UserUpdateWithoutEngagementsAsHostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    userType?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    verificationStatus?: EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastActive?: DateTimeFieldUpdateOperationsInput | Date | string
+    isOnboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    numberOfProperties?: NullableIntFieldUpdateOperationsInput | number | null
+    hostingExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    propertyLocations?: NullableStringFieldUpdateOperationsInput | string | null
+    propertyTypes?: NullableStringFieldUpdateOperationsInput | string | null
+    platformsUsed?: NullableStringFieldUpdateOperationsInput | string | null
+    monthlyIncomeTarget?: NullableStringFieldUpdateOperationsInput | string | null
+    usesCoHost?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    supportRequired?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadId?: NullableStringFieldUpdateOperationsInput | string | null
+    proofOfOwnership?: NullableStringFieldUpdateOperationsInput | string | null
+    businessRegistration?: NullableStringFieldUpdateOperationsInput | string | null
+    postcode?: NullableStringFieldUpdateOperationsInput | string | null
+    hasAirbnbExperience?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    propertiesManaged?: NullableIntFieldUpdateOperationsInput | number | null
+    averageRating?: NullableFloatFieldUpdateOperationsInput | number | null
+    servicesOffered?: NullableStringFieldUpdateOperationsInput | string | null
+    availability?: NullableStringFieldUpdateOperationsInput | string | null
+    areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
+    proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
+    references?: NullableStringFieldUpdateOperationsInput | string | null
+    insurance?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
+    properties?: PropertyUpdateManyWithoutOwnerNestedInput
+    cohostProfile?: CoHostUpdateOneWithoutUserNestedInput
+    jobs?: JobPostingUpdateManyWithoutAuthorNestedInput
+    reviewsWritten?: ReviewUpdateManyWithoutReviewerNestedInput
+    reviewsReceived?: ReviewUpdateManyWithoutRevieweeNestedInput
+    bookings?: BookingUpdateManyWithoutGuestNestedInput
+    payments?: PaymentUpdateManyWithoutUserNestedInput
+    interviewsAsHost?: InterviewUpdateManyWithoutHostNestedInput
+    interviewsAsCandidate?: InterviewUpdateManyWithoutCandidateNestedInput
+    engagementsAsStaff?: EngagementUpdateManyWithoutStaffNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutEngagementsAsHostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    userType?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    verificationStatus?: EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastActive?: DateTimeFieldUpdateOperationsInput | Date | string
+    isOnboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    numberOfProperties?: NullableIntFieldUpdateOperationsInput | number | null
+    hostingExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    propertyLocations?: NullableStringFieldUpdateOperationsInput | string | null
+    propertyTypes?: NullableStringFieldUpdateOperationsInput | string | null
+    platformsUsed?: NullableStringFieldUpdateOperationsInput | string | null
+    monthlyIncomeTarget?: NullableStringFieldUpdateOperationsInput | string | null
+    usesCoHost?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    supportRequired?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadId?: NullableStringFieldUpdateOperationsInput | string | null
+    proofOfOwnership?: NullableStringFieldUpdateOperationsInput | string | null
+    businessRegistration?: NullableStringFieldUpdateOperationsInput | string | null
+    postcode?: NullableStringFieldUpdateOperationsInput | string | null
+    hasAirbnbExperience?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    propertiesManaged?: NullableIntFieldUpdateOperationsInput | number | null
+    averageRating?: NullableFloatFieldUpdateOperationsInput | number | null
+    servicesOffered?: NullableStringFieldUpdateOperationsInput | string | null
+    availability?: NullableStringFieldUpdateOperationsInput | string | null
+    areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
+    proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
+    references?: NullableStringFieldUpdateOperationsInput | string | null
+    insurance?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
+    properties?: PropertyUncheckedUpdateManyWithoutOwnerNestedInput
+    cohostProfile?: CoHostUncheckedUpdateOneWithoutUserNestedInput
+    jobs?: JobPostingUncheckedUpdateManyWithoutAuthorNestedInput
+    reviewsWritten?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    reviewsReceived?: ReviewUncheckedUpdateManyWithoutRevieweeNestedInput
+    bookings?: BookingUncheckedUpdateManyWithoutGuestNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
+    interviewsAsHost?: InterviewUncheckedUpdateManyWithoutHostNestedInput
+    interviewsAsCandidate?: InterviewUncheckedUpdateManyWithoutCandidateNestedInput
+    engagementsAsStaff?: EngagementUncheckedUpdateManyWithoutStaffNestedInput
+  }
+
+  export type UserUpsertWithoutEngagementsAsStaffInput = {
+    update: XOR<UserUpdateWithoutEngagementsAsStaffInput, UserUncheckedUpdateWithoutEngagementsAsStaffInput>
+    create: XOR<UserCreateWithoutEngagementsAsStaffInput, UserUncheckedCreateWithoutEngagementsAsStaffInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutEngagementsAsStaffInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutEngagementsAsStaffInput, UserUncheckedUpdateWithoutEngagementsAsStaffInput>
+  }
+
+  export type UserUpdateWithoutEngagementsAsStaffInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    userType?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    verificationStatus?: EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastActive?: DateTimeFieldUpdateOperationsInput | Date | string
+    isOnboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    numberOfProperties?: NullableIntFieldUpdateOperationsInput | number | null
+    hostingExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    propertyLocations?: NullableStringFieldUpdateOperationsInput | string | null
+    propertyTypes?: NullableStringFieldUpdateOperationsInput | string | null
+    platformsUsed?: NullableStringFieldUpdateOperationsInput | string | null
+    monthlyIncomeTarget?: NullableStringFieldUpdateOperationsInput | string | null
+    usesCoHost?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    supportRequired?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadId?: NullableStringFieldUpdateOperationsInput | string | null
+    proofOfOwnership?: NullableStringFieldUpdateOperationsInput | string | null
+    businessRegistration?: NullableStringFieldUpdateOperationsInput | string | null
+    postcode?: NullableStringFieldUpdateOperationsInput | string | null
+    hasAirbnbExperience?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    propertiesManaged?: NullableIntFieldUpdateOperationsInput | number | null
+    averageRating?: NullableFloatFieldUpdateOperationsInput | number | null
+    servicesOffered?: NullableStringFieldUpdateOperationsInput | string | null
+    availability?: NullableStringFieldUpdateOperationsInput | string | null
+    areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
+    proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
+    references?: NullableStringFieldUpdateOperationsInput | string | null
+    insurance?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
+    properties?: PropertyUpdateManyWithoutOwnerNestedInput
+    cohostProfile?: CoHostUpdateOneWithoutUserNestedInput
+    jobs?: JobPostingUpdateManyWithoutAuthorNestedInput
+    reviewsWritten?: ReviewUpdateManyWithoutReviewerNestedInput
+    reviewsReceived?: ReviewUpdateManyWithoutRevieweeNestedInput
+    bookings?: BookingUpdateManyWithoutGuestNestedInput
+    payments?: PaymentUpdateManyWithoutUserNestedInput
+    interviewsAsHost?: InterviewUpdateManyWithoutHostNestedInput
+    interviewsAsCandidate?: InterviewUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUpdateManyWithoutHostNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutEngagementsAsStaffInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    userType?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    verificationStatus?: EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastActive?: DateTimeFieldUpdateOperationsInput | Date | string
+    isOnboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    numberOfProperties?: NullableIntFieldUpdateOperationsInput | number | null
+    hostingExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    propertyLocations?: NullableStringFieldUpdateOperationsInput | string | null
+    propertyTypes?: NullableStringFieldUpdateOperationsInput | string | null
+    platformsUsed?: NullableStringFieldUpdateOperationsInput | string | null
+    monthlyIncomeTarget?: NullableStringFieldUpdateOperationsInput | string | null
+    usesCoHost?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    supportRequired?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadId?: NullableStringFieldUpdateOperationsInput | string | null
+    proofOfOwnership?: NullableStringFieldUpdateOperationsInput | string | null
+    businessRegistration?: NullableStringFieldUpdateOperationsInput | string | null
+    postcode?: NullableStringFieldUpdateOperationsInput | string | null
+    hasAirbnbExperience?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    propertiesManaged?: NullableIntFieldUpdateOperationsInput | number | null
+    averageRating?: NullableFloatFieldUpdateOperationsInput | number | null
+    servicesOffered?: NullableStringFieldUpdateOperationsInput | string | null
+    availability?: NullableStringFieldUpdateOperationsInput | string | null
+    areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
+    proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
+    references?: NullableStringFieldUpdateOperationsInput | string | null
+    insurance?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
+    properties?: PropertyUncheckedUpdateManyWithoutOwnerNestedInput
+    cohostProfile?: CoHostUncheckedUpdateOneWithoutUserNestedInput
+    jobs?: JobPostingUncheckedUpdateManyWithoutAuthorNestedInput
+    reviewsWritten?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    reviewsReceived?: ReviewUncheckedUpdateManyWithoutRevieweeNestedInput
+    bookings?: BookingUncheckedUpdateManyWithoutGuestNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
+    interviewsAsHost?: InterviewUncheckedUpdateManyWithoutHostNestedInput
+    interviewsAsCandidate?: InterviewUncheckedUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUncheckedUpdateManyWithoutHostNestedInput
+  }
+
   export type UserCreateWithoutPropertiesInput = {
     id?: string
     email: string
@@ -21622,6 +23964,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -21633,6 +23977,8 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutUserInput
     interviewsAsHost?: InterviewCreateNestedManyWithoutHostInput
     interviewsAsCandidate?: InterviewCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementCreateNestedManyWithoutStaffInput
   }
 
   export type UserUncheckedCreateWithoutPropertiesInput = {
@@ -21674,6 +24020,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -21685,6 +24033,8 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     interviewsAsHost?: InterviewUncheckedCreateNestedManyWithoutHostInput
     interviewsAsCandidate?: InterviewUncheckedCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementUncheckedCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementUncheckedCreateNestedManyWithoutStaffInput
   }
 
   export type UserCreateOrConnectWithoutPropertiesInput = {
@@ -21843,6 +24193,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21854,6 +24206,8 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUpdateManyWithoutStaffNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPropertiesInput = {
@@ -21895,6 +24249,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21906,6 +24262,8 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUncheckedUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUncheckedUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUncheckedUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUncheckedUpdateManyWithoutStaffNestedInput
   }
 
   export type CoHostUpsertWithWhereUniqueWithoutPropertiesInput = {
@@ -22012,6 +24370,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -22023,6 +24383,8 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutUserInput
     interviewsAsHost?: InterviewCreateNestedManyWithoutHostInput
     interviewsAsCandidate?: InterviewCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementCreateNestedManyWithoutStaffInput
   }
 
   export type UserUncheckedCreateWithoutCohostProfileInput = {
@@ -22064,6 +24426,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -22075,6 +24439,8 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     interviewsAsHost?: InterviewUncheckedCreateNestedManyWithoutHostInput
     interviewsAsCandidate?: InterviewUncheckedCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementUncheckedCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementUncheckedCreateNestedManyWithoutStaffInput
   }
 
   export type UserCreateOrConnectWithoutCohostProfileInput = {
@@ -22177,6 +24543,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22188,6 +24556,8 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUpdateManyWithoutStaffNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCohostProfileInput = {
@@ -22229,6 +24599,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22240,6 +24612,8 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUncheckedUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUncheckedUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUncheckedUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUncheckedUpdateManyWithoutStaffNestedInput
   }
 
   export type PropertyUpsertWithWhereUniqueWithoutCohostsInput = {
@@ -22297,6 +24671,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -22308,6 +24684,8 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutUserInput
     interviewsAsHost?: InterviewCreateNestedManyWithoutHostInput
     interviewsAsCandidate?: InterviewCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementCreateNestedManyWithoutStaffInput
   }
 
   export type UserUncheckedCreateWithoutJobsInput = {
@@ -22349,6 +24727,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -22360,6 +24740,8 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     interviewsAsHost?: InterviewUncheckedCreateNestedManyWithoutHostInput
     interviewsAsCandidate?: InterviewUncheckedCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementUncheckedCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementUncheckedCreateNestedManyWithoutStaffInput
   }
 
   export type UserCreateOrConnectWithoutJobsInput = {
@@ -22462,6 +24844,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22473,6 +24857,8 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUpdateManyWithoutStaffNestedInput
   }
 
   export type UserUncheckedUpdateWithoutJobsInput = {
@@ -22514,6 +24900,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22525,6 +24913,8 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUncheckedUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUncheckedUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUncheckedUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUncheckedUpdateManyWithoutStaffNestedInput
   }
 
   export type PropertyUpsertWithoutJobsInput = {
@@ -22617,6 +25007,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -22628,6 +25020,8 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutUserInput
     interviewsAsHost?: InterviewCreateNestedManyWithoutHostInput
     interviewsAsCandidate?: InterviewCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementCreateNestedManyWithoutStaffInput
   }
 
   export type UserUncheckedCreateWithoutReviewsWrittenInput = {
@@ -22669,6 +25063,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -22680,6 +25076,8 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     interviewsAsHost?: InterviewUncheckedCreateNestedManyWithoutHostInput
     interviewsAsCandidate?: InterviewUncheckedCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementUncheckedCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementUncheckedCreateNestedManyWithoutStaffInput
   }
 
   export type UserCreateOrConnectWithoutReviewsWrittenInput = {
@@ -22726,6 +25124,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -22737,6 +25137,8 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutUserInput
     interviewsAsHost?: InterviewCreateNestedManyWithoutHostInput
     interviewsAsCandidate?: InterviewCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementCreateNestedManyWithoutStaffInput
   }
 
   export type UserUncheckedCreateWithoutReviewsReceivedInput = {
@@ -22778,6 +25180,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -22789,6 +25193,8 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     interviewsAsHost?: InterviewUncheckedCreateNestedManyWithoutHostInput
     interviewsAsCandidate?: InterviewUncheckedCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementUncheckedCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementUncheckedCreateNestedManyWithoutStaffInput
   }
 
   export type UserCreateOrConnectWithoutReviewsReceivedInput = {
@@ -22846,6 +25252,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22857,6 +25265,8 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUpdateManyWithoutStaffNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReviewsWrittenInput = {
@@ -22898,6 +25308,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22909,6 +25321,8 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUncheckedUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUncheckedUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUncheckedUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUncheckedUpdateManyWithoutStaffNestedInput
   }
 
   export type UserUpsertWithoutReviewsReceivedInput = {
@@ -22961,6 +25375,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22972,6 +25388,8 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUpdateManyWithoutStaffNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReviewsReceivedInput = {
@@ -23013,6 +25431,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23024,6 +25444,8 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUncheckedUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUncheckedUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUncheckedUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUncheckedUpdateManyWithoutStaffNestedInput
   }
 
   export type PropertyCreateWithoutBookingsInput = {
@@ -23110,6 +25532,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -23121,6 +25545,8 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutUserInput
     interviewsAsHost?: InterviewCreateNestedManyWithoutHostInput
     interviewsAsCandidate?: InterviewCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementCreateNestedManyWithoutStaffInput
   }
 
   export type UserUncheckedCreateWithoutBookingsInput = {
@@ -23162,6 +25588,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -23173,6 +25601,8 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     interviewsAsHost?: InterviewUncheckedCreateNestedManyWithoutHostInput
     interviewsAsCandidate?: InterviewUncheckedCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementUncheckedCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementUncheckedCreateNestedManyWithoutStaffInput
   }
 
   export type UserCreateOrConnectWithoutBookingsInput = {
@@ -23281,6 +25711,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23292,6 +25724,8 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUpdateManyWithoutStaffNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBookingsInput = {
@@ -23333,6 +25767,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23344,6 +25780,8 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUncheckedUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUncheckedUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUncheckedUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUncheckedUpdateManyWithoutStaffNestedInput
   }
 
   export type UserCreateWithoutPaymentsInput = {
@@ -23385,6 +25823,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -23396,6 +25836,8 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutGuestInput
     interviewsAsHost?: InterviewCreateNestedManyWithoutHostInput
     interviewsAsCandidate?: InterviewCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementCreateNestedManyWithoutStaffInput
   }
 
   export type UserUncheckedCreateWithoutPaymentsInput = {
@@ -23437,6 +25879,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -23448,6 +25892,8 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutGuestInput
     interviewsAsHost?: InterviewUncheckedCreateNestedManyWithoutHostInput
     interviewsAsCandidate?: InterviewUncheckedCreateNestedManyWithoutCandidateInput
+    engagementsAsHost?: EngagementUncheckedCreateNestedManyWithoutHostInput
+    engagementsAsStaff?: EngagementUncheckedCreateNestedManyWithoutStaffInput
   }
 
   export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -23505,6 +25951,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23516,6 +25964,8 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutGuestNestedInput
     interviewsAsHost?: InterviewUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUpdateManyWithoutStaffNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPaymentsInput = {
@@ -23557,6 +26007,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23568,6 +26020,8 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutGuestNestedInput
     interviewsAsHost?: InterviewUncheckedUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUncheckedUpdateManyWithoutCandidateNestedInput
+    engagementsAsHost?: EngagementUncheckedUpdateManyWithoutHostNestedInput
+    engagementsAsStaff?: EngagementUncheckedUpdateManyWithoutStaffNestedInput
   }
 
   export type PropertyCreateManyOwnerInput = {
@@ -23653,6 +26107,26 @@ export namespace Prisma {
     status?: $Enums.InterviewStatus
     date?: Date | string | null
     notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EngagementCreateManyHostInput = {
+    id?: string
+    staffId: string
+    status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EngagementCreateManyStaffInput = {
+    id?: string
+    hostId: string
+    status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -23920,6 +26394,66 @@ export namespace Prisma {
     status?: EnumInterviewStatusFieldUpdateOperationsInput | $Enums.InterviewStatus
     date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EngagementUpdateWithoutHostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    staff?: UserUpdateOneRequiredWithoutEngagementsAsStaffNestedInput
+  }
+
+  export type EngagementUncheckedUpdateWithoutHostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    staffId?: StringFieldUpdateOperationsInput | string
+    status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EngagementUncheckedUpdateManyWithoutHostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    staffId?: StringFieldUpdateOperationsInput | string
+    status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EngagementUpdateWithoutStaffInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    host?: UserUpdateOneRequiredWithoutEngagementsAsHostNestedInput
+  }
+
+  export type EngagementUncheckedUpdateWithoutStaffInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    hostId?: StringFieldUpdateOperationsInput | string
+    status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EngagementUncheckedUpdateManyWithoutStaffInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    hostId?: StringFieldUpdateOperationsInput | string
+    status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

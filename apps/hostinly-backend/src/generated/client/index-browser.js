@@ -171,9 +171,22 @@ exports.Prisma.UserScalarFieldEnum = {
   availability: 'availability',
   areasCovered: 'areasCovered',
   proofOfAddress: 'proofOfAddress',
+  resume: 'resume',
+  coverLetter: 'coverLetter',
   references: 'references',
   insurance: 'insurance',
   approvalReason: 'approvalReason'
+};
+
+exports.Prisma.EngagementScalarFieldEnum = {
+  id: 'id',
+  hostId: 'hostId',
+  staffId: 'staffId',
+  status: 'status',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.PropertyScalarFieldEnum = {
@@ -322,6 +335,12 @@ exports.VerificationStatus = exports.$Enums.VerificationStatus = {
   REJECTED: 'REJECTED'
 };
 
+exports.EngagementStatus = exports.$Enums.EngagementStatus = {
+  ACTIVE: 'ACTIVE',
+  PROBATION: 'PROBATION',
+  ENDED: 'ENDED'
+};
+
 exports.PropertyStatus = exports.$Enums.PropertyStatus = {
   AVAILABLE: 'AVAILABLE',
   MANAGED: 'MANAGED',
@@ -364,6 +383,7 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
 exports.Prisma.ModelName = {
   Interview: 'Interview',
   User: 'User',
+  Engagement: 'Engagement',
   Property: 'Property',
   CoHost: 'CoHost',
   JobPosting: 'JobPosting',

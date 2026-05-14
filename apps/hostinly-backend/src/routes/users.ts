@@ -39,13 +39,23 @@ const checkOnboardingStatus = (user: any): boolean => {
 
 router.get('/', async (req, res) => {
   try {
-    const data = await prisma.user.findMany();
-    // Filter to return only public fields
-    const safeData = data.map(user => {
-      const { passwordHash, ...userWithoutPassword } = user;
-      return userWithoutPassword;
+    const data = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        userType: true,
+        avatar: true,
+        phone: true,
+        city: true,
+        country: true,
+        status: true,
+        verificationStatus: true,
+        createdAt: true,
+        isOnboardingCompleted: true,
+      }
     });
-    sendSuccess(res, safeData);
+    sendSuccess(res, data);
   } catch (error: any) {
     sendError(res, error.message);
   }
@@ -66,6 +76,36 @@ router.get('/:id', async (req, res) => {
     const { passwordHash, ...userWithoutPassword } = user;
     sendSuccess(res, userWithoutPassword);
   } catch (error: any) {
+    // If the error is about missing columns, try a restricted select as a fallback
+    if (error.message.includes('resume') || error.message.includes('column')) {
+      try {
+        const fallbackUser = await prisma.user.findUnique({
+          where: { id: req.params.id },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            userType: true,
+            avatar: true,
+            phone: true,
+            address: true,
+            city: true,
+            state: true,
+            zipCode: true,
+            country: true,
+            status: true,
+            verificationStatus: true,
+            createdAt: true,
+            lastActive: true,
+            // Exclude missing columns here
+          }
+        });
+        if (!fallbackUser) return sendError(res, 'User not found', 404);
+        return sendSuccess(res, fallbackUser);
+      } catch (innerError: any) {
+        return sendError(res, error.message);
+      }
+    }
     sendError(res, error.message);
   }
 });

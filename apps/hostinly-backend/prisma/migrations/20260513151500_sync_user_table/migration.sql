@@ -1,16 +1,38 @@
 -- AlterEnum
-ALTER TYPE "UserType" ADD VALUE 'CLEANER';
+DO $$ BEGIN
+    ALTER TYPE "UserType" ADD VALUE 'CLEANER';
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- CreateEnum
-CREATE TYPE "InterviewStatus" AS ENUM ('PENDING', 'SCHEDULED', 'COMPLETED', 'CANCELLED');
+DO $$ BEGIN
+    CREATE TYPE "InterviewStatus" AS ENUM ('PENDING', 'SCHEDULED', 'COMPLETED', 'CANCELLED');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- AlterTable
-ALTER TABLE "users" ADD COLUMN "is_onboarding_completed" BOOLEAN NOT NULL DEFAULT false,
-ADD COLUMN "resume" TEXT,
-ADD COLUMN "cover_letter" TEXT;
+DO $$ BEGIN
+    ALTER TABLE "users" ADD COLUMN "is_onboarding_completed" BOOLEAN NOT NULL DEFAULT false;
+EXCEPTION
+    WHEN duplicate_column THEN null;
+END $$;
+
+DO $$ BEGIN
+    ALTER TABLE "users" ADD COLUMN "resume" TEXT;
+EXCEPTION
+    WHEN duplicate_column THEN null;
+END $$;
+
+DO $$ BEGIN
+    ALTER TABLE "users" ADD COLUMN "cover_letter" TEXT;
+EXCEPTION
+    WHEN duplicate_column THEN null;
+END $$;
 
 -- CreateTable
-CREATE TABLE "interviews" (
+CREATE TABLE IF NOT EXISTS "interviews" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "host_id" UUID NOT NULL,
     "candidate_id" UUID NOT NULL,
@@ -24,7 +46,14 @@ CREATE TABLE "interviews" (
 );
 
 -- AddForeignKey
-ALTER TABLE "interviews" ADD CONSTRAINT "interviews_host_id_fkey" FOREIGN KEY ("host_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "interviews" ADD CONSTRAINT "interviews_host_id_fkey" FOREIGN KEY ("host_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
--- AddForeignKey
-ALTER TABLE "interviews" ADD CONSTRAINT "interviews_candidate_id_fkey" FOREIGN KEY ("candidate_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "interviews" ADD CONSTRAINT "interviews_candidate_id_fkey" FOREIGN KEY ("candidate_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;

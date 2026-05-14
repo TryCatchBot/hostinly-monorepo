@@ -4,6 +4,39 @@ import { sendSuccess, sendError } from '../middleware';
 
 const router: Router = Router();
 
+// Get all interviews
+router.get('/', async (req, res) => {
+  try {
+    const interviews = await prisma.interview.findMany({
+      include: {
+        host: { select: { id: true, name: true, email: true, userType: true } },
+        candidate: { select: { id: true, name: true, email: true, userType: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    sendSuccess(res, interviews);
+  } catch (error: any) {
+    sendError(res, error.message);
+  }
+});
+
+// Get individual interview by id
+router.get('/:id', async (req, res) => {
+  try {
+    const interview = await prisma.interview.findUnique({
+      where: { id: req.params.id },
+      include: {
+        host: { select: { id: true, name: true, email: true, userType: true } },
+        candidate: { select: { id: true, name: true, email: true, userType: true } },
+      },
+    });
+    if (!interview) return sendError(res, 'Interview not found', 404);
+    sendSuccess(res, interview);
+  } catch (error: any) {
+    sendError(res, error.message);
+  }
+});
+
 // Create an interview request
 router.post('/', async (req, res) => {
   try {
