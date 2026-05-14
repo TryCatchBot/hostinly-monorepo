@@ -3,26 +3,70 @@
 import DashboardLayout from '@/components/DashboardLayout';
 import PropertyCard from '@/components/PropertyCard';
 import AddPropertyModal from '@/components/AddPropertyModal';
-import { mockProperties, addProperty, type Property } from '@/lib/mockData';
+import { type Property } from '@/lib/mockData';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/api';
 
 export default function PropertiesPage() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const [showAddPropertyModal, setShowAddPropertyModal] = useState(false);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!isLoading && !user) {
+    if (!authLoading && !user) {
       router.push('/login');
     }
-  }, [user, isLoading, router]);
+  }, [user, authLoading, router]);
 
-  if (isLoading || !user) {
+  useEffect(() => {
+    const fetchProperties = async () => {
+      if (!user) return;
+      
+      try {
+        const token = localStorage.getItem('hostinly_token');
+        const response = await fetch(`${API_URL}/properties`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const result = await response.json();
+        if (result.success) {
+          // Map backend properties to frontend Property type if necessary
+          const mappedProperties = result.data.map((p: any) => ({
+            id: p.id,
+            title: p.title,
+            location: `${p.address}, ${p.city}`,
+            price: p.price,
+            bedrooms: p.bedrooms,
+            bathrooms: p.bathrooms,
+            image: p.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop',
+            images: p.images,
+            rating: 4.5, // Default rating
+            reviews: 0,
+            status: p.status.toLowerCase(),
+          }));
+          setProperties(mappedProperties);
+        }
+      } catch (error) {
+        console.error('Failed to fetch properties:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchProperties();
+    }
+  }, [user]);
+
+  if (authLoading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
@@ -32,11 +76,11 @@ export default function PropertiesPage() {
 
   const isHost = user.userType === 'host';
   const displayProperties = isHost
-    ? mockProperties.filter((p) => p.status !== 'available')
-    : mockProperties.filter((p) => p.status === 'available');
+    ? properties.filter((p) => p.status !== 'available')
+    : properties.filter((p) => p.status === 'available');
 
   const handleAddProperty = (property: Property) => {
-    addProperty(property);
+    setProperties((prev) => [property, ...prev]);
     setShowAddPropertyModal(false);
   };
 

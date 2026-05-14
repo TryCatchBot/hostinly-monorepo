@@ -45,12 +45,30 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   try {
-    const { price, ...rest } = req.body;
+    const { price, ownerId, ...rest } = req.body;
     const data = await prisma.property.update({
       where: { id: req.params.id },
       data: {
         ...rest,
-        price: price ? parseFloat(price) : undefined
+        price: price ? parseFloat(price) : undefined,
+        owner: ownerId ? { connect: { id: ownerId } } : undefined
+      },
+    });
+    sendSuccess(res, data);
+  } catch (error: any) {
+    sendError(res, error.message);
+  }
+});
+
+router.patch('/:id', async (req, res) => {
+  try {
+    const { price, ownerId, ...rest } = req.body;
+    const data = await prisma.property.update({
+      where: { id: req.params.id },
+      data: {
+        ...rest,
+        price: price !== undefined ? parseFloat(price) : undefined,
+        owner: ownerId ? { connect: { id: ownerId } } : undefined
       },
     });
     sendSuccess(res, data);

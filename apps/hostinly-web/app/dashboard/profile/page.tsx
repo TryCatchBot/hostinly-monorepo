@@ -2,13 +2,13 @@
 export const dynamic = "force-dynamic";
 
 import DashboardLayout from '@/components/DashboardLayout';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Check, Upload, Edit2, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function ProfilePage() {
+function ProfilePageContent() {
   const { user, updateUser, fetchUser } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -1058,5 +1058,19 @@ export default function ProfilePage() {
         </form>
       </div>
     </DashboardLayout>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader2 className="w-12 h-12 animate-spin text-primary" />
+        </div>
+      </DashboardLayout>
+    }>
+      <ProfilePageContent />
+    </Suspense>
   );
 }

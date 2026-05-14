@@ -28,11 +28,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard', alwaysEnabled: true },
     { icon: Home, label: 'Properties', href: '/dashboard/properties' },
-    { icon: Users, label: 'Co-Hosts', href: '/dashboard/cohosts' },
+    { 
+      icon: Users, 
+      label: 'Co-Hosts', 
+      href: '/dashboard/cohosts',
+      hidden: user?.userType === 'cohost' || user?.userType === 'cleaner'
+    },
     { icon: MessageSquare, label: 'Interviews', href: '/dashboard/interviews' },
     { icon: Briefcase, label: 'Jobs', href: '/dashboard/jobs' },
     { icon: CreditCard, label: 'Billing', href: '/dashboard/billing' },
-  ];
+  ].filter(item => !item.hidden);
 
   const isActive = (href: string) => pathname === href || (href !== '/dashboard' && pathname?.startsWith(href));
 

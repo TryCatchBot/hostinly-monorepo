@@ -6,10 +6,29 @@ const router: Router = Router();
 
 router.get('/', async (req, res) => {
   try {
-    const data = await prisma.jobPosting.findMany({
-      include: { author: true, property: true }
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      prisma.jobPosting.findMany({
+        skip,
+        take: limit,
+        include: { author: true, property: true },
+        orderBy: { createdAt: 'desc' }
+      }),
+      prisma.jobPosting.count()
+    ]);
+
+    sendSuccess(res, { 
+      jobs: data, 
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      }
     });
-    sendSuccess(res, data);
   } catch (error: any) {
     sendError(res, error.message);
   }
@@ -46,9 +65,31 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   try {
+    const { authorId, propertyId, ...rest } = req.body;
     const data = await prisma.jobPosting.update({
       where: { id: req.params.id },
-      data: req.body,
+      data: {
+        ...rest,
+        author: authorId ? { connect: { id: authorId } } : undefined,
+        property: propertyId ? { connect: { id: propertyId } } : undefined
+      },
+    });
+    sendSuccess(res, data);
+  } catch (error: any) {
+    sendError(res, error.message);
+  }
+});
+
+router.patch('/:id', async (req, res) => {
+  try {
+    const { authorId, propertyId, ...rest } = req.body;
+    const data = await prisma.jobPosting.update({
+      where: { id: req.params.id },
+      data: {
+        ...rest,
+        author: authorId ? { connect: { id: authorId } } : undefined,
+        property: propertyId ? { connect: { id: propertyId } } : undefined
+      },
     });
     sendSuccess(res, data);
   } catch (error: any) {
