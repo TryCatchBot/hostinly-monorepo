@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 import type { JobPosting } from '@/lib/mockData';
+import { useAuth } from '@/context/AuthContext';
 
 interface PostJobModalProps {
   isOpen: boolean;
@@ -10,7 +11,12 @@ interface PostJobModalProps {
   onPost: (job: JobPosting) => void;
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/api';
+
 export default function PostJobModal({ isOpen, onClose, onPost }: PostJobModalProps) {
+  const { user } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -28,36 +34,57 @@ export default function PostJobModal({ isOpen, onClose, onPost }: PostJobModalPr
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     
     if (!formData.title || !formData.description || !formData.propertyLocation || !formData.budget || !formData.duration || !formData.experience) {
-      alert('Please fill in all fields');
+      setError('Please fill in all fields');
       return;
     }
 
-    const newJob: JobPosting = {
-      id: Math.random().toString(36).substring(7),
-      title: formData.title,
-      description: formData.description,
-      propertyLocation: formData.propertyLocation,
-      budget: parseFloat(formData.budget),
-      duration: formData.duration,
-      experience: formData.experience,
-      status: 'open' as const,
-      applications: 0,
-    };
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        title: formData.title,
+        description: formData.description,
+        budget: `$${formData.budget}`,
+        location: formData.propertyLocation,
+        type: formData.duration,
+        authorId: user?.id,
+      };
 
-    onPost(newJob);
-    setFormData({
-      title: '',
-      description: '',
-      propertyLocation: '',
-      budget: '',
-      duration: '',
-      experience: '',
-    });
-    onClose();
+      const token = localStorage.getItem('hostinly_token');
+      const response = await fetch(`${API_URL}/jobs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to post job');
+      }
+
+      onPost(result.data);
+      setFormData({
+        title: '',
+        description: '',
+        propertyLocation: '',
+        budget: '',
+        duration: '',
+        experience: '',
+      });
+      onClose();
+    } catch (err: any) {
+      setError(err.message || 'An error occurred while posting the job');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -74,6 +101,12 @@ export default function PostJobModal({ isOpen, onClose, onPost }: PostJobModalPr
             <X size={24} />
           </button>
         </div>
+
+        {error && (
+          <div className="mx-6 mt-4 p-3 bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-lg">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
@@ -161,15 +194,17 @@ export default function PostJobModal({ isOpen, onClose, onPost }: PostJobModalPr
           <div className="flex gap-3 pt-4">
             <button
               type="submit"
-              className="flex-1 px-4 py-2 rounded-lg font-medium text-white transition-opacity hover:opacity-90"
+              disabled={isSubmitting}
+              className="flex-1 px-4 py-2 rounded-lg font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 flex items-center justify-center"
               style={{ background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))' }}
             >
-              Post Job
+              {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Post Job'}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 rounded-lg font-medium border border-border text-foreground hover:bg-muted transition-colors"
+              disabled={isSubmitting}
+              className="flex-1 px-4 py-2 rounded-lg font-medium border border-border text-foreground hover:bg-muted transition-colors disabled:opacity-50"
             >
               Cancel
             </button>

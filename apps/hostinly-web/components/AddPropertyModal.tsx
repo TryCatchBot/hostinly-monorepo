@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { X, Upload, Trash2, Star } from 'lucide-react';
 import type { Property } from '@/lib/mockData';
+import { useAuth } from '@/context/AuthContext';
 
 interface AddPropertyModalProps {
   isOpen: boolean;
@@ -10,8 +11,12 @@ interface AddPropertyModalProps {
   onAdd: (property: Property) => void;
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/api';
+
 export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddPropertyModalProps) {
+  const { user } = useAuth();
   const [step, setStep] = useState<0 | 1 | 2 | 3 | 4>(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [imageInput, setImageInput] = useState('');
   const [listForm, setListForm] = useState({
@@ -184,41 +189,53 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
       return;
     }
 
-    const favorite = listForm.upload_property_photos.find((p) => p.isFavorite);
-    const imageUrls = listForm.upload_property_photos.map((p) => p.url);
-    const primaryImage =
-      favorite?.url ||
-      imageUrls[0] ||
-      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop';
+    setIsSubmitting(true);
+    try {
+      const favorite = listForm.upload_property_photos.find((p) => p.isFavorite);
+      const imageUrls = listForm.upload_property_photos.map((p) => p.url);
+      const primaryImage =
+        favorite?.url ||
+        imageUrls[0] ||
+        'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop';
 
-    const id = Math.random().toString(36).substring(7);
-    const newProperty: Property = {
-      id,
-      title: listForm.property_title,
-      location: `${listForm.city}, ${listForm.postcode}`,
-      price: 0,
-      bedrooms: parseInt(listForm.number_of_bedrooms),
-      bathrooms: parseFloat(listForm.number_of_bathrooms),
-      image: primaryImage,
-      images: imageUrls.length > 0 ? imageUrls : [primaryImage],
-      rating: 4.5,
-      reviews: 0,
-      status: 'pending' as const,
-    };
+      const payload = {
+        title: listForm.property_title,
+        description: `Type: ${listForm.property_type}. Services: ${listForm.services_required}`,
+        address: listForm.full_address,
+        city: listForm.city,
+        price: 0,
+        ownerId: user?.id,
+        images: imageUrls.length > 0 ? imageUrls : [primaryImage],
+        amenities: listForm.services_required.split(',').map((s) => s.trim()),
+        bedrooms: parseInt(listForm.number_of_bedrooms),
+        bathrooms: parseFloat(listForm.number_of_bathrooms),
+        guests: parseInt(listForm.maximum_guest_capacity),
+      };
 
-    const stored = localStorage.getItem('hostinly_list_your_property_submissions');
-    const parsed = stored ? (JSON.parse(stored) as unknown) : [];
-    const submissions = Array.isArray(parsed) ? parsed : [];
-    submissions.push({
-      id,
-      ...listForm,
-      created_at: new Date().toISOString(),
-    });
-    localStorage.setItem('hostinly_list_your_property_submissions', JSON.stringify(submissions));
+      const token = localStorage.getItem('hostinly_token');
+      const response = await fetch(`${API_URL}/properties`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
-    onAdd(newProperty);
-    resetForm();
-    onClose();
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to create property');
+      }
+
+      onAdd(result.data);
+      resetForm();
+      onClose();
+    } catch (err: any) {
+      setError(err.message || 'An error occurred while creating the property');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -818,13 +835,14 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 rounded-lg font-medium text-white transition-opacity hover:opacity-90"
+              disabled={isSubmitting}
+              className="flex-1 px-4 py-2 rounded-lg font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
               style={{
                 background:
                   'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
               }}
             >
-              {step === 4 ? 'Submit' : 'Continue'}
+              {step === 4 ? (isSubmitting ? 'Listing...' : 'List My Property') : 'Next Step'}
             </button>
             <button
               type="button"

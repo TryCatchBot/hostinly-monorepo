@@ -20,9 +20,10 @@ import {
   type CoHost,
 } from '@/lib/mockData';
 import { useAuth } from '@/context/AuthContext';
-import { Home, Users, Briefcase, TrendingUp, Plus, AlertCircle } from 'lucide-react';
+import { Home, Users, Briefcase, TrendingUp, Plus, AlertCircle, Activity, ArrowUpRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/api';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -30,14 +31,39 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [showAddPropertyModal, setShowAddPropertyModal] = useState(false);
   const [showPostJobModal, setShowPostJobModal] = useState(false);
+  const [stats, setStats] = useState<any>(null);
+  const [activities, setActivities] = useState<any[]>([]);
+  const [isDataLoading, setIsDataLoading] = useState(true);
 
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/login');
     } else if (user) {
       fetchUser();
+      fetchDashboardData();
     }
   }, [user, isLoading, router]);
+
+  const fetchDashboardData = async () => {
+    setIsDataLoading(true);
+    try {
+      const token = localStorage.getItem('hostinly_token');
+      const [statsRes, activityRes] = await Promise.all([
+        fetch(`${API_URL}/admin/stats`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${API_URL}/admin/recent-activity`, { headers: { Authorization: `Bearer ${token}` } })
+      ]);
+      
+      const statsData = await statsRes.json();
+      const activityData = await activityRes.json();
+      
+      if (statsData.success) setStats(statsData.data);
+      if (activityData.success) setActivities(activityData.data);
+    } catch (error) {
+      console.error('Failed to fetch dashboard data:', error);
+    } finally {
+      setIsDataLoading(false);
+    }
+  };
 
   if (isLoading || !user) {
     return (
@@ -68,31 +94,27 @@ export default function DashboardPage() {
     router.push(`/dashboard/cohosts/${cohost.id}`);
   };
 
-  // Stats for dashboard
-  const stats = [
+  const dashboardStats = [
     {
-      label: 'Active Properties',
-      value: hostProperties.length,
+      label: 'Total Properties',
+      value: stats?.propertyCount || 0,
       icon: Home,
       color: 'text-blue-600',
+      trend: '+12%',
     },
     {
-      label: 'Total Revenue',
-      value: `$${(hostProperties.reduce((sum, p) => sum + p.price * 30, 0) / 1000).toFixed(1)}k`,
+      label: 'Revenue',
+      value: `$${(stats?.totalRevenue / 1000 || 0).toFixed(1)}k`,
       icon: TrendingUp,
       color: 'text-green-600',
+      trend: '+8%',
     },
     {
-      label: 'Co-Hosts',
-      value: 4,
-      icon: Users,
-      color: 'text-purple-600',
-    },
-    {
-      label: 'Available Listings',
-      value: availableProperties.length,
+      label: 'Active Jobs',
+      value: stats?.activeJobCount || 0,
       icon: Briefcase,
       color: 'text-orange-600',
+      trend: '+5',
     },
   ];
 
@@ -101,12 +123,18 @@ export default function DashboardPage() {
   return (
     <DashboardLayout>
       {/* Subtitle */}
-      <div className="mb-6 sm:mb-8">
-        <p className="text-sm sm:text-base text-muted-foreground">
-          {isHost
-            ? 'Manage your properties and find the perfect co-hosts'
-            : 'Explore properties and co-hosting opportunities'}
-        </p>
+      <div className="mb-6 sm:mb-8 flex justify-between items-center">
+        <div>
+          <p className="text-sm sm:text-base text-muted-foreground">
+            {isHost
+              ? 'Here is what is happening with your properties today.'
+              : 'Explore properties and co-hosting opportunities'}
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={fetchDashboardData} disabled={isDataLoading}>
+          {isDataLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Activity className="h-4 w-4 mr-2" />}
+          Refresh
+        </Button>
       </div>
 
       {!isOnboarded && (
@@ -129,8 +157,8 @@ export default function DashboardPage() {
       )}
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {stats.map((stat, idx) => {
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        {dashboardStats.map((stat, idx) => {
           const Icon = stat.icon;
           return (
             <div key={idx} className="bg-background rounded-2xl shadow-soft border border-border p-5 sm:p-6 hover:shadow-medium transition-all hover:scale-[1.02]">
@@ -143,9 +171,99 @@ export default function DashboardPage() {
                   <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
               </div>
+              <div className="flex items-center text-xs font-bold text-green-600">
+                <ArrowUpRight className="h-3 w-3 mr-1" />
+                {stat.trend} <span className="text-muted-foreground font-medium ml-1">vs last month</span>
+              </div>
             </div>
           );
         })}
+      </div>
+
+      {/* Main Content Area */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        {/* Charts/Activity Column */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* Mock Chart Infographic */}
+          <div className="bg-background rounded-2xl border border-border p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-bold text-lg">Revenue Overview</h3>
+              <select className="text-xs font-bold bg-muted border-none rounded-lg px-2 py-1 outline-none">
+                <option>Last 7 Days</option>
+                <option>Last 30 Days</option>
+              </select>
+            </div>
+            <div className="h-48 flex items-end justify-between gap-2 px-2">
+              {[40, 70, 45, 90, 65, 85, 55].map((height, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
+                  <div 
+                    className="w-full bg-primary/20 rounded-t-lg transition-all group-hover:bg-primary/40 relative"
+                    style={{ height: `${height}%` }}
+                  >
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                      ${(height * 10).toLocaleString()}
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-bold text-muted-foreground">Day {i+1}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Sidebar Column */}
+        <div className="space-y-8">
+          {/* Quick Actions */}
+          <div className="bg-background rounded-2xl border border-border p-6 shadow-sm">
+            <h3 className="font-bold text-lg mb-4">Quick Actions</h3>
+            <div className="grid grid-cols-1 gap-3">
+              <Button 
+                className="w-full justify-start py-6 rounded-xl border-2 hover:bg-muted/50 transition-all"
+                variant="outline"
+                onClick={() => setShowAddPropertyModal(true)}
+              >
+                <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mr-3">
+                  <Plus size={18} />
+                </div>
+                <span className="font-bold">List New Property</span>
+              </Button>
+              <Button 
+                className="w-full justify-start py-6 rounded-xl border-2 hover:bg-muted/50 transition-all"
+                variant="outline"
+                onClick={() => setShowPostJobModal(true)}
+              >
+                <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center mr-3">
+                  <Plus size={18} />
+                </div>
+                <span className="font-bold">Post New Job</span>
+              </Button>
+            </div>
+          </div>
+
+          {/* Property Status Distribution */}
+          <div className="bg-background rounded-2xl border border-border p-6 shadow-sm">
+            <h3 className="font-bold text-lg mb-4">Property Status</h3>
+            <div className="space-y-4">
+              {stats?.propertyStats?.map((s: any, i: number) => (
+                <div key={i}>
+                  <div className="flex justify-between text-xs font-bold mb-1 uppercase tracking-wider">
+                    <span>{s.status.toLowerCase()}</span>
+                    <span>{s._count}</span>
+                  </div>
+                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full rounded-full ${
+                        s.status === 'AVAILABLE' ? 'bg-green-500' :
+                        s.status === 'MANAGED' ? 'bg-blue-500' : 'bg-gray-400'
+                      }`}
+                      style={{ width: `${(s._count / stats.propertyCount) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Tabs Navigation */}
@@ -298,6 +416,37 @@ export default function DashboardPage() {
                   <PropertyCard key={property.id} property={property} />
                 ))}
               </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Activity List */}
+      <div className="bg-background rounded-2xl border border-border p-6 shadow-sm mb-8">
+        <h3 className="font-bold text-lg mb-6">Recent Activity</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {activities.length > 0 ? activities.map((activity, idx) => (
+            <div key={idx} className="flex items-start gap-4 p-4 rounded-xl hover:bg-muted/30 transition-colors border border-transparent hover:border-border">
+              <div className={`p-2.5 rounded-xl ${
+                activity.type === 'USER_SIGNUP' ? 'bg-purple-100 text-purple-600' :
+                activity.type === 'JOB_POSTED' ? 'bg-orange-100 text-orange-600' :
+                'bg-blue-100 text-blue-600'
+              }`}>
+                <Activity size={18} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground leading-snug">
+                  {activity.type === 'USER_SIGNUP' && <span>New user <span className="font-bold">{activity.data.name}</span> joined as <span className="capitalize">{activity.data.userType.toLowerCase()}</span></span>}
+                  {activity.type === 'JOB_POSTED' && <span>Job <span className="font-bold truncate inline-block max-w-[150px] align-bottom">{activity.data.title}</span> posted by {activity.data.author.name}</span>}
+                  {activity.type === 'PROPERTY_ADDED' && <span>Property <span className="font-bold truncate inline-block max-w-[150px] align-bottom">{activity.data.title}</span> added in {activity.data.city}</span>}
+                </p>
+                <p className="text-[10px] font-bold text-muted-foreground mt-1.5 uppercase tracking-wider">{new Date(activity.date).toLocaleDateString()} • {new Date(activity.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+              </div>
+            </div>
+          )) : (
+            <div className="col-span-full text-center py-12">
+              <Activity className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+              <p className="text-muted-foreground font-medium">No recent activity to show</p>
             </div>
           )}
         </div>

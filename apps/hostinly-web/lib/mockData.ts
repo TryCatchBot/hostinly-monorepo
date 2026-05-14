@@ -10,7 +10,8 @@ export interface Property {
   images?: string[];
   rating: number;
   reviews: number;
-  status: 'available' | 'managing' | 'pending';
+  status: 'available' | 'managing' | 'pending' | 'managed' | 'inactive';
+  description?: string;
 }
 
 export interface CoHost {

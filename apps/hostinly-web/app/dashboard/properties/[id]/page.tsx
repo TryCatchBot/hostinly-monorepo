@@ -1,30 +1,74 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import DashboardLayout from '@/components/DashboardLayout';
-import { getPropertyById, type Property } from '@/lib/mockData';
+import { type Property } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Star, MapPin, Bed, Bath, Edit2, Trash2 } from 'lucide-react';
+import { ArrowLeft, Star, MapPin, Bed, Bath, Edit2, Trash2, AlertTriangle } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/api';
 
 export default function PropertyDetailPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
+  const { user } = useAuth();
   const id = params?.id;
-  const [revision, setRevision] = useState(0);
-  const property = useMemo(
-    () => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const _ = revision;
-      return id ? getPropertyById(id) : null;
-    },
-    [id, revision]
-  );
+  
+  const [property, setProperty] = useState<Property | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [statusOverride, setStatusOverride] = useState<Property['status'] | null>(
-    null
-  );
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const fetchProperty = async () => {
+      if (!id) return;
+      
+      try {
+        const token = localStorage.getItem('hostinly_token');
+        const response = await fetch(`${API_URL}/properties/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const result = await response.json();
+        if (result.success) {
+          const p = result.data;
+          setProperty({
+            id: p.id,
+            title: p.title,
+            location: `${p.address}, ${p.city}`,
+            price: p.price,
+            bedrooms: p.bedrooms,
+            bathrooms: p.bathrooms,
+            image: p.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop',
+            images: p.images,
+            rating: 4.5,
+            reviews: 0,
+            status: p.status.toLowerCase(),
+          });
+        }
+      } catch (error) {
+        console.error('Failed to fetch property:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProperty();
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   if (!property) {
     return (
@@ -32,25 +76,43 @@ export default function PropertyDetailPage() {
         <div className="flex flex-col items-center justify-center min-h-screen">
           <h1 className="text-2xl font-bold mb-4">Property not found</h1>
           <Button
-            onClick={() => router.push('/dashboard')}
+            onClick={() => router.push('/dashboard/properties')}
             className="py-2 px-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
+            Back to Properties
           </Button>
         </div>
       </DashboardLayout>
     );
   }
 
-  const handleDelete = () => {
-    // In a real app, this would call an API
-    console.log('Deleting property:', property.id);
-    setShowDeleteConfirm(false);
-    router.push('/dashboard');
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const token = localStorage.getItem('hostinly_token');
+      const response = await fetch(`${API_URL}/properties/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const result = await response.json();
+      if (result.success) {
+        router.push('/dashboard/properties');
+      } else {
+        alert(result.error || 'Failed to delete property');
+      }
+    } catch (error) {
+      console.error('Failed to delete property:', error);
+      alert('An error occurred while deleting the property');
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
   };
 
-  const currentStatus = statusOverride ?? property.status;
+  const currentStatus = property.status;
 
   return (
     <DashboardLayout>
@@ -68,6 +130,7 @@ export default function PropertyDetailPage() {
             <Button
               variant="outline"
               className="py-2 px-4"
+              onClick={() => router.push(`/dashboard/properties/${id}/edit`)}
             >
               <Edit2 className="h-4 w-4 mr-2" />
               Edit
@@ -134,7 +197,7 @@ export default function PropertyDetailPage() {
             <div className="mb-8">
               <h2 className="text-2xl font-bold mb-4">About this property</h2>
               <p className="text-muted-foreground leading-relaxed">
-                This beautiful property is located in the heart of {property.location}. With {property.bedrooms} spacious bedrooms and {property.bathrooms} modern bathrooms, it is perfect for guests looking for comfort and convenience. The property features modern amenities and has consistently received excellent reviews from guests.
+                {property.description || `This beautiful property is located in the heart of ${property.location}. With ${property.bedrooms} spacious bedrooms and ${property.bathrooms} modern bathrooms, it is perfect for guests looking for comfort and convenience.`}
               </p>
             </div>
 
@@ -161,7 +224,7 @@ export default function PropertyDetailPage() {
                 <p className="text-sm text-muted-foreground mb-2">Status</p>
                 <div
                   className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                    currentStatus === 'managing'
+                    currentStatus === 'managed' || currentStatus === 'managing'
                       ? 'bg-green-100 text-green-700'
                       : currentStatus === 'pending'
                       ? 'bg-yellow-100 text-yellow-700'
@@ -169,22 +232,6 @@ export default function PropertyDetailPage() {
                   }`}
                 >
                   {currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1)}
-                </div>
-                <div className="mt-3">
-                  <select
-                    value={currentStatus}
-                    onChange={(e) => {
-                      const nextStatus = e.target.value as Property['status'];
-                      setStatusOverride(nextStatus);
-                      updateProperty(property.id, { status: nextStatus });
-                      setRevision((r) => r + 1);
-                    }}
-                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    <option value="pending">Pending</option>
-                    <option value="managing">Managing</option>
-                    <option value="available">Available</option>
-                  </select>
                 </div>
               </div>
 
@@ -210,16 +257,20 @@ export default function PropertyDetailPage() {
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-background rounded-lg p-6 max-w-sm w-full">
-            <h2 className="text-xl font-bold mb-2">Delete Property?</h2>
+          <div className="bg-background rounded-lg p-6 max-w-sm w-full border border-border shadow-xl">
+            <div className="flex items-center gap-3 text-destructive mb-4">
+              <AlertTriangle size={24} />
+              <h2 className="text-xl font-bold">Danger Zone</h2>
+            </div>
             <p className="text-muted-foreground mb-6">
-              Are you sure you want to delete {property.title}? This action cannot be undone.
+              Are you sure you want to delete <span className="font-semibold text-foreground">{property.title}</span>? This action is permanent and cannot be undone.
             </p>
             <div className="flex gap-3">
               <Button
                 variant="outline"
                 className="flex-1 py-2"
                 onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
               >
                 Cancel
               </Button>
@@ -227,8 +278,9 @@ export default function PropertyDetailPage() {
                 variant="destructive"
                 className="flex-1 py-2"
                 onClick={handleDelete}
+                disabled={isDeleting}
               >
-                Delete
+                {isDeleting ? 'Deleting...' : 'Delete Forever'}
               </Button>
             </div>
           </div>
