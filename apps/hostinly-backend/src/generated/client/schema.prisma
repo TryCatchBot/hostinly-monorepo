@@ -5,8 +5,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum UserType {
@@ -93,6 +94,8 @@ model User {
   availability        String?  @map("availability")
   areasCovered        String?  @map("areas_covered")
   proofOfAddress      String?  @map("proof_of_address")
+  resume              String?  @map("resume")
+  coverLetter         String?  @map("cover_letter")
   references          String?  @map("references")
   insurance           String?  @map("insurance")
   approvalReason      String?  @map("approval_reason")
@@ -105,10 +108,33 @@ model User {
   bookings        Booking[]
   payments        Payment[]
 
-  interviewsAsHost      Interview[] @relation("HostInterviews")
-  interviewsAsCandidate Interview[] @relation("CandidateInterviews")
+  interviewsAsHost      Interview[]  @relation("HostInterviews")
+  interviewsAsCandidate Interview[]  @relation("CandidateInterviews")
+  engagementsAsHost     Engagement[] @relation("HostEngagements")
+  engagementsAsStaff    Engagement[] @relation("StaffEngagements")
 
   @@map("users")
+}
+
+enum EngagementStatus {
+  ACTIVE
+  PROBATION
+  ENDED
+}
+
+model Engagement {
+  id        String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  hostId    String           @map("host_id") @db.Uuid
+  host      User             @relation("HostEngagements", fields: [hostId], references: [id])
+  staffId   String           @map("staff_id") @db.Uuid
+  staff     User             @relation("StaffEngagements", fields: [staffId], references: [id])
+  status    EngagementStatus @default(ACTIVE)
+  startDate DateTime         @default(now()) @map("start_date")
+  endDate   DateTime?        @map("end_date")
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+
+  @@map("engagements")
 }
 
 enum PropertyStatus {

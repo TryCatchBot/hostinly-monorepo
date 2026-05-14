@@ -7,11 +7,103 @@
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxZjM1ZWM1Zi0yNDYyLTQ4MmUtOGMzNy1mMGY4ZGQ1YjM4MzkiLCJlbWFpbCI6ImRlZW5AeW9wbWFpbC5jb20iLCJ1c2VyVHlwZSI6IkhPU1QiLCJpYXQiOjE3Nzg2ODEwNjQsImV4cCI6MTc3ODc2NzQ2NH0._7JJ6MkGLleb9jxfhtSUWGeUIUhahHWDdDL7wnKYOLw
 @email = deen@yopmail.com
 @password = Password1*
+@interviewId = 12345678901234567890123456789012
+@engagementId = 12345678901234567890123456789012
 
+###
+# --- Interviews ---
+###
 
+# Get all interviews
+GET {{baseUrl}}/interviews
+Authorization: Bearer {{token}}
 
-# --- AUTH ---
+###
 
+# Get individual interview by id
+GET {{baseUrl}}/interviews/{{interviewId}}
+Authorization: Bearer {{token}}
+
+###
+
+# Create an interview request (Host books interview)
+POST {{baseUrl}}/interviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "hostId": "{{userId}}",
+  "candidateId": "{{cohostId}}",
+  "date": "2026-06-01T14:00:00Z",
+  "notes": "Let's discuss the property management for London apartment."
+}
+
+###
+
+# Accept/Reject/Cancel interview
+PATCH {{baseUrl}}/interviews/{{interviewId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "SCHEDULED"
+}
+
+###
+# --- Engagements (Hire & Management) ---
+###
+
+# Get all engagements
+GET {{baseUrl}}/engagements
+Authorization: Bearer {{token}}
+
+###
+
+# Get engagements for a user
+GET {{baseUrl}}/engagements/user/{{userId}}
+Authorization: Bearer {{token}}
+
+###
+
+# Hire someone (Create engagement)
+POST {{baseUrl}}/engagements
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "hostId": "{{userId}}",
+  "staffId": "{{cohostId}}",
+  "status": "ACTIVE",
+  "startDate": "2026-06-15T09:00:00Z"
+}
+
+###
+
+# Update engagement (Probation, End engagement)
+PATCH {{baseUrl}}/engagements/{{engagementId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "PROBATION"
+}
+
+###
+
+# Rate a staff member
+POST {{baseUrl}}/engagements/rate
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "rating": 5,
+  "comment": "Excellent work, very professional.",
+  "reviewerId": "{{userId}}",
+  "revieweeId": "{{cohostId}}"
+}
+
+###
+# --- Auth ---
 ### Signup
 POST {{baseUrl}}/auth/signup
 Content-Type: application/json

@@ -13,6 +13,26 @@ router.post('/login', async (req, res) => {
 
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        passwordHash: true,
+        userType: true,
+        avatar: true,
+        phone: true,
+        address: true,
+        city: true,
+        state: true,
+        zipCode: true,
+        country: true,
+        status: true,
+        verificationStatus: true,
+        createdAt: true,
+        lastActive: true,
+        // resume and other new fields are omitted here to prevent 500 errors 
+        // until migration is applied
+      }
     });
 
     if (!user) {

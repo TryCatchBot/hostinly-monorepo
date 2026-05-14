@@ -50,11 +50,21 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { authorId, propertyId, ...rest } = req.body;
+    
+    // Validate propertyId if provided
+    let propertyConnect = undefined;
+    if (propertyId && propertyId.length === 36) { // Basic UUID length check
+      const property = await prisma.property.findUnique({ where: { id: propertyId } });
+      if (property) {
+        propertyConnect = { connect: { id: propertyId } };
+      }
+    }
+
     const data = await prisma.jobPosting.create({
       data: {
         ...rest,
         author: { connect: { id: authorId } },
-        property: propertyId ? { connect: { id: propertyId } } : undefined
+        property: propertyConnect
       }
     });
     sendSuccess(res, data);
