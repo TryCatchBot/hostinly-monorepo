@@ -231,6 +231,9 @@ exports.Prisma.JobPostingScalarFieldEnum = {
   propertyId: 'propertyId',
   location: 'location',
   type: 'type',
+  duration: 'duration',
+  requirements: 'requirements',
+  skills: 'skills',
   createdAt: 'createdAt'
 };
 
