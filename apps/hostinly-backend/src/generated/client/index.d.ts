@@ -8857,6 +8857,8 @@ export namespace Prisma {
     propertyId: string | null
     location: string | null
     type: string | null
+    duration: string | null
+    requirements: string | null
     createdAt: Date | null
   }
 
@@ -8870,6 +8872,8 @@ export namespace Prisma {
     propertyId: string | null
     location: string | null
     type: string | null
+    duration: string | null
+    requirements: string | null
     createdAt: Date | null
   }
 
@@ -8883,6 +8887,9 @@ export namespace Prisma {
     propertyId: number
     location: number
     type: number
+    duration: number
+    requirements: number
+    skills: number
     createdAt: number
     _all: number
   }
@@ -8898,6 +8905,8 @@ export namespace Prisma {
     propertyId?: true
     location?: true
     type?: true
+    duration?: true
+    requirements?: true
     createdAt?: true
   }
 
@@ -8911,6 +8920,8 @@ export namespace Prisma {
     propertyId?: true
     location?: true
     type?: true
+    duration?: true
+    requirements?: true
     createdAt?: true
   }
 
@@ -8924,6 +8935,9 @@ export namespace Prisma {
     propertyId?: true
     location?: true
     type?: true
+    duration?: true
+    requirements?: true
+    skills?: true
     createdAt?: true
     _all?: true
   }
@@ -9010,6 +9024,9 @@ export namespace Prisma {
     propertyId: string | null
     location: string
     type: string
+    duration: string | null
+    requirements: string | null
+    skills: string[]
     createdAt: Date
     _count: JobPostingCountAggregateOutputType | null
     _min: JobPostingMinAggregateOutputType | null
@@ -9040,6 +9057,9 @@ export namespace Prisma {
     propertyId?: boolean
     location?: boolean
     type?: boolean
+    duration?: boolean
+    requirements?: boolean
+    skills?: boolean
     createdAt?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
     property?: boolean | JobPosting$propertyArgs<ExtArgs>
@@ -9055,6 +9075,9 @@ export namespace Prisma {
     propertyId?: boolean
     location?: boolean
     type?: boolean
+    duration?: boolean
+    requirements?: boolean
+    skills?: boolean
     createdAt?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
     property?: boolean | JobPosting$propertyArgs<ExtArgs>
@@ -9070,6 +9093,9 @@ export namespace Prisma {
     propertyId?: boolean
     location?: boolean
     type?: boolean
+    duration?: boolean
+    requirements?: boolean
+    skills?: boolean
     createdAt?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
     property?: boolean | JobPosting$propertyArgs<ExtArgs>
@@ -9085,10 +9111,13 @@ export namespace Prisma {
     propertyId?: boolean
     location?: boolean
     type?: boolean
+    duration?: boolean
+    requirements?: boolean
+    skills?: boolean
     createdAt?: boolean
   }
 
-  export type JobPostingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "budget" | "status" | "authorId" | "propertyId" | "location" | "type" | "createdAt", ExtArgs["result"]["jobPosting"]>
+  export type JobPostingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "budget" | "status" | "authorId" | "propertyId" | "location" | "type" | "duration" | "requirements" | "skills" | "createdAt", ExtArgs["result"]["jobPosting"]>
   export type JobPostingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
     property?: boolean | JobPosting$propertyArgs<ExtArgs>
@@ -9118,6 +9147,9 @@ export namespace Prisma {
       propertyId: string | null
       location: string
       type: string
+      duration: string | null
+      requirements: string | null
+      skills: string[]
       createdAt: Date
     }, ExtArgs["result"]["jobPosting"]>
     composites: {}
@@ -9553,6 +9585,9 @@ export namespace Prisma {
     readonly propertyId: FieldRef<"JobPosting", 'String'>
     readonly location: FieldRef<"JobPosting", 'String'>
     readonly type: FieldRef<"JobPosting", 'String'>
+    readonly duration: FieldRef<"JobPosting", 'String'>
+    readonly requirements: FieldRef<"JobPosting", 'String'>
+    readonly skills: FieldRef<"JobPosting", 'String[]'>
     readonly createdAt: FieldRef<"JobPosting", 'DateTime'>
   }
     
@@ -16735,6 +16770,9 @@ export namespace Prisma {
     propertyId: 'propertyId',
     location: 'location',
     type: 'type',
+    duration: 'duration',
+    requirements: 'requirements',
+    skills: 'skills',
     createdAt: 'createdAt'
   };
 
@@ -17739,6 +17777,9 @@ export namespace Prisma {
     propertyId?: UuidNullableFilter<"JobPosting"> | string | null
     location?: StringFilter<"JobPosting"> | string
     type?: StringFilter<"JobPosting"> | string
+    duration?: StringNullableFilter<"JobPosting"> | string | null
+    requirements?: StringNullableFilter<"JobPosting"> | string | null
+    skills?: StringNullableListFilter<"JobPosting">
     createdAt?: DateTimeFilter<"JobPosting"> | Date | string
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
     property?: XOR<PropertyNullableScalarRelationFilter, PropertyWhereInput> | null
@@ -17754,6 +17795,9 @@ export namespace Prisma {
     propertyId?: SortOrderInput | SortOrder
     location?: SortOrder
     type?: SortOrder
+    duration?: SortOrderInput | SortOrder
+    requirements?: SortOrderInput | SortOrder
+    skills?: SortOrder
     createdAt?: SortOrder
     author?: UserOrderByWithRelationInput
     property?: PropertyOrderByWithRelationInput
@@ -17772,6 +17816,9 @@ export namespace Prisma {
     propertyId?: UuidNullableFilter<"JobPosting"> | string | null
     location?: StringFilter<"JobPosting"> | string
     type?: StringFilter<"JobPosting"> | string
+    duration?: StringNullableFilter<"JobPosting"> | string | null
+    requirements?: StringNullableFilter<"JobPosting"> | string | null
+    skills?: StringNullableListFilter<"JobPosting">
     createdAt?: DateTimeFilter<"JobPosting"> | Date | string
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
     property?: XOR<PropertyNullableScalarRelationFilter, PropertyWhereInput> | null
@@ -17787,6 +17834,9 @@ export namespace Prisma {
     propertyId?: SortOrderInput | SortOrder
     location?: SortOrder
     type?: SortOrder
+    duration?: SortOrderInput | SortOrder
+    requirements?: SortOrderInput | SortOrder
+    skills?: SortOrder
     createdAt?: SortOrder
     _count?: JobPostingCountOrderByAggregateInput
     _max?: JobPostingMaxOrderByAggregateInput
@@ -17806,6 +17856,9 @@ export namespace Prisma {
     propertyId?: UuidNullableWithAggregatesFilter<"JobPosting"> | string | null
     location?: StringWithAggregatesFilter<"JobPosting"> | string
     type?: StringWithAggregatesFilter<"JobPosting"> | string
+    duration?: StringNullableWithAggregatesFilter<"JobPosting"> | string | null
+    requirements?: StringNullableWithAggregatesFilter<"JobPosting"> | string | null
+    skills?: StringNullableListFilter<"JobPosting">
     createdAt?: DateTimeWithAggregatesFilter<"JobPosting"> | Date | string
   }
 
@@ -18975,6 +19028,9 @@ export namespace Prisma {
     status?: $Enums.JobStatus
     location: string
     type: string
+    duration?: string | null
+    requirements?: string | null
+    skills?: JobPostingCreateskillsInput | string[]
     createdAt?: Date | string
     author: UserCreateNestedOneWithoutJobsInput
     property?: PropertyCreateNestedOneWithoutJobsInput
@@ -18990,6 +19046,9 @@ export namespace Prisma {
     propertyId?: string | null
     location: string
     type: string
+    duration?: string | null
+    requirements?: string | null
+    skills?: JobPostingCreateskillsInput | string[]
     createdAt?: Date | string
   }
 
@@ -19001,6 +19060,9 @@ export namespace Prisma {
     status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: JobPostingUpdateskillsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutJobsNestedInput
     property?: PropertyUpdateOneWithoutJobsNestedInput
@@ -19016,6 +19078,9 @@ export namespace Prisma {
     propertyId?: NullableStringFieldUpdateOperationsInput | string | null
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: JobPostingUpdateskillsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -19029,6 +19094,9 @@ export namespace Prisma {
     propertyId?: string | null
     location: string
     type: string
+    duration?: string | null
+    requirements?: string | null
+    skills?: JobPostingCreateskillsInput | string[]
     createdAt?: Date | string
   }
 
@@ -19040,6 +19108,9 @@ export namespace Prisma {
     status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: JobPostingUpdateskillsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -19053,6 +19124,9 @@ export namespace Prisma {
     propertyId?: NullableStringFieldUpdateOperationsInput | string | null
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: JobPostingUpdateskillsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -20330,6 +20404,9 @@ export namespace Prisma {
     propertyId?: SortOrder
     location?: SortOrder
     type?: SortOrder
+    duration?: SortOrder
+    requirements?: SortOrder
+    skills?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -20343,6 +20420,8 @@ export namespace Prisma {
     propertyId?: SortOrder
     location?: SortOrder
     type?: SortOrder
+    duration?: SortOrder
+    requirements?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -20356,6 +20435,8 @@ export namespace Prisma {
     propertyId?: SortOrder
     location?: SortOrder
     type?: SortOrder
+    duration?: SortOrder
+    requirements?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -21583,6 +21664,10 @@ export namespace Prisma {
     deleteMany?: PropertyScalarWhereInput | PropertyScalarWhereInput[]
   }
 
+  export type JobPostingCreateskillsInput = {
+    set: string[]
+  }
+
   export type UserCreateNestedOneWithoutJobsInput = {
     create?: XOR<UserCreateWithoutJobsInput, UserUncheckedCreateWithoutJobsInput>
     connectOrCreate?: UserCreateOrConnectWithoutJobsInput
@@ -21597,6 +21682,11 @@ export namespace Prisma {
 
   export type EnumJobStatusFieldUpdateOperationsInput = {
     set?: $Enums.JobStatus
+  }
+
+  export type JobPostingUpdateskillsInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type UserUpdateOneRequiredWithoutJobsNestedInput = {
@@ -22877,6 +22967,9 @@ export namespace Prisma {
     status?: $Enums.JobStatus
     location: string
     type: string
+    duration?: string | null
+    requirements?: string | null
+    skills?: JobPostingCreateskillsInput | string[]
     createdAt?: Date | string
     property?: PropertyCreateNestedOneWithoutJobsInput
   }
@@ -22890,6 +22983,9 @@ export namespace Prisma {
     propertyId?: string | null
     location: string
     type: string
+    duration?: string | null
+    requirements?: string | null
+    skills?: JobPostingCreateskillsInput | string[]
     createdAt?: Date | string
   }
 
@@ -23244,6 +23340,9 @@ export namespace Prisma {
     propertyId?: UuidNullableFilter<"JobPosting"> | string | null
     location?: StringFilter<"JobPosting"> | string
     type?: StringFilter<"JobPosting"> | string
+    duration?: StringNullableFilter<"JobPosting"> | string | null
+    requirements?: StringNullableFilter<"JobPosting"> | string | null
+    skills?: StringNullableListFilter<"JobPosting">
     createdAt?: DateTimeFilter<"JobPosting"> | Date | string
   }
 
@@ -24083,6 +24182,9 @@ export namespace Prisma {
     status?: $Enums.JobStatus
     location: string
     type: string
+    duration?: string | null
+    requirements?: string | null
+    skills?: JobPostingCreateskillsInput | string[]
     createdAt?: Date | string
     author: UserCreateNestedOneWithoutJobsInput
   }
@@ -24096,6 +24198,9 @@ export namespace Prisma {
     authorId: string
     location: string
     type: string
+    duration?: string | null
+    requirements?: string | null
+    skills?: JobPostingCreateskillsInput | string[]
     createdAt?: Date | string
   }
 
@@ -26050,6 +26155,9 @@ export namespace Prisma {
     propertyId?: string | null
     location: string
     type: string
+    duration?: string | null
+    requirements?: string | null
+    skills?: JobPostingCreateskillsInput | string[]
     createdAt?: Date | string
   }
 
@@ -26196,6 +26304,9 @@ export namespace Prisma {
     status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: JobPostingUpdateskillsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     property?: PropertyUpdateOneWithoutJobsNestedInput
   }
@@ -26209,6 +26320,9 @@ export namespace Prisma {
     propertyId?: NullableStringFieldUpdateOperationsInput | string | null
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: JobPostingUpdateskillsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26221,6 +26335,9 @@ export namespace Prisma {
     propertyId?: NullableStringFieldUpdateOperationsInput | string | null
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: JobPostingUpdateskillsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26467,6 +26584,9 @@ export namespace Prisma {
     authorId: string
     location: string
     type: string
+    duration?: string | null
+    requirements?: string | null
+    skills?: JobPostingCreateskillsInput | string[]
     createdAt?: Date | string
   }
 
@@ -26532,6 +26652,9 @@ export namespace Prisma {
     status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: JobPostingUpdateskillsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutJobsNestedInput
   }
@@ -26545,6 +26668,9 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: JobPostingUpdateskillsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26557,6 +26683,9 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: JobPostingUpdateskillsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

@@ -204,18 +204,21 @@ enum JobStatus {
 }
 
 model JobPosting {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title       String
-  description String
-  budget      String
-  status      JobStatus @default(OPEN)
-  authorId    String    @map("author_id") @db.Uuid
-  author      User      @relation(fields: [authorId], references: [id])
-  propertyId  String?   @map("property_id") @db.Uuid
-  property    Property? @relation(fields: [propertyId], references: [id])
-  location    String
-  type        String
-  createdAt   DateTime  @default(now()) @map("created_at")
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title        String
+  description  String
+  budget       String
+  status       JobStatus @default(OPEN)
+  authorId     String    @map("author_id") @db.Uuid
+  author       User      @relation(fields: [authorId], references: [id])
+  propertyId   String?   @map("property_id") @db.Uuid
+  property     Property? @relation(fields: [propertyId], references: [id])
+  location     String
+  type         String
+  duration     String?
+  requirements String?
+  skills       String[]
+  createdAt    DateTime  @default(now()) @map("created_at")
 
   @@map("job_postings")
 }
