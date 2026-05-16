@@ -216,6 +216,7 @@ exports.Prisma.CoHostScalarFieldEnum = {
   totalReviews: 'totalReviews',
   location: 'location',
   hourlyRate: 'hourlyRate',
+  commissionPercentage: 'commissionPercentage',
   languages: 'languages',
   specialties: 'specialties',
   availabilityStatus: 'availabilityStatus'
