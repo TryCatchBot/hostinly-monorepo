@@ -7650,6 +7650,7 @@ export namespace Prisma {
     rating: number | null
     totalReviews: number | null
     hourlyRate: number | null
+    commissionPercentage: number | null
   }
 
   export type CoHostSumAggregateOutputType = {
@@ -7657,6 +7658,7 @@ export namespace Prisma {
     rating: number | null
     totalReviews: number | null
     hourlyRate: number | null
+    commissionPercentage: number | null
   }
 
   export type CoHostMinAggregateOutputType = {
@@ -7668,6 +7670,7 @@ export namespace Prisma {
     totalReviews: number | null
     location: string | null
     hourlyRate: number | null
+    commissionPercentage: number | null
     availabilityStatus: string | null
   }
 
@@ -7680,6 +7683,7 @@ export namespace Prisma {
     totalReviews: number | null
     location: string | null
     hourlyRate: number | null
+    commissionPercentage: number | null
     availabilityStatus: string | null
   }
 
@@ -7692,6 +7696,7 @@ export namespace Prisma {
     totalReviews: number
     location: number
     hourlyRate: number
+    commissionPercentage: number
     languages: number
     specialties: number
     availabilityStatus: number
@@ -7704,6 +7709,7 @@ export namespace Prisma {
     rating?: true
     totalReviews?: true
     hourlyRate?: true
+    commissionPercentage?: true
   }
 
   export type CoHostSumAggregateInputType = {
@@ -7711,6 +7717,7 @@ export namespace Prisma {
     rating?: true
     totalReviews?: true
     hourlyRate?: true
+    commissionPercentage?: true
   }
 
   export type CoHostMinAggregateInputType = {
@@ -7722,6 +7729,7 @@ export namespace Prisma {
     totalReviews?: true
     location?: true
     hourlyRate?: true
+    commissionPercentage?: true
     availabilityStatus?: true
   }
 
@@ -7734,6 +7742,7 @@ export namespace Prisma {
     totalReviews?: true
     location?: true
     hourlyRate?: true
+    commissionPercentage?: true
     availabilityStatus?: true
   }
 
@@ -7746,6 +7755,7 @@ export namespace Prisma {
     totalReviews?: true
     location?: true
     hourlyRate?: true
+    commissionPercentage?: true
     languages?: true
     specialties?: true
     availabilityStatus?: true
@@ -7847,6 +7857,7 @@ export namespace Prisma {
     totalReviews: number
     location: string | null
     hourlyRate: number | null
+    commissionPercentage: number | null
     languages: string[]
     specialties: string[]
     availabilityStatus: string
@@ -7880,6 +7891,7 @@ export namespace Prisma {
     totalReviews?: boolean
     location?: boolean
     hourlyRate?: boolean
+    commissionPercentage?: boolean
     languages?: boolean
     specialties?: boolean
     availabilityStatus?: boolean
@@ -7897,6 +7909,7 @@ export namespace Prisma {
     totalReviews?: boolean
     location?: boolean
     hourlyRate?: boolean
+    commissionPercentage?: boolean
     languages?: boolean
     specialties?: boolean
     availabilityStatus?: boolean
@@ -7912,6 +7925,7 @@ export namespace Prisma {
     totalReviews?: boolean
     location?: boolean
     hourlyRate?: boolean
+    commissionPercentage?: boolean
     languages?: boolean
     specialties?: boolean
     availabilityStatus?: boolean
@@ -7927,12 +7941,13 @@ export namespace Prisma {
     totalReviews?: boolean
     location?: boolean
     hourlyRate?: boolean
+    commissionPercentage?: boolean
     languages?: boolean
     specialties?: boolean
     availabilityStatus?: boolean
   }
 
-  export type CoHostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "bio" | "experience" | "rating" | "totalReviews" | "location" | "hourlyRate" | "languages" | "specialties" | "availabilityStatus", ExtArgs["result"]["coHost"]>
+  export type CoHostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "bio" | "experience" | "rating" | "totalReviews" | "location" | "hourlyRate" | "commissionPercentage" | "languages" | "specialties" | "availabilityStatus", ExtArgs["result"]["coHost"]>
   export type CoHostInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     properties?: boolean | CoHost$propertiesArgs<ExtArgs>
@@ -7960,6 +7975,7 @@ export namespace Prisma {
       totalReviews: number
       location: string | null
       hourlyRate: number | null
+      commissionPercentage: number | null
       languages: string[]
       specialties: string[]
       availabilityStatus: string
@@ -8396,6 +8412,7 @@ export namespace Prisma {
     readonly totalReviews: FieldRef<"CoHost", 'Int'>
     readonly location: FieldRef<"CoHost", 'String'>
     readonly hourlyRate: FieldRef<"CoHost", 'Float'>
+    readonly commissionPercentage: FieldRef<"CoHost", 'Float'>
     readonly languages: FieldRef<"CoHost", 'String[]'>
     readonly specialties: FieldRef<"CoHost", 'String[]'>
     readonly availabilityStatus: FieldRef<"CoHost", 'String'>
@@ -16752,6 +16769,7 @@ export namespace Prisma {
     totalReviews: 'totalReviews',
     location: 'location',
     hourlyRate: 'hourlyRate',
+    commissionPercentage: 'commissionPercentage',
     languages: 'languages',
     specialties: 'specialties',
     availabilityStatus: 'availabilityStatus'
@@ -17686,6 +17704,7 @@ export namespace Prisma {
     totalReviews?: IntFilter<"CoHost"> | number
     location?: StringNullableFilter<"CoHost"> | string | null
     hourlyRate?: FloatNullableFilter<"CoHost"> | number | null
+    commissionPercentage?: FloatNullableFilter<"CoHost"> | number | null
     languages?: StringNullableListFilter<"CoHost">
     specialties?: StringNullableListFilter<"CoHost">
     availabilityStatus?: StringFilter<"CoHost"> | string
@@ -17702,6 +17721,7 @@ export namespace Prisma {
     totalReviews?: SortOrder
     location?: SortOrderInput | SortOrder
     hourlyRate?: SortOrderInput | SortOrder
+    commissionPercentage?: SortOrderInput | SortOrder
     languages?: SortOrder
     specialties?: SortOrder
     availabilityStatus?: SortOrder
@@ -17721,6 +17741,7 @@ export namespace Prisma {
     totalReviews?: IntFilter<"CoHost"> | number
     location?: StringNullableFilter<"CoHost"> | string | null
     hourlyRate?: FloatNullableFilter<"CoHost"> | number | null
+    commissionPercentage?: FloatNullableFilter<"CoHost"> | number | null
     languages?: StringNullableListFilter<"CoHost">
     specialties?: StringNullableListFilter<"CoHost">
     availabilityStatus?: StringFilter<"CoHost"> | string
@@ -17737,6 +17758,7 @@ export namespace Prisma {
     totalReviews?: SortOrder
     location?: SortOrderInput | SortOrder
     hourlyRate?: SortOrderInput | SortOrder
+    commissionPercentage?: SortOrderInput | SortOrder
     languages?: SortOrder
     specialties?: SortOrder
     availabilityStatus?: SortOrder
@@ -17759,6 +17781,7 @@ export namespace Prisma {
     totalReviews?: IntWithAggregatesFilter<"CoHost"> | number
     location?: StringNullableWithAggregatesFilter<"CoHost"> | string | null
     hourlyRate?: FloatNullableWithAggregatesFilter<"CoHost"> | number | null
+    commissionPercentage?: FloatNullableWithAggregatesFilter<"CoHost"> | number | null
     languages?: StringNullableListFilter<"CoHost">
     specialties?: StringNullableListFilter<"CoHost">
     availabilityStatus?: StringWithAggregatesFilter<"CoHost"> | string
@@ -18927,6 +18950,7 @@ export namespace Prisma {
     totalReviews?: number
     location?: string | null
     hourlyRate?: number | null
+    commissionPercentage?: number | null
     languages?: CoHostCreatelanguagesInput | string[]
     specialties?: CoHostCreatespecialtiesInput | string[]
     availabilityStatus?: string
@@ -18943,6 +18967,7 @@ export namespace Prisma {
     totalReviews?: number
     location?: string | null
     hourlyRate?: number | null
+    commissionPercentage?: number | null
     languages?: CoHostCreatelanguagesInput | string[]
     specialties?: CoHostCreatespecialtiesInput | string[]
     availabilityStatus?: string
@@ -18957,6 +18982,7 @@ export namespace Prisma {
     totalReviews?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     hourlyRate?: NullableFloatFieldUpdateOperationsInput | number | null
+    commissionPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
     languages?: CoHostUpdatelanguagesInput | string[]
     specialties?: CoHostUpdatespecialtiesInput | string[]
     availabilityStatus?: StringFieldUpdateOperationsInput | string
@@ -18973,6 +18999,7 @@ export namespace Prisma {
     totalReviews?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     hourlyRate?: NullableFloatFieldUpdateOperationsInput | number | null
+    commissionPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
     languages?: CoHostUpdatelanguagesInput | string[]
     specialties?: CoHostUpdatespecialtiesInput | string[]
     availabilityStatus?: StringFieldUpdateOperationsInput | string
@@ -18988,6 +19015,7 @@ export namespace Prisma {
     totalReviews?: number
     location?: string | null
     hourlyRate?: number | null
+    commissionPercentage?: number | null
     languages?: CoHostCreatelanguagesInput | string[]
     specialties?: CoHostCreatespecialtiesInput | string[]
     availabilityStatus?: string
@@ -19001,6 +19029,7 @@ export namespace Prisma {
     totalReviews?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     hourlyRate?: NullableFloatFieldUpdateOperationsInput | number | null
+    commissionPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
     languages?: CoHostUpdatelanguagesInput | string[]
     specialties?: CoHostUpdatespecialtiesInput | string[]
     availabilityStatus?: StringFieldUpdateOperationsInput | string
@@ -19015,6 +19044,7 @@ export namespace Prisma {
     totalReviews?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     hourlyRate?: NullableFloatFieldUpdateOperationsInput | number | null
+    commissionPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
     languages?: CoHostUpdatelanguagesInput | string[]
     specialties?: CoHostUpdatespecialtiesInput | string[]
     availabilityStatus?: StringFieldUpdateOperationsInput | string
@@ -20327,6 +20357,7 @@ export namespace Prisma {
     totalReviews?: SortOrder
     location?: SortOrder
     hourlyRate?: SortOrder
+    commissionPercentage?: SortOrder
     languages?: SortOrder
     specialties?: SortOrder
     availabilityStatus?: SortOrder
@@ -20337,6 +20368,7 @@ export namespace Prisma {
     rating?: SortOrder
     totalReviews?: SortOrder
     hourlyRate?: SortOrder
+    commissionPercentage?: SortOrder
   }
 
   export type CoHostMaxOrderByAggregateInput = {
@@ -20348,6 +20380,7 @@ export namespace Prisma {
     totalReviews?: SortOrder
     location?: SortOrder
     hourlyRate?: SortOrder
+    commissionPercentage?: SortOrder
     availabilityStatus?: SortOrder
   }
 
@@ -20360,6 +20393,7 @@ export namespace Prisma {
     totalReviews?: SortOrder
     location?: SortOrder
     hourlyRate?: SortOrder
+    commissionPercentage?: SortOrder
     availabilityStatus?: SortOrder
   }
 
@@ -20368,6 +20402,7 @@ export namespace Prisma {
     rating?: SortOrder
     totalReviews?: SortOrder
     hourlyRate?: SortOrder
+    commissionPercentage?: SortOrder
   }
 
   export type EnumJobStatusFilter<$PrismaModel = never> = {
@@ -22918,6 +22953,7 @@ export namespace Prisma {
     totalReviews?: number
     location?: string | null
     hourlyRate?: number | null
+    commissionPercentage?: number | null
     languages?: CoHostCreatelanguagesInput | string[]
     specialties?: CoHostCreatespecialtiesInput | string[]
     availabilityStatus?: string
@@ -22932,6 +22968,7 @@ export namespace Prisma {
     totalReviews?: number
     location?: string | null
     hourlyRate?: number | null
+    commissionPercentage?: number | null
     languages?: CoHostCreatelanguagesInput | string[]
     specialties?: CoHostCreatespecialtiesInput | string[]
     availabilityStatus?: string
@@ -23286,6 +23323,7 @@ export namespace Prisma {
     totalReviews?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     hourlyRate?: NullableFloatFieldUpdateOperationsInput | number | null
+    commissionPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
     languages?: CoHostUpdatelanguagesInput | string[]
     specialties?: CoHostUpdatespecialtiesInput | string[]
     availabilityStatus?: StringFieldUpdateOperationsInput | string
@@ -23300,6 +23338,7 @@ export namespace Prisma {
     totalReviews?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     hourlyRate?: NullableFloatFieldUpdateOperationsInput | number | null
+    commissionPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
     languages?: CoHostUpdatelanguagesInput | string[]
     specialties?: CoHostUpdatespecialtiesInput | string[]
     availabilityStatus?: StringFieldUpdateOperationsInput | string
@@ -24223,6 +24262,7 @@ export namespace Prisma {
     totalReviews?: number
     location?: string | null
     hourlyRate?: number | null
+    commissionPercentage?: number | null
     languages?: CoHostCreatelanguagesInput | string[]
     specialties?: CoHostCreatespecialtiesInput | string[]
     availabilityStatus?: string
@@ -24238,6 +24278,7 @@ export namespace Prisma {
     totalReviews?: number
     location?: string | null
     hourlyRate?: number | null
+    commissionPercentage?: number | null
     languages?: CoHostCreatelanguagesInput | string[]
     specialties?: CoHostCreatespecialtiesInput | string[]
     availabilityStatus?: string
@@ -24431,6 +24472,7 @@ export namespace Prisma {
     totalReviews?: IntFilter<"CoHost"> | number
     location?: StringNullableFilter<"CoHost"> | string | null
     hourlyRate?: FloatNullableFilter<"CoHost"> | number | null
+    commissionPercentage?: FloatNullableFilter<"CoHost"> | number | null
     languages?: StringNullableListFilter<"CoHost">
     specialties?: StringNullableListFilter<"CoHost">
     availabilityStatus?: StringFilter<"CoHost"> | string
@@ -26691,6 +26733,7 @@ export namespace Prisma {
     totalReviews?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     hourlyRate?: NullableFloatFieldUpdateOperationsInput | number | null
+    commissionPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
     languages?: CoHostUpdatelanguagesInput | string[]
     specialties?: CoHostUpdatespecialtiesInput | string[]
     availabilityStatus?: StringFieldUpdateOperationsInput | string
@@ -26706,6 +26749,7 @@ export namespace Prisma {
     totalReviews?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     hourlyRate?: NullableFloatFieldUpdateOperationsInput | number | null
+    commissionPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
     languages?: CoHostUpdatelanguagesInput | string[]
     specialties?: CoHostUpdatespecialtiesInput | string[]
     availabilityStatus?: StringFieldUpdateOperationsInput | string
@@ -26720,6 +26764,7 @@ export namespace Prisma {
     totalReviews?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     hourlyRate?: NullableFloatFieldUpdateOperationsInput | number | null
+    commissionPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
     languages?: CoHostUpdatelanguagesInput | string[]
     specialties?: CoHostUpdatespecialtiesInput | string[]
     availabilityStatus?: StringFieldUpdateOperationsInput | string
