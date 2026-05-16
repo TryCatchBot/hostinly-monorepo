@@ -178,18 +178,19 @@ model Property {
 }
 
 model CoHost {
-  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId             String   @unique @map("user_id") @db.Uuid
-  user               User     @relation(fields: [userId], references: [id])
-  bio                String?
-  experience         Int      @default(0)
-  rating             Float    @default(5.0)
-  totalReviews       Int      @default(0) @map("total_reviews")
-  location           String?
-  hourlyRate         Float?   @map("hourly_rate")
-  languages          String[]
-  specialties        String[]
-  availabilityStatus String   @default("Available") @map("availability_status")
+  id                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId               String   @unique @map("user_id") @db.Uuid
+  user                 User     @relation(fields: [userId], references: [id])
+  bio                  String?
+  experience           Int      @default(0)
+  rating               Float    @default(5.0)
+  totalReviews         Int      @default(0) @map("total_reviews")
+  location             String?
+  hourlyRate           Float?   @map("hourly_rate")
+  commissionPercentage Float?   @map("commission_percentage")
+  languages            String[]
+  specialties          String[]
+  availabilityStatus   String   @default("Available") @map("availability_status")
 
   properties Property[]
 

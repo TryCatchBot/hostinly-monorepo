@@ -3,12 +3,12 @@
 import DashboardLayout from '@/components/DashboardLayout';
 import JobCard from '@/components/JobCard';
 import PostJobModal from '@/components/PostJobModal';
-import { type JobPosting } from '@/lib/mockData';
+import { type JobPosting } from '@/lib/provideData';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, Loader2, LayoutGrid, List, Briefcase } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/api';
 
@@ -18,6 +18,7 @@ export default function JobsPage() {
   const [showPostJobModal, setShowPostJobModal] = useState(false);
   const [jobs, setJobs] = useState<JobPosting[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -95,43 +96,80 @@ export default function JobsPage() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-5xl mx-auto">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-10">
           <div>
             <h1 className="text-4xl font-bold text-foreground mb-2">
               {isHost ? 'Job Postings' : 'Available Jobs'}
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-lg">
               {isHost
                 ? 'Manage your job listings and find co-hosts'
                 : 'Browse available co-hosting opportunities'}
             </p>
           </div>
-          {isHost && (
-            <Button
-              style={{
-                background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
-                color: '#ffffff',
-              }}
-              className="py-3 px-6 h-auto text-base font-bold shadow-lg hover:opacity-90 transition-all"
-              onClick={() => setShowPostJobModal(true)}
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Post Job
-            </Button>
-          )}
+          
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <div className="flex items-center bg-muted/50 p-1 rounded-xl border border-border mr-2">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-2 rounded-lg transition-all ${
+                  viewMode === 'grid' 
+                    ? 'bg-background text-primary shadow-sm' 
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+                title="Grid View"
+              >
+                <LayoutGrid size={20} />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-2 rounded-lg transition-all ${
+                  viewMode === 'list' 
+                    ? 'bg-background text-primary shadow-sm' 
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+                title="List View"
+              >
+                <List size={20} />
+              </button>
+            </div>
+
+            {isHost && (
+              <Button
+                style={{
+                  background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
+                  color: '#ffffff',
+                }}
+                className="flex-1 md:flex-none py-6 px-8 text-base font-bold shadow-lg hover:opacity-90 transition-all rounded-xl"
+                onClick={() => setShowPostJobModal(true)}
+              >
+                <Plus className="h-5 w-5 mr-2" />
+                Post Job
+              </Button>
+            )}
+          </div>
         </div>
 
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <Loader2 className="w-10 h-10 animate-spin text-primary" />
-            <p className="text-muted-foreground animate-pulse">Loading jobs...</p>
+          <div className="flex flex-col items-center justify-center py-32 gap-6">
+            <div className="relative">
+              <div className="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Briefcase size={24} className="text-primary animate-pulse" />
+              </div>
+            </div>
+            <p className="text-muted-foreground text-lg font-medium animate-pulse">Fetching opportunities...</p>
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 gap-6 mb-8">
+            <div className={
+              viewMode === 'grid' 
+                ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12" 
+                : "flex flex-col gap-4 mb-12"
+            }>
               {jobs.map((job) => (
-                <JobCard key={job.id} job={job} />
+                <JobCard key={job.id} job={job} viewMode={viewMode} />
               ))}
             </div>
 

@@ -10,7 +10,7 @@ import {
   type CoHost,
   type Property,
   updateProperty,
-} from '@/lib/mockData';
+} from '@/lib/provideData';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -30,12 +30,48 @@ export default function CoHostsPage() {
   const isHost = user?.userType === 'host';
   const [hireRevision, setHireRevision] = useState(0);
   const [propertiesRevision, setPropertiesRevision] = useState(0);
+  const [cohosts, setCohosts] = useState<CoHost[]>([]);
+  const [isDataLoading, setIsDataLoading] = useState(true);
 
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/login');
+    } else if (user) {
+      fetchCohosts();
     }
   }, [user, isLoading, router]);
+
+  const fetchCohosts = async () => {
+    setIsDataLoading(true);
+    try {
+      const token = localStorage.getItem('hostinly_token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cohosts`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const result = await response.json();
+      if (result.success) {
+        setCohosts(result.data.map((c: any) => ({
+          id: c.id,
+          name: c.user.name,
+          title: c.specialties[0] || 'Property Expert',
+          rating: c.rating,
+          reviews: c.totalReviews,
+          image: c.user.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
+          specialties: c.specialties,
+          hourlyRate: c.hourlyRate,
+          commissionPercentage: c.commissionPercentage,
+          languages: c.languages
+        })));
+      }
+    } catch (err) {
+      console.error('Failed to fetch cohosts:', err);
+      setCohosts(mockCoHosts);
+    } finally {
+      setIsDataLoading(false);
+    }
+  };
 
   const handleContact = (cohost: CoHost) => {
     router.push(`/dashboard/cohosts/${cohost.id}`);
@@ -205,9 +241,19 @@ export default function CoHostsPage() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockCoHosts.map((cohost) => (
-            <CoHostCard key={cohost.id} cohost={cohost} onContact={handleContact} />
-          ))}
+          {isDataLoading ? (
+            <div className="col-span-full flex justify-center py-12">
+              <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+            </div>
+          ) : cohosts.length > 0 ? (
+            cohosts.map((cohost) => (
+              <CoHostCard key={cohost.id} cohost={cohost} onContact={handleContact} />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <p className="text-muted-foreground italic">No co-hosts found.</p>
+            </div>
+          )}
         </div>
       </div>
     </DashboardLayout>

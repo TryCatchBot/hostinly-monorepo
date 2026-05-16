@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
-import { type JobPosting } from '@/lib/mockData';
+import { type JobPosting } from '@/lib/provideData';
 import { Button } from '@/components/ui/button';
 import {
   ArrowLeft,
   MapPin,
-  DollarSign,
+  PoundSterling,
   Clock,
   Briefcase,
   Users,
@@ -16,8 +16,11 @@ import {
   Trash2,
   AlertTriangle,
   Loader2,
+  Tag,
+  CheckCircle2,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/api';
 
@@ -30,7 +33,10 @@ export default function JobDetailPage() {
   const [job, setJob] = useState<JobPosting | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [hasSaved, setHasSaved] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
@@ -44,20 +50,23 @@ export default function JobDetailPage() {
           },
         });
         const result = await response.json();
-        if (result.success) {
-          const j = result.data;
-          setJob({
-            id: j.id,
-            title: j.title,
-            description: j.description,
-            propertyLocation: j.location,
-            budget: j.budget,
-            duration: j.type,
-            experience: 'Any experience welcome',
-            status: j.status.toLowerCase(),
-            applications: 0,
-          });
-        }
+          if (result.success) {
+            const j = result.data;
+            setJob({
+              id: j.id,
+              title: j.title,
+              description: j.description,
+              propertyLocation: j.location,
+              budget: j.budget,
+              duration: j.duration || j.type,
+              experience: 'Any experience welcome',
+              status: j.status.toLowerCase(),
+              applications: 0,
+              type: j.type,
+              requirements: j.requirements,
+              skills: j.skills || [],
+            });
+          }
       } catch (error) {
         console.error('Failed to fetch job:', error);
       } finally {
@@ -92,8 +101,58 @@ export default function JobDetailPage() {
     );
   }
 
-  const handleApply = () => {
-    setHasApplied(true);
+  const handleApply = async () => {
+    if (!id) return;
+    setIsApplying(true);
+    try {
+      const token = localStorage.getItem('hostinly_token');
+      const response = await fetch(`${API_URL}/jobs/${id}/apply`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      });
+      const result = await response.json();
+      if (result.success) {
+        setHasApplied(true);
+        toast.success('Application sent successfully!');
+      } else {
+        toast.error(result.error || 'Failed to apply for job');
+      }
+    } catch (error) {
+      console.error('Failed to apply:', error);
+      toast.error('An error occurred while applying');
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!id) return;
+    setIsSaving(true);
+    try {
+      const token = localStorage.getItem('hostinly_token');
+      const response = await fetch(`${API_URL}/jobs/${id}/save`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      });
+      const result = await response.json();
+      if (result.success) {
+        setHasSaved(true);
+        toast.success('Job saved successfully!');
+      } else {
+        toast.error(result.error || 'Failed to save job');
+      }
+    } catch (error) {
+      console.error('Failed to save job:', error);
+      toast.error('An error occurred while saving the job');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDelete = async () => {
@@ -163,66 +222,100 @@ export default function JobDetailPage() {
           {/* Main Content */}
           <div className="lg:col-span-2">
             {/* Job Header */}
-            <div className="bg-background rounded-lg border border-border p-8 mb-6 shadow-sm">
-              <h1 className="text-4xl font-bold text-foreground mb-4">{job.title}</h1>
+            <div className="bg-background rounded-2xl border border-border p-8 mb-6 shadow-sm overflow-hidden relative">
+              <div className="absolute top-0 right-0 p-4">
+                <span className="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-blue-50 text-blue-600 border border-blue-100">
+                  {job.type}
+                </span>
+              </div>
+              
+              <h1 className="text-4xl font-bold text-foreground mb-4 pr-24">{job.title}</h1>
 
               {/* Quick Info */}
               <div className="grid grid-cols-2 gap-6 mb-6 pb-6 border-b border-border">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <MapPin size={20} className="text-primary" />
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <MapPin size={24} className="text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Location</p>
-                    <p className="font-semibold text-foreground">{job.propertyLocation}</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-0.5">Location</p>
+                    <p className="font-bold text-foreground">{job.propertyLocation}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Clock size={20} className="text-primary" />
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Clock size={24} className="text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Duration</p>
-                    <p className="font-semibold text-foreground">{job.duration}</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-0.5">Duration</p>
+                    <p className="font-bold text-foreground">{job.duration}</p>
                   </div>
                 </div>
               </div>
 
               {/* Budget and Applications */}
               <div className="grid grid-cols-2 gap-6">
-                <div className="bg-green-50/50 p-4 rounded-xl border border-green-100">
+                <div className="bg-green-50/30 p-5 rounded-2xl border border-green-100 group hover:bg-green-50 transition-colors">
                   <div className="flex items-center gap-2 mb-2">
-                    <DollarSign size={20} className="text-green-600" />
-                    <p className="text-sm text-green-700 font-medium">Budget</p>
+                    <div className="p-1.5 bg-green-100 rounded-lg">
+                      {/* <PoundSterling size={20} className="text-green-600" /> */}
+                    </div>
+                    <p className="text-xs text-green-700 font-bold uppercase tracking-wider">Budget</p>
                   </div>
-                  <p className="text-3xl font-bold text-green-700">{job.budget}</p>
+                  <p className="text-3xl font-black text-green-700">
+                    {typeof job.budget === 'number' ? `£${job.budget.toLocaleString('en-GB')}` : (job.budget as string).replace('$', '£')}
+                  </p>
                 </div>
-                <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                <div className="bg-blue-50/30 p-5 rounded-2xl border border-blue-100 group hover:bg-blue-50 transition-colors">
                   <div className="flex items-center gap-2 mb-2">
-                    <Users size={20} className="text-blue-600" />
-                    <p className="text-sm text-blue-700 font-medium">Applications</p>
+                    <div className="p-1.5 bg-blue-100 rounded-lg">
+                      <Users size={20} className="text-blue-600" />
+                    </div>
+                    <p className="text-xs text-blue-700 font-bold uppercase tracking-wider">Applicants</p>
                   </div>
-                  <p className="text-3xl font-bold text-blue-700">{job.applications}</p>
+                  <p className="text-3xl font-black text-blue-700">{job.applications}</p>
                 </div>
               </div>
             </div>
 
-            {/* Description */}
-            <div className="bg-background rounded-lg border border-border p-8 mb-6 shadow-sm">
-              <h2 className="text-2xl font-bold mb-4">About this job</h2>
-              <p className="text-muted-foreground leading-relaxed mb-6 whitespace-pre-wrap">{job.description}</p>
-
-              {/* Requirements */}
-              <h3 className="text-lg font-bold mb-3">Requirements</h3>
-              <div className="bg-muted/30 rounded-xl p-6 flex items-start gap-4 border border-border">
-                <div className="w-12 h-12 rounded-full bg-background flex items-center justify-center border border-border shadow-sm">
-                  <Briefcase size={24} className="text-primary" />
-                </div>
-                <div>
-                  <p className="font-bold text-foreground mb-1">Experience Level</p>
-                  <p className="text-muted-foreground">{job.experience}</p>
-                </div>
+            {/* Description & Requirements */}
+            <div className="bg-background rounded-2xl border border-border p-8 mb-6 shadow-sm">
+              <div className="mb-10">
+                <h2 className="text-2xl font-black mb-6 flex items-center gap-2">
+                  <div className="w-2 h-8 bg-primary rounded-full" />
+                  Job Description
+                </h2>
+                <p className="text-muted-foreground leading-relaxed text-lg whitespace-pre-wrap">{job.description}</p>
               </div>
+
+              {job.requirements && (
+                <div className="mb-10">
+                  <h3 className="text-2xl font-black mb-6 flex items-center gap-2">
+                    <div className="w-2 h-8 bg-secondary rounded-full" />
+                    Requirements
+                  </h3>
+                  <div className="bg-muted/30 rounded-2xl p-6 border border-border whitespace-pre-wrap text-muted-foreground leading-relaxed">
+                    {job.requirements}
+                  </div>
+                </div>
+              )}
+
+              {job.skills && job.skills.length > 0 && (
+                <div>
+                  <h3 className="text-2xl font-black mb-6 flex items-center gap-2">
+                    <div className="w-2 h-8 bg-accent rounded-full" />
+                    Desired Skills
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {job.skills.map((skill, i) => (
+                      <div key={i} className="flex items-center gap-2 px-4 py-2 bg-background border border-border rounded-xl shadow-sm group hover:border-primary transition-colors">
+                        <Tag size={16} className="text-primary group-hover:scale-110 transition-transform" />
+                        <span className="font-bold text-foreground">{skill}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -257,14 +350,21 @@ export default function JobDetailPage() {
                         color: '#ffffff',
                       }}
                       onClick={handleApply}
-                      disabled={job.status !== 'open'}
+                      disabled={job.status !== 'open' || isApplying}
                     >
+                      {isApplying ? <Loader2 className="animate-spin mr-2" /> : null}
                       Apply Now
                     </Button>
                   )}
 
-                  <Button variant="outline" className="w-full py-4 font-bold rounded-xl border-2">
-                    Save Job
+                  <Button 
+                    variant="outline" 
+                    className="w-full py-4 font-bold rounded-xl border-2"
+                    onClick={handleSave}
+                    disabled={isSaving || hasSaved}
+                  >
+                    {isSaving ? <Loader2 className="animate-spin mr-2" /> : null}
+                    {hasSaved ? '✓ Saved' : 'Save Job'}
                   </Button>
                 </div>
               )}

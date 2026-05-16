@@ -36,7 +36,7 @@ export const properties: Property[] = [
     bedrooms: 2,
     bathrooms: 2,
     maxGuests: 4,
-    expectedRevenue: "$3,500/mo",
+    expectedRevenue: "£3,500/mo",
     status: "Looking for Co-Host",
     image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop",
     images: [
@@ -64,7 +64,7 @@ export const properties: Property[] = [
     bedrooms: 4,
     bathrooms: 3,
     maxGuests: 10,
-    expectedRevenue: "$8,000/mo",
+    expectedRevenue: "£8,000/mo",
     status: "Looking for Co-Host",
     image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=300&fit=crop",
     images: [
@@ -92,7 +92,7 @@ export const properties: Property[] = [
     bedrooms: 3,
     bathrooms: 2,
     maxGuests: 6,
-    expectedRevenue: "$4,200/mo",
+    expectedRevenue: "£4,200/mo",
     status: "Looking for Co-Host",
     image: "https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=400&h=300&fit=crop",
     images: [
@@ -120,7 +120,7 @@ export const properties: Property[] = [
     bedrooms: 3,
     bathrooms: 2,
     maxGuests: 8,
-    expectedRevenue: "$4,800/mo",
+    expectedRevenue: "£4,800/mo",
     status: "Looking for Co-Host",
     image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=300&fit=crop",
     images: [
@@ -148,7 +148,7 @@ export const properties: Property[] = [
     bedrooms: 1,
     bathrooms: 1,
     maxGuests: 2,
-    expectedRevenue: "$5,200/mo",
+    expectedRevenue: "£5,200/mo",
     status: "Looking for Co-Host",
     image: "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=400&h=300&fit=crop",
     images: [
@@ -176,7 +176,7 @@ export const properties: Property[] = [
     bedrooms: 4,
     bathrooms: 3,
     maxGuests: 8,
-    expectedRevenue: "$6,500/mo",
+    expectedRevenue: "£6,500/mo",
     status: "Looking for Co-Host",
     image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop",
     images: [
@@ -204,7 +204,7 @@ export const properties: Property[] = [
     bedrooms: 3,
     bathrooms: 2,
     maxGuests: 6,
-    expectedRevenue: "$5,800/mo",
+    expectedRevenue: "£5,800/mo",
     status: "Looking for Co-Host",
     image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop",
     images: [
@@ -232,7 +232,7 @@ export const properties: Property[] = [
     bedrooms: 2,
     bathrooms: 2,
     maxGuests: 4,
-    expectedRevenue: "$4,500/mo",
+    expectedRevenue: "£4,500/mo",
     status: "Looking for Co-Host",
     image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=400&h=300&fit=crop",
     images: [
@@ -260,7 +260,7 @@ export const properties: Property[] = [
     bedrooms: 2,
     bathrooms: 2,
     maxGuests: 4,
-    expectedRevenue: "$3,800/mo",
+    expectedRevenue: "£3,800/mo",
     status: "Looking for Co-Host",
     image: "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=400&h=300&fit=crop",
     images: [

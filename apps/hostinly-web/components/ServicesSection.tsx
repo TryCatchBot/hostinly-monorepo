@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   MessageSquare,
   Calendar,
-  DollarSign,
+  PoundSterling,
   Clock,
   Shield,
   Star,
@@ -22,7 +22,7 @@ const features = [
       "Manage calendars, availability, and reservations across platforms.",
   },
   {
-    icon: DollarSign,
+    icon: PoundSterling,
     title: "Pricing Optimization",
     description:
       "Dynamic pricing strategies to maximize your rental income.",
