@@ -12,6 +12,7 @@ import jobRoutes from './routes/jobs';
 import adminRoutes from './routes/admin';
 import uploadRoutes from './routes/uploads';
 import interviewRoutes from './routes/interviews';
+import serviceRoutes from './routes/services';
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ app.use(`${API_PREFIX}/jobs`, jobRoutes);
 app.use(`${API_PREFIX}/admin`, adminRoutes);
 app.use(`${API_PREFIX}/uploads`, uploadRoutes);
 app.use(`${API_PREFIX}/interviews`, interviewRoutes);
+app.use(`${API_PREFIX}/services`, serviceRoutes);
 
 app.listen(port, host, () => {
   console.log(`[ ready ] http://${host}:${port}`);

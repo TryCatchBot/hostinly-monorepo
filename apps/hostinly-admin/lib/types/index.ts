@@ -1,13 +1,9 @@
 // Admin Roles
 export type AdminRole =
   | "super_admin"
-  | "operations_admin"
-  | "finance_admin"
-  | "support_admin"
-  | "compliance_admin"
-  | "content_moderator"
-  | "marketing_admin"
-  | "technical_admin";
+  | "admin"
+  | "supervisor"
+  | "facilityManager";
 
 export interface AdminUser {
   id: string;
@@ -20,28 +16,28 @@ export interface AdminUser {
 }
 
 // Platform Users
-export type UserRole = "owner" | "co_host" | "guest";
-export type UserStatus = "active" | "suspended" | "pending" | "banned";
-export type VerificationStatus = "verified" | "pending" | "rejected" | "unverified";
+export type UserType = "HOST" | "COHOST" | "CLEANER" | "SUPER_ADMIN" | "ADMIN" | "SUPERVISOR" | "FACILITY_MANAGER";
+export type UserStatus = "ACTIVE" | "INACTIVE" | "SUSPENDED";
+export type VerificationStatus = "PENDING" | "VERIFIED" | "REJECTED";
 
-export interface PlatformUser {
+export interface User {
   id: string;
   email: string;
   name: string;
   phone?: string;
-  role: UserRole;
+  userType: UserType;
   status: UserStatus;
   verificationStatus: VerificationStatus;
   avatar?: string;
   createdAt: string;
   lastActive?: string;
-  properties?: number;
-  bookings?: number;
-  revenue?: number;
+  properties: number;
+  bookings: number;
+  revenue: number;
 }
 
 // Properties
-export type PropertyStatus = "active" | "pending" | "rejected" | "inactive" | "under_review";
+export type PropertyStatus = "AVAILABLE" | "MANAGED" | "INACTIVE" | "PENDING";
 export type PropertyType = "apartment" | "house" | "villa" | "condo" | "studio" | "penthouse";
 
 export interface Property {
@@ -65,9 +61,9 @@ export interface Property {
   amenities: string[];
   bedrooms: number;
   bathrooms: number;
-  maxGuests: number;
-  rating?: number;
-  reviewCount?: number;
+  guests: number;
+  rating: number | null;
+  reviewCount: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -448,8 +444,23 @@ export const ROLE_PERMISSIONS: Record<AdminRole, RolePermissions> = {
     marketing: { view: true, create: true, edit: true },
     support: { view: true, assign: true, resolve: true },
   },
-  operations_admin: {
-    users: { view: true, create: true, edit: true, delete: false },
+  admin: {
+    users: { view: true, create: true, edit: true, delete: true },
+    properties: { view: true, create: true, edit: true, delete: true, approve: true },
+    coHosts: { view: true, create: true, edit: true, delete: true },
+    bookings: { view: true, edit: true, cancel: true },
+    payments: { view: true, process: true, refund: true },
+    services: { view: true, create: true, edit: true, delete: true },
+    reviews: { view: true, moderate: true, delete: true },
+    communications: { view: true, create: true, send: true },
+    documents: { view: true, verify: true, reject: true },
+    settings: { view: true, edit: true },
+    moderation: { view: true, action: true },
+    marketing: { view: true, create: true, edit: true },
+    support: { view: true, assign: true, resolve: true },
+  },
+  supervisor: {
+    users: { view: true, create: false, edit: true, delete: false },
     properties: { view: true, create: false, edit: true, delete: false, approve: true },
     coHosts: { view: true, create: true, edit: true, delete: false },
     bookings: { view: true, edit: true, cancel: true },
@@ -463,92 +474,17 @@ export const ROLE_PERMISSIONS: Record<AdminRole, RolePermissions> = {
     marketing: { view: false, create: false, edit: false },
     support: { view: true, assign: false, resolve: false },
   },
-  finance_admin: {
-    users: { view: true, create: false, edit: false, delete: false },
-    properties: { view: true, create: false, edit: false, delete: false, approve: false },
-    coHosts: { view: true, create: false, edit: false, delete: false },
-    bookings: { view: true, edit: false, cancel: false },
-    payments: { view: true, process: true, refund: true },
-    services: { view: false, create: false, edit: false, delete: false },
-    reviews: { view: false, moderate: false, delete: false },
-    communications: { view: false, create: false, send: false },
-    documents: { view: true, verify: false, reject: false },
-    settings: { view: true, edit: false },
-    moderation: { view: false, action: false },
-    marketing: { view: true, create: false, edit: false },
-    support: { view: false, assign: false, resolve: false },
-  },
-  support_admin: {
-    users: { view: true, create: false, edit: true, delete: false },
-    properties: { view: true, create: false, edit: false, delete: false, approve: false },
-    coHosts: { view: true, create: false, edit: false, delete: false },
-    bookings: { view: true, edit: true, cancel: true },
-    payments: { view: true, process: false, refund: false },
-    services: { view: true, create: false, edit: false, delete: false },
-    reviews: { view: true, moderate: false, delete: false },
-    communications: { view: true, create: true, send: true },
-    documents: { view: true, verify: false, reject: false },
-    settings: { view: false, edit: false },
-    moderation: { view: true, action: false },
-    marketing: { view: false, create: false, edit: false },
-    support: { view: true, assign: true, resolve: true },
-  },
-  compliance_admin: {
-    users: { view: true, create: false, edit: false, delete: false },
-    properties: { view: true, create: false, edit: false, delete: false, approve: false },
-    coHosts: { view: true, create: false, edit: false, delete: false },
-    bookings: { view: true, edit: false, cancel: false },
-    payments: { view: true, process: false, refund: false },
-    services: { view: false, create: false, edit: false, delete: false },
-    reviews: { view: true, moderate: false, delete: false },
-    communications: { view: false, create: false, send: false },
-    documents: { view: true, verify: true, reject: true },
-    settings: { view: false, edit: false },
-    moderation: { view: true, action: true },
-    marketing: { view: false, create: false, edit: false },
-    support: { view: true, assign: false, resolve: false },
-  },
-  content_moderator: {
+  facilityManager: {
     users: { view: true, create: false, edit: false, delete: false },
     properties: { view: true, create: false, edit: true, delete: false, approve: false },
     coHosts: { view: false, create: false, edit: false, delete: false },
     bookings: { view: false, edit: false, cancel: false },
     payments: { view: false, process: false, refund: false },
-    services: { view: false, create: false, edit: false, delete: false },
-    reviews: { view: true, moderate: true, delete: true },
-    communications: { view: false, create: false, send: false },
-    documents: { view: false, verify: false, reject: false },
-    settings: { view: false, edit: false },
-    moderation: { view: true, action: true },
-    marketing: { view: false, create: false, edit: false },
-    support: { view: false, assign: false, resolve: false },
-  },
-  marketing_admin: {
-    users: { view: true, create: false, edit: false, delete: false },
-    properties: { view: true, create: false, edit: false, delete: false, approve: false },
-    coHosts: { view: false, create: false, edit: false, delete: false },
-    bookings: { view: true, edit: false, cancel: false },
-    payments: { view: false, process: false, refund: false },
-    services: { view: false, create: false, edit: false, delete: false },
-    reviews: { view: true, moderate: false, delete: false },
-    communications: { view: true, create: true, send: true },
-    documents: { view: false, verify: false, reject: false },
-    settings: { view: false, edit: false },
-    moderation: { view: false, action: false },
-    marketing: { view: true, create: true, edit: true },
-    support: { view: false, assign: false, resolve: false },
-  },
-  technical_admin: {
-    users: { view: true, create: false, edit: false, delete: false },
-    properties: { view: true, create: false, edit: false, delete: false, approve: false },
-    coHosts: { view: false, create: false, edit: false, delete: false },
-    bookings: { view: true, edit: false, cancel: false },
-    payments: { view: true, process: false, refund: false },
     services: { view: true, create: true, edit: true, delete: true },
     reviews: { view: false, moderate: false, delete: false },
     communications: { view: false, create: false, send: false },
     documents: { view: false, verify: false, reject: false },
-    settings: { view: true, edit: true },
+    settings: { view: false, edit: false },
     moderation: { view: true, action: false },
     marketing: { view: false, create: false, edit: false },
     support: { view: true, assign: false, resolve: false },
@@ -557,11 +493,7 @@ export const ROLE_PERMISSIONS: Record<AdminRole, RolePermissions> = {
 
 export const ROLE_LABELS: Record<AdminRole, string> = {
   super_admin: "Super Admin",
-  operations_admin: "Operations Admin",
-  finance_admin: "Finance Admin",
-  support_admin: "Support Admin",
-  compliance_admin: "Compliance Admin",
-  content_moderator: "Content Moderator",
-  marketing_admin: "Marketing Admin",
-  technical_admin: "Technical Admin",
+  admin: "Admin",
+  supervisor: "Supervisor",
+  facilityManager: "Facility Manager",
 };

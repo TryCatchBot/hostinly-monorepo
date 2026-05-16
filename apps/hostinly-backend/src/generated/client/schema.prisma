@@ -13,7 +13,10 @@ enum UserType {
   HOST
   COHOST
   CLEANER
+  SUPER_ADMIN
   ADMIN
+  SUPERVISOR
+  FACILITY_MANAGER
 }
 
 enum UserStatus {
@@ -93,6 +96,8 @@ model User {
   availability        String?  @map("availability")
   areasCovered        String?  @map("areas_covered")
   proofOfAddress      String?  @map("proof_of_address")
+  resume              String?  @map("resume")
+  coverLetter         String?  @map("cover_letter")
   references          String?  @map("references")
   insurance           String?  @map("insurance")
   approvalReason      String?  @map("approval_reason")
@@ -143,10 +148,12 @@ model Property {
   bedrooms    Int            @default(1)
   bathrooms   Int            @default(1)
   guests      Int            @default(2)
+  type        PropertyType
 
   cohosts  CoHost[]
   jobs     JobPosting[]
   bookings Booking[]
+  reviews  Review[]
 
   @@map("properties")
 }
@@ -195,14 +202,16 @@ model JobPosting {
 }
 
 model Review {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   rating     Int
   comment    String
-  reviewerId String   @map("reviewer_id") @db.Uuid
-  reviewer   User     @relation("Reviewer", fields: [reviewerId], references: [id])
-  revieweeId String   @map("reviewee_id") @db.Uuid
-  reviewee   User     @relation("Reviewee", fields: [revieweeId], references: [id])
-  createdAt  DateTime @default(now()) @map("created_at")
+  reviewerId String    @map("reviewer_id") @db.Uuid
+  reviewer   User      @relation("Reviewer", fields: [reviewerId], references: [id])
+  revieweeId String    @map("reviewee_id") @db.Uuid
+  reviewee   User      @relation("Reviewee", fields: [revieweeId], references: [id])
+  propertyId String?   @map("property_id") @db.Uuid
+  property   Property? @relation(fields: [propertyId], references: [id])
+  createdAt  DateTime  @default(now()) @map("created_at")
 
   @@map("reviews")
 }

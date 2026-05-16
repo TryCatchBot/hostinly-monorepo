@@ -39,13 +39,48 @@ const checkOnboardingStatus = (user: any): boolean => {
 
 router.get('/', async (req, res) => {
   try {
-    const data = await prisma.user.findMany();
-    // Filter to return only public fields
-    const safeData = data.map(user => {
-      const { passwordHash, ...userWithoutPassword } = user;
-      return userWithoutPassword;
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        userType: true,
+        avatar: true,
+        phone: true,
+        status: true,
+        verificationStatus: true,
+        createdAt: true,
+        _count: {
+          select: {
+            properties: true,
+            bookings: true,
+          },
+        },
+      },
     });
-    sendSuccess(res, safeData);
+
+    const usersWithAggregates = await Promise.all(
+      users.map(async (user) => {
+        const totalRevenueResult = await prisma.payment.aggregate({
+          _sum: {
+            amount: true,
+          },
+          where: {
+            userId: user.id,
+            status: 'succeeded',
+          },
+        });
+        const totalRevenue = totalRevenueResult._sum.amount?.toNumber() || 0;
+        return {
+          ...user,
+          properties: user._count.properties,
+          bookings: user._count.bookings,
+          revenue: totalRevenue,
+        };
+      })
+    );
+
+    sendSuccess(res, usersWithAggregates);
   } catch (error: any) {
     sendError(res, error.message);
   }

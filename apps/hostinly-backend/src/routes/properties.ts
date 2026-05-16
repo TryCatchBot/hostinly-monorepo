@@ -7,8 +7,51 @@ const router: Router = Router();
 // --- Properties ---
 router.get('/', async (req, res) => {
   try {
-    const data = await prisma.property.findMany();
-    sendSuccess(res, data);
+    const properties = await prisma.property.findMany({
+      include: {
+        owner: {
+          select: { name: true },
+        },
+        reviews: {
+          select: { rating: true },
+        },
+      },
+    });
+
+    const propertiesWithDetails = properties.map((property) => {
+      const totalRating = property.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0);
+      const averageRating = property.reviews.length > 0 ? totalRating / property.reviews.length : null;
+
+      return {
+        id: property.id,
+        title: property.title,
+        description: property.description,
+        type: property.type,
+        status: property.status,
+        ownerId: property.ownerId,
+        ownerName: property.owner.name,
+        location: {
+          address: property.address,
+          city: property.city,
+          country: "USA", // Assuming a default country for now
+        },
+        pricing: {
+          nightlyRate: property.price,
+          currency: "USD", // Assuming a default currency for now
+        },
+        images: property.images,
+        amenities: property.amenities,
+        bedrooms: property.bedrooms,
+        bathrooms: property.bathrooms,
+        guests: property.guests,
+        rating: averageRating,
+        reviewCount: property.reviews.length,
+        createdAt: property.createdAt,
+        updatedAt: property.updatedAt,
+      };
+    });
+
+    sendSuccess(res, propertiesWithDetails);
   } catch (error: any) {
     sendError(res, error.message);
   }

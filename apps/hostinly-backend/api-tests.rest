@@ -7,6 +7,8 @@
 @token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxZjM1ZWM1Zi0yNDYyLTQ4MmUtOGMzNy1mMGY4ZGQ1YjM4MzkiLCJlbWFpbCI6ImRlZW5AeW9wbWFpbC5jb20iLCJ1c2VyVHlwZSI6IkhPU1QiLCJpYXQiOjE3Nzg2ODEwNjQsImV4cCI6MTc3ODc2NzQ2NH0._7JJ6MkGLleb9jxfhtSUWGeUIUhahHWDdDL7wnKYOLw"
 @email = "deen@yopmail.com"
 @password = "Password1*"
+@superAdminEmail = "joshua@yopmail.com"
+@superAdminPassword = "Password1*"
 
 
 
@@ -32,10 +34,17 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  # "email": "{{email}}",
-  # "password": "{{password}}",
   "email": "deen@yopmail.com",
   "password": "Password1*"
+}
+
+### Super Admin Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{superAdminEmail}}",
+  "password": "{{superAdminPassword}}"
 }
 
 
@@ -82,8 +91,10 @@ Content-Type: image/jpeg
 GET {{baseUrl}}/users
 
 ### Get User Profile
-# GET {{baseUrl}}/users/{{userId}}
 GET {{baseUrl}}/users/7c6d8823-245d-4495-96f8-056b9d2e4986
+
+### Get User Profile (Reported 404)
+GET {{baseUrl}}/users/1f35ec5f-2462-482e-8c37-f0f8dd5b3839
 
 
 
@@ -165,6 +176,14 @@ Content-Type: application/json
 ### Get Job Detail
 GET {{baseUrl}}/jobs/{{jobId}}
 
+# --- SERVICES ---
+
+### Get Service Providers
+GET {{baseUrl}}/services/providers
+
+### Get Service Requests
+GET {{baseUrl}}/services/requests
+
 # --- ADMIN ---
 
 ### Get Admin Stats
@@ -172,3 +191,9 @@ GET {{baseUrl}}/admin/stats
 
 ### Get Recent Activity
 GET {{baseUrl}}/admin/recent-activity
+
+### Get Chart Data
+GET {{baseUrl}}/admin/chart-data
+
+### Get Recent Bookings
+GET {{baseUrl}}/admin/recent-bookings

@@ -77,7 +77,10 @@ export namespace $Enums {
   HOST: 'HOST',
   COHOST: 'COHOST',
   CLEANER: 'CLEANER',
-  ADMIN: 'ADMIN'
+  SUPER_ADMIN: 'SUPER_ADMIN',
+  ADMIN: 'ADMIN',
+  SUPERVISOR: 'SUPERVISOR',
+  FACILITY_MANAGER: 'FACILITY_MANAGER'
 };
 
 export type UserType = (typeof UserType)[keyof typeof UserType]
@@ -2024,12 +2027,14 @@ export namespace Prisma {
     cohosts: number
     jobs: number
     bookings: number
+    reviews: number
   }
 
   export type PropertyCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cohosts?: boolean | PropertyCountOutputTypeCountCohostsArgs
     jobs?: boolean | PropertyCountOutputTypeCountJobsArgs
     bookings?: boolean | PropertyCountOutputTypeCountBookingsArgs
+    reviews?: boolean | PropertyCountOutputTypeCountReviewsArgs
   }
 
   // Custom InputTypes
@@ -2062,6 +2067,13 @@ export namespace Prisma {
    */
   export type PropertyCountOutputTypeCountBookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: BookingWhereInput
+  }
+
+  /**
+   * PropertyCountOutputType without action
+   */
+  export type PropertyCountOutputTypeCountReviewsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ReviewWhereInput
   }
 
 
@@ -3272,6 +3284,8 @@ export namespace Prisma {
     availability: string | null
     areasCovered: string | null
     proofOfAddress: string | null
+    resume: string | null
+    coverLetter: string | null
     references: string | null
     insurance: string | null
     approvalReason: string | null
@@ -3316,6 +3330,8 @@ export namespace Prisma {
     availability: string | null
     areasCovered: string | null
     proofOfAddress: string | null
+    resume: string | null
+    coverLetter: string | null
     references: string | null
     insurance: string | null
     approvalReason: string | null
@@ -3360,6 +3376,8 @@ export namespace Prisma {
     availability: number
     areasCovered: number
     proofOfAddress: number
+    resume: number
+    coverLetter: number
     references: number
     insurance: number
     approvalReason: number
@@ -3422,6 +3440,8 @@ export namespace Prisma {
     availability?: true
     areasCovered?: true
     proofOfAddress?: true
+    resume?: true
+    coverLetter?: true
     references?: true
     insurance?: true
     approvalReason?: true
@@ -3466,6 +3486,8 @@ export namespace Prisma {
     availability?: true
     areasCovered?: true
     proofOfAddress?: true
+    resume?: true
+    coverLetter?: true
     references?: true
     insurance?: true
     approvalReason?: true
@@ -3510,6 +3532,8 @@ export namespace Prisma {
     availability?: true
     areasCovered?: true
     proofOfAddress?: true
+    resume?: true
+    coverLetter?: true
     references?: true
     insurance?: true
     approvalReason?: true
@@ -3641,6 +3665,8 @@ export namespace Prisma {
     availability: string | null
     areasCovered: string | null
     proofOfAddress: string | null
+    resume: string | null
+    coverLetter: string | null
     references: string | null
     insurance: string | null
     approvalReason: string | null
@@ -3704,6 +3730,8 @@ export namespace Prisma {
     availability?: boolean
     areasCovered?: boolean
     proofOfAddress?: boolean
+    resume?: boolean
+    coverLetter?: boolean
     references?: boolean
     insurance?: boolean
     approvalReason?: boolean
@@ -3758,6 +3786,8 @@ export namespace Prisma {
     availability?: boolean
     areasCovered?: boolean
     proofOfAddress?: boolean
+    resume?: boolean
+    coverLetter?: boolean
     references?: boolean
     insurance?: boolean
     approvalReason?: boolean
@@ -3802,6 +3832,8 @@ export namespace Prisma {
     availability?: boolean
     areasCovered?: boolean
     proofOfAddress?: boolean
+    resume?: boolean
+    coverLetter?: boolean
     references?: boolean
     insurance?: boolean
     approvalReason?: boolean
@@ -3846,12 +3878,14 @@ export namespace Prisma {
     availability?: boolean
     areasCovered?: boolean
     proofOfAddress?: boolean
+    resume?: boolean
+    coverLetter?: boolean
     references?: boolean
     insurance?: boolean
     approvalReason?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "passwordHash" | "userType" | "avatar" | "phone" | "address" | "city" | "state" | "zipCode" | "country" | "status" | "verificationStatus" | "createdAt" | "lastActive" | "isOnboardingCompleted" | "dateOfBirth" | "numberOfProperties" | "hostingExperience" | "propertyLocations" | "propertyTypes" | "platformsUsed" | "monthlyIncomeTarget" | "usesCoHost" | "supportRequired" | "uploadId" | "proofOfOwnership" | "businessRegistration" | "postcode" | "hasAirbnbExperience" | "yearsOfExperience" | "propertiesManaged" | "averageRating" | "servicesOffered" | "availability" | "areasCovered" | "proofOfAddress" | "references" | "insurance" | "approvalReason", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "passwordHash" | "userType" | "avatar" | "phone" | "address" | "city" | "state" | "zipCode" | "country" | "status" | "verificationStatus" | "createdAt" | "lastActive" | "isOnboardingCompleted" | "dateOfBirth" | "numberOfProperties" | "hostingExperience" | "propertyLocations" | "propertyTypes" | "platformsUsed" | "monthlyIncomeTarget" | "usesCoHost" | "supportRequired" | "uploadId" | "proofOfOwnership" | "businessRegistration" | "postcode" | "hasAirbnbExperience" | "yearsOfExperience" | "propertiesManaged" | "averageRating" | "servicesOffered" | "availability" | "areasCovered" | "proofOfAddress" | "resume" | "coverLetter" | "references" | "insurance" | "approvalReason", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     properties?: boolean | User$propertiesArgs<ExtArgs>
     cohostProfile?: boolean | User$cohostProfileArgs<ExtArgs>
@@ -3919,6 +3953,8 @@ export namespace Prisma {
       availability: string | null
       areasCovered: string | null
       proofOfAddress: string | null
+      resume: string | null
+      coverLetter: string | null
       references: string | null
       insurance: string | null
       approvalReason: string | null
@@ -4392,6 +4428,8 @@ export namespace Prisma {
     readonly availability: FieldRef<"User", 'String'>
     readonly areasCovered: FieldRef<"User", 'String'>
     readonly proofOfAddress: FieldRef<"User", 'String'>
+    readonly resume: FieldRef<"User", 'String'>
+    readonly coverLetter: FieldRef<"User", 'String'>
     readonly references: FieldRef<"User", 'String'>
     readonly insurance: FieldRef<"User", 'String'>
     readonly approvalReason: FieldRef<"User", 'String'>
@@ -5052,6 +5090,7 @@ export namespace Prisma {
     bedrooms: number | null
     bathrooms: number | null
     guests: number | null
+    type: $Enums.PropertyType | null
   }
 
   export type PropertyMaxAggregateOutputType = {
@@ -5068,6 +5107,7 @@ export namespace Prisma {
     bedrooms: number | null
     bathrooms: number | null
     guests: number | null
+    type: $Enums.PropertyType | null
   }
 
   export type PropertyCountAggregateOutputType = {
@@ -5086,6 +5126,7 @@ export namespace Prisma {
     bedrooms: number
     bathrooms: number
     guests: number
+    type: number
     _all: number
   }
 
@@ -5118,6 +5159,7 @@ export namespace Prisma {
     bedrooms?: true
     bathrooms?: true
     guests?: true
+    type?: true
   }
 
   export type PropertyMaxAggregateInputType = {
@@ -5134,6 +5176,7 @@ export namespace Prisma {
     bedrooms?: true
     bathrooms?: true
     guests?: true
+    type?: true
   }
 
   export type PropertyCountAggregateInputType = {
@@ -5152,6 +5195,7 @@ export namespace Prisma {
     bedrooms?: true
     bathrooms?: true
     guests?: true
+    type?: true
     _all?: true
   }
 
@@ -5257,6 +5301,7 @@ export namespace Prisma {
     bedrooms: number
     bathrooms: number
     guests: number
+    type: $Enums.PropertyType
     _count: PropertyCountAggregateOutputType | null
     _avg: PropertyAvgAggregateOutputType | null
     _sum: PropertySumAggregateOutputType | null
@@ -5294,10 +5339,12 @@ export namespace Prisma {
     bedrooms?: boolean
     bathrooms?: boolean
     guests?: boolean
+    type?: boolean
     owner?: boolean | UserDefaultArgs<ExtArgs>
     cohosts?: boolean | Property$cohostsArgs<ExtArgs>
     jobs?: boolean | Property$jobsArgs<ExtArgs>
     bookings?: boolean | Property$bookingsArgs<ExtArgs>
+    reviews?: boolean | Property$reviewsArgs<ExtArgs>
     _count?: boolean | PropertyCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["property"]>
 
@@ -5317,6 +5364,7 @@ export namespace Prisma {
     bedrooms?: boolean
     bathrooms?: boolean
     guests?: boolean
+    type?: boolean
     owner?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["property"]>
 
@@ -5336,6 +5384,7 @@ export namespace Prisma {
     bedrooms?: boolean
     bathrooms?: boolean
     guests?: boolean
+    type?: boolean
     owner?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["property"]>
 
@@ -5355,14 +5404,16 @@ export namespace Prisma {
     bedrooms?: boolean
     bathrooms?: boolean
     guests?: boolean
+    type?: boolean
   }
 
-  export type PropertyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "address" | "city" | "price" | "status" | "ownerId" | "createdAt" | "updatedAt" | "images" | "amenities" | "bedrooms" | "bathrooms" | "guests", ExtArgs["result"]["property"]>
+  export type PropertyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "address" | "city" | "price" | "status" | "ownerId" | "createdAt" | "updatedAt" | "images" | "amenities" | "bedrooms" | "bathrooms" | "guests" | "type", ExtArgs["result"]["property"]>
   export type PropertyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     owner?: boolean | UserDefaultArgs<ExtArgs>
     cohosts?: boolean | Property$cohostsArgs<ExtArgs>
     jobs?: boolean | Property$jobsArgs<ExtArgs>
     bookings?: boolean | Property$bookingsArgs<ExtArgs>
+    reviews?: boolean | Property$reviewsArgs<ExtArgs>
     _count?: boolean | PropertyCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type PropertyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5379,6 +5430,7 @@ export namespace Prisma {
       cohosts: Prisma.$CoHostPayload<ExtArgs>[]
       jobs: Prisma.$JobPostingPayload<ExtArgs>[]
       bookings: Prisma.$BookingPayload<ExtArgs>[]
+      reviews: Prisma.$ReviewPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5396,6 +5448,7 @@ export namespace Prisma {
       bedrooms: number
       bathrooms: number
       guests: number
+      type: $Enums.PropertyType
     }, ExtArgs["result"]["property"]>
     composites: {}
   }
@@ -5794,6 +5847,7 @@ export namespace Prisma {
     cohosts<T extends Property$cohostsArgs<ExtArgs> = {}>(args?: Subset<T, Property$cohostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CoHostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     jobs<T extends Property$jobsArgs<ExtArgs> = {}>(args?: Subset<T, Property$jobsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobPostingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     bookings<T extends Property$bookingsArgs<ExtArgs> = {}>(args?: Subset<T, Property$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    reviews<T extends Property$reviewsArgs<ExtArgs> = {}>(args?: Subset<T, Property$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5838,6 +5892,7 @@ export namespace Prisma {
     readonly bedrooms: FieldRef<"Property", 'Int'>
     readonly bathrooms: FieldRef<"Property", 'Int'>
     readonly guests: FieldRef<"Property", 'Int'>
+    readonly type: FieldRef<"Property", 'PropertyType'>
   }
     
 
@@ -6303,6 +6358,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: BookingScalarFieldEnum | BookingScalarFieldEnum[]
+  }
+
+  /**
+   * Property.reviews
+   */
+  export type Property$reviewsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Review
+     */
+    select?: ReviewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Review
+     */
+    omit?: ReviewOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReviewInclude<ExtArgs> | null
+    where?: ReviewWhereInput
+    orderBy?: ReviewOrderByWithRelationInput | ReviewOrderByWithRelationInput[]
+    cursor?: ReviewWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ReviewScalarFieldEnum | ReviewScalarFieldEnum[]
   }
 
   /**
@@ -8704,6 +8783,7 @@ export namespace Prisma {
     comment: string | null
     reviewerId: string | null
     revieweeId: string | null
+    propertyId: string | null
     createdAt: Date | null
   }
 
@@ -8713,6 +8793,7 @@ export namespace Prisma {
     comment: string | null
     reviewerId: string | null
     revieweeId: string | null
+    propertyId: string | null
     createdAt: Date | null
   }
 
@@ -8722,6 +8803,7 @@ export namespace Prisma {
     comment: number
     reviewerId: number
     revieweeId: number
+    propertyId: number
     createdAt: number
     _all: number
   }
@@ -8741,6 +8823,7 @@ export namespace Prisma {
     comment?: true
     reviewerId?: true
     revieweeId?: true
+    propertyId?: true
     createdAt?: true
   }
 
@@ -8750,6 +8833,7 @@ export namespace Prisma {
     comment?: true
     reviewerId?: true
     revieweeId?: true
+    propertyId?: true
     createdAt?: true
   }
 
@@ -8759,6 +8843,7 @@ export namespace Prisma {
     comment?: true
     reviewerId?: true
     revieweeId?: true
+    propertyId?: true
     createdAt?: true
     _all?: true
   }
@@ -8855,6 +8940,7 @@ export namespace Prisma {
     comment: string
     reviewerId: string
     revieweeId: string
+    propertyId: string | null
     createdAt: Date
     _count: ReviewCountAggregateOutputType | null
     _avg: ReviewAvgAggregateOutputType | null
@@ -8883,9 +8969,11 @@ export namespace Prisma {
     comment?: boolean
     reviewerId?: boolean
     revieweeId?: boolean
+    propertyId?: boolean
     createdAt?: boolean
     reviewer?: boolean | UserDefaultArgs<ExtArgs>
     reviewee?: boolean | UserDefaultArgs<ExtArgs>
+    property?: boolean | Review$propertyArgs<ExtArgs>
   }, ExtArgs["result"]["review"]>
 
   export type ReviewSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8894,9 +8982,11 @@ export namespace Prisma {
     comment?: boolean
     reviewerId?: boolean
     revieweeId?: boolean
+    propertyId?: boolean
     createdAt?: boolean
     reviewer?: boolean | UserDefaultArgs<ExtArgs>
     reviewee?: boolean | UserDefaultArgs<ExtArgs>
+    property?: boolean | Review$propertyArgs<ExtArgs>
   }, ExtArgs["result"]["review"]>
 
   export type ReviewSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8905,9 +8995,11 @@ export namespace Prisma {
     comment?: boolean
     reviewerId?: boolean
     revieweeId?: boolean
+    propertyId?: boolean
     createdAt?: boolean
     reviewer?: boolean | UserDefaultArgs<ExtArgs>
     reviewee?: boolean | UserDefaultArgs<ExtArgs>
+    property?: boolean | Review$propertyArgs<ExtArgs>
   }, ExtArgs["result"]["review"]>
 
   export type ReviewSelectScalar = {
@@ -8916,21 +9008,25 @@ export namespace Prisma {
     comment?: boolean
     reviewerId?: boolean
     revieweeId?: boolean
+    propertyId?: boolean
     createdAt?: boolean
   }
 
-  export type ReviewOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rating" | "comment" | "reviewerId" | "revieweeId" | "createdAt", ExtArgs["result"]["review"]>
+  export type ReviewOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rating" | "comment" | "reviewerId" | "revieweeId" | "propertyId" | "createdAt", ExtArgs["result"]["review"]>
   export type ReviewInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     reviewer?: boolean | UserDefaultArgs<ExtArgs>
     reviewee?: boolean | UserDefaultArgs<ExtArgs>
+    property?: boolean | Review$propertyArgs<ExtArgs>
   }
   export type ReviewIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     reviewer?: boolean | UserDefaultArgs<ExtArgs>
     reviewee?: boolean | UserDefaultArgs<ExtArgs>
+    property?: boolean | Review$propertyArgs<ExtArgs>
   }
   export type ReviewIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     reviewer?: boolean | UserDefaultArgs<ExtArgs>
     reviewee?: boolean | UserDefaultArgs<ExtArgs>
+    property?: boolean | Review$propertyArgs<ExtArgs>
   }
 
   export type $ReviewPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8938,6 +9034,7 @@ export namespace Prisma {
     objects: {
       reviewer: Prisma.$UserPayload<ExtArgs>
       reviewee: Prisma.$UserPayload<ExtArgs>
+      property: Prisma.$PropertyPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8945,6 +9042,7 @@ export namespace Prisma {
       comment: string
       reviewerId: string
       revieweeId: string
+      propertyId: string | null
       createdAt: Date
     }, ExtArgs["result"]["review"]>
     composites: {}
@@ -9342,6 +9440,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     reviewer<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     reviewee<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    property<T extends Review$propertyArgs<ExtArgs> = {}>(args?: Subset<T, Review$propertyArgs<ExtArgs>>): Prisma__PropertyClient<$Result.GetResult<Prisma.$PropertyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9376,6 +9475,7 @@ export namespace Prisma {
     readonly comment: FieldRef<"Review", 'String'>
     readonly reviewerId: FieldRef<"Review", 'String'>
     readonly revieweeId: FieldRef<"Review", 'String'>
+    readonly propertyId: FieldRef<"Review", 'String'>
     readonly createdAt: FieldRef<"Review", 'DateTime'>
   }
     
@@ -9770,6 +9870,25 @@ export namespace Prisma {
      * Limit how many Reviews to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Review.property
+   */
+  export type Review$propertyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Property
+     */
+    select?: PropertySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Property
+     */
+    omit?: PropertyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PropertyInclude<ExtArgs> | null
+    where?: PropertyWhereInput
   }
 
   /**
@@ -15354,6 +15473,8 @@ export namespace Prisma {
     availability: 'availability',
     areasCovered: 'areasCovered',
     proofOfAddress: 'proofOfAddress',
+    resume: 'resume',
+    coverLetter: 'coverLetter',
     references: 'references',
     insurance: 'insurance',
     approvalReason: 'approvalReason'
@@ -15377,7 +15498,8 @@ export namespace Prisma {
     amenities: 'amenities',
     bedrooms: 'bedrooms',
     bathrooms: 'bathrooms',
-    guests: 'guests'
+    guests: 'guests',
+    type: 'type'
   };
 
   export type PropertyScalarFieldEnum = (typeof PropertyScalarFieldEnum)[keyof typeof PropertyScalarFieldEnum]
@@ -15422,6 +15544,7 @@ export namespace Prisma {
     comment: 'comment',
     reviewerId: 'reviewerId',
     revieweeId: 'revieweeId',
+    propertyId: 'propertyId',
     createdAt: 'createdAt'
   };
 
@@ -15658,6 +15781,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'PropertyType'
+   */
+  export type EnumPropertyTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PropertyType'>
+    
+
+
+  /**
+   * Reference to a field of type 'PropertyType[]'
+   */
+  export type ListEnumPropertyTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PropertyType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'JobStatus'
    */
   export type EnumJobStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JobStatus'>
@@ -15873,6 +16010,8 @@ export namespace Prisma {
     availability?: StringNullableFilter<"User"> | string | null
     areasCovered?: StringNullableFilter<"User"> | string | null
     proofOfAddress?: StringNullableFilter<"User"> | string | null
+    resume?: StringNullableFilter<"User"> | string | null
+    coverLetter?: StringNullableFilter<"User"> | string | null
     references?: StringNullableFilter<"User"> | string | null
     insurance?: StringNullableFilter<"User"> | string | null
     approvalReason?: StringNullableFilter<"User"> | string | null
@@ -15926,6 +16065,8 @@ export namespace Prisma {
     availability?: SortOrderInput | SortOrder
     areasCovered?: SortOrderInput | SortOrder
     proofOfAddress?: SortOrderInput | SortOrder
+    resume?: SortOrderInput | SortOrder
+    coverLetter?: SortOrderInput | SortOrder
     references?: SortOrderInput | SortOrder
     insurance?: SortOrderInput | SortOrder
     approvalReason?: SortOrderInput | SortOrder
@@ -15982,6 +16123,8 @@ export namespace Prisma {
     availability?: StringNullableFilter<"User"> | string | null
     areasCovered?: StringNullableFilter<"User"> | string | null
     proofOfAddress?: StringNullableFilter<"User"> | string | null
+    resume?: StringNullableFilter<"User"> | string | null
+    coverLetter?: StringNullableFilter<"User"> | string | null
     references?: StringNullableFilter<"User"> | string | null
     insurance?: StringNullableFilter<"User"> | string | null
     approvalReason?: StringNullableFilter<"User"> | string | null
@@ -16035,6 +16178,8 @@ export namespace Prisma {
     availability?: SortOrderInput | SortOrder
     areasCovered?: SortOrderInput | SortOrder
     proofOfAddress?: SortOrderInput | SortOrder
+    resume?: SortOrderInput | SortOrder
+    coverLetter?: SortOrderInput | SortOrder
     references?: SortOrderInput | SortOrder
     insurance?: SortOrderInput | SortOrder
     approvalReason?: SortOrderInput | SortOrder
@@ -16087,6 +16232,8 @@ export namespace Prisma {
     availability?: StringNullableWithAggregatesFilter<"User"> | string | null
     areasCovered?: StringNullableWithAggregatesFilter<"User"> | string | null
     proofOfAddress?: StringNullableWithAggregatesFilter<"User"> | string | null
+    resume?: StringNullableWithAggregatesFilter<"User"> | string | null
+    coverLetter?: StringNullableWithAggregatesFilter<"User"> | string | null
     references?: StringNullableWithAggregatesFilter<"User"> | string | null
     insurance?: StringNullableWithAggregatesFilter<"User"> | string | null
     approvalReason?: StringNullableWithAggregatesFilter<"User"> | string | null
@@ -16111,10 +16258,12 @@ export namespace Prisma {
     bedrooms?: IntFilter<"Property"> | number
     bathrooms?: IntFilter<"Property"> | number
     guests?: IntFilter<"Property"> | number
+    type?: EnumPropertyTypeFilter<"Property"> | $Enums.PropertyType
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     cohosts?: CoHostListRelationFilter
     jobs?: JobPostingListRelationFilter
     bookings?: BookingListRelationFilter
+    reviews?: ReviewListRelationFilter
   }
 
   export type PropertyOrderByWithRelationInput = {
@@ -16133,10 +16282,12 @@ export namespace Prisma {
     bedrooms?: SortOrder
     bathrooms?: SortOrder
     guests?: SortOrder
+    type?: SortOrder
     owner?: UserOrderByWithRelationInput
     cohosts?: CoHostOrderByRelationAggregateInput
     jobs?: JobPostingOrderByRelationAggregateInput
     bookings?: BookingOrderByRelationAggregateInput
+    reviews?: ReviewOrderByRelationAggregateInput
   }
 
   export type PropertyWhereUniqueInput = Prisma.AtLeast<{
@@ -16158,10 +16309,12 @@ export namespace Prisma {
     bedrooms?: IntFilter<"Property"> | number
     bathrooms?: IntFilter<"Property"> | number
     guests?: IntFilter<"Property"> | number
+    type?: EnumPropertyTypeFilter<"Property"> | $Enums.PropertyType
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     cohosts?: CoHostListRelationFilter
     jobs?: JobPostingListRelationFilter
     bookings?: BookingListRelationFilter
+    reviews?: ReviewListRelationFilter
   }, "id">
 
   export type PropertyOrderByWithAggregationInput = {
@@ -16180,6 +16333,7 @@ export namespace Prisma {
     bedrooms?: SortOrder
     bathrooms?: SortOrder
     guests?: SortOrder
+    type?: SortOrder
     _count?: PropertyCountOrderByAggregateInput
     _avg?: PropertyAvgOrderByAggregateInput
     _max?: PropertyMaxOrderByAggregateInput
@@ -16206,6 +16360,7 @@ export namespace Prisma {
     bedrooms?: IntWithAggregatesFilter<"Property"> | number
     bathrooms?: IntWithAggregatesFilter<"Property"> | number
     guests?: IntWithAggregatesFilter<"Property"> | number
+    type?: EnumPropertyTypeWithAggregatesFilter<"Property"> | $Enums.PropertyType
   }
 
   export type CoHostWhereInput = {
@@ -16390,9 +16545,11 @@ export namespace Prisma {
     comment?: StringFilter<"Review"> | string
     reviewerId?: UuidFilter<"Review"> | string
     revieweeId?: UuidFilter<"Review"> | string
+    propertyId?: UuidNullableFilter<"Review"> | string | null
     createdAt?: DateTimeFilter<"Review"> | Date | string
     reviewer?: XOR<UserScalarRelationFilter, UserWhereInput>
     reviewee?: XOR<UserScalarRelationFilter, UserWhereInput>
+    property?: XOR<PropertyNullableScalarRelationFilter, PropertyWhereInput> | null
   }
 
   export type ReviewOrderByWithRelationInput = {
@@ -16401,9 +16558,11 @@ export namespace Prisma {
     comment?: SortOrder
     reviewerId?: SortOrder
     revieweeId?: SortOrder
+    propertyId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     reviewer?: UserOrderByWithRelationInput
     reviewee?: UserOrderByWithRelationInput
+    property?: PropertyOrderByWithRelationInput
   }
 
   export type ReviewWhereUniqueInput = Prisma.AtLeast<{
@@ -16415,9 +16574,11 @@ export namespace Prisma {
     comment?: StringFilter<"Review"> | string
     reviewerId?: UuidFilter<"Review"> | string
     revieweeId?: UuidFilter<"Review"> | string
+    propertyId?: UuidNullableFilter<"Review"> | string | null
     createdAt?: DateTimeFilter<"Review"> | Date | string
     reviewer?: XOR<UserScalarRelationFilter, UserWhereInput>
     reviewee?: XOR<UserScalarRelationFilter, UserWhereInput>
+    property?: XOR<PropertyNullableScalarRelationFilter, PropertyWhereInput> | null
   }, "id">
 
   export type ReviewOrderByWithAggregationInput = {
@@ -16426,6 +16587,7 @@ export namespace Prisma {
     comment?: SortOrder
     reviewerId?: SortOrder
     revieweeId?: SortOrder
+    propertyId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: ReviewCountOrderByAggregateInput
     _avg?: ReviewAvgOrderByAggregateInput
@@ -16443,6 +16605,7 @@ export namespace Prisma {
     comment?: StringWithAggregatesFilter<"Review"> | string
     reviewerId?: UuidWithAggregatesFilter<"Review"> | string
     revieweeId?: UuidWithAggregatesFilter<"Review"> | string
+    propertyId?: UuidNullableWithAggregatesFilter<"Review"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Review"> | Date | string
   }
 
@@ -16899,6 +17062,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -16952,6 +17117,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -17005,6 +17172,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17058,6 +17227,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17111,6 +17282,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -17155,6 +17328,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17199,6 +17374,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17219,10 +17396,12 @@ export namespace Prisma {
     bedrooms?: number
     bathrooms?: number
     guests?: number
+    type: $Enums.PropertyType
     owner: UserCreateNestedOneWithoutPropertiesInput
     cohosts?: CoHostCreateNestedManyWithoutPropertiesInput
     jobs?: JobPostingCreateNestedManyWithoutPropertyInput
     bookings?: BookingCreateNestedManyWithoutPropertyInput
+    reviews?: ReviewCreateNestedManyWithoutPropertyInput
   }
 
   export type PropertyUncheckedCreateInput = {
@@ -17241,9 +17420,11 @@ export namespace Prisma {
     bedrooms?: number
     bathrooms?: number
     guests?: number
+    type: $Enums.PropertyType
     cohosts?: CoHostUncheckedCreateNestedManyWithoutPropertiesInput
     jobs?: JobPostingUncheckedCreateNestedManyWithoutPropertyInput
     bookings?: BookingUncheckedCreateNestedManyWithoutPropertyInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutPropertyInput
   }
 
   export type PropertyUpdateInput = {
@@ -17261,10 +17442,12 @@ export namespace Prisma {
     bedrooms?: IntFieldUpdateOperationsInput | number
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
+    type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
     owner?: UserUpdateOneRequiredWithoutPropertiesNestedInput
     cohosts?: CoHostUpdateManyWithoutPropertiesNestedInput
     jobs?: JobPostingUpdateManyWithoutPropertyNestedInput
     bookings?: BookingUpdateManyWithoutPropertyNestedInput
+    reviews?: ReviewUpdateManyWithoutPropertyNestedInput
   }
 
   export type PropertyUncheckedUpdateInput = {
@@ -17283,9 +17466,11 @@ export namespace Prisma {
     bedrooms?: IntFieldUpdateOperationsInput | number
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
+    type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
     cohosts?: CoHostUncheckedUpdateManyWithoutPropertiesNestedInput
     jobs?: JobPostingUncheckedUpdateManyWithoutPropertyNestedInput
     bookings?: BookingUncheckedUpdateManyWithoutPropertyNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutPropertyNestedInput
   }
 
   export type PropertyCreateManyInput = {
@@ -17304,6 +17489,7 @@ export namespace Prisma {
     bedrooms?: number
     bathrooms?: number
     guests?: number
+    type: $Enums.PropertyType
   }
 
   export type PropertyUpdateManyMutationInput = {
@@ -17321,6 +17507,7 @@ export namespace Prisma {
     bedrooms?: IntFieldUpdateOperationsInput | number
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
+    type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
   }
 
   export type PropertyUncheckedUpdateManyInput = {
@@ -17339,6 +17526,7 @@ export namespace Prisma {
     bedrooms?: IntFieldUpdateOperationsInput | number
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
+    type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
   }
 
   export type CoHostCreateInput = {
@@ -17538,6 +17726,7 @@ export namespace Prisma {
     createdAt?: Date | string
     reviewer: UserCreateNestedOneWithoutReviewsWrittenInput
     reviewee: UserCreateNestedOneWithoutReviewsReceivedInput
+    property?: PropertyCreateNestedOneWithoutReviewsInput
   }
 
   export type ReviewUncheckedCreateInput = {
@@ -17546,6 +17735,7 @@ export namespace Prisma {
     comment: string
     reviewerId: string
     revieweeId: string
+    propertyId?: string | null
     createdAt?: Date | string
   }
 
@@ -17556,6 +17746,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reviewer?: UserUpdateOneRequiredWithoutReviewsWrittenNestedInput
     reviewee?: UserUpdateOneRequiredWithoutReviewsReceivedNestedInput
+    property?: PropertyUpdateOneWithoutReviewsNestedInput
   }
 
   export type ReviewUncheckedUpdateInput = {
@@ -17564,6 +17755,7 @@ export namespace Prisma {
     comment?: StringFieldUpdateOperationsInput | string
     reviewerId?: StringFieldUpdateOperationsInput | string
     revieweeId?: StringFieldUpdateOperationsInput | string
+    propertyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -17573,6 +17765,7 @@ export namespace Prisma {
     comment: string
     reviewerId: string
     revieweeId: string
+    propertyId?: string | null
     createdAt?: Date | string
   }
 
@@ -17589,6 +17782,7 @@ export namespace Prisma {
     comment?: StringFieldUpdateOperationsInput | string
     reviewerId?: StringFieldUpdateOperationsInput | string
     revieweeId?: StringFieldUpdateOperationsInput | string
+    propertyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -18295,6 +18489,8 @@ export namespace Prisma {
     availability?: SortOrder
     areasCovered?: SortOrder
     proofOfAddress?: SortOrder
+    resume?: SortOrder
+    coverLetter?: SortOrder
     references?: SortOrder
     insurance?: SortOrder
     approvalReason?: SortOrder
@@ -18347,6 +18543,8 @@ export namespace Prisma {
     availability?: SortOrder
     areasCovered?: SortOrder
     proofOfAddress?: SortOrder
+    resume?: SortOrder
+    coverLetter?: SortOrder
     references?: SortOrder
     insurance?: SortOrder
     approvalReason?: SortOrder
@@ -18391,6 +18589,8 @@ export namespace Prisma {
     availability?: SortOrder
     areasCovered?: SortOrder
     proofOfAddress?: SortOrder
+    resume?: SortOrder
+    coverLetter?: SortOrder
     references?: SortOrder
     insurance?: SortOrder
     approvalReason?: SortOrder
@@ -18537,6 +18737,13 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type EnumPropertyTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.PropertyType | EnumPropertyTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.PropertyType[] | ListEnumPropertyTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PropertyType[] | ListEnumPropertyTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumPropertyTypeFilter<$PrismaModel> | $Enums.PropertyType
+  }
+
   export type CoHostListRelationFilter = {
     every?: CoHostWhereInput
     some?: CoHostWhereInput
@@ -18563,6 +18770,7 @@ export namespace Prisma {
     bedrooms?: SortOrder
     bathrooms?: SortOrder
     guests?: SortOrder
+    type?: SortOrder
   }
 
   export type PropertyAvgOrderByAggregateInput = {
@@ -18586,6 +18794,7 @@ export namespace Prisma {
     bedrooms?: SortOrder
     bathrooms?: SortOrder
     guests?: SortOrder
+    type?: SortOrder
   }
 
   export type PropertyMinOrderByAggregateInput = {
@@ -18602,6 +18811,7 @@ export namespace Prisma {
     bedrooms?: SortOrder
     bathrooms?: SortOrder
     guests?: SortOrder
+    type?: SortOrder
   }
 
   export type PropertySumOrderByAggregateInput = {
@@ -18651,6 +18861,16 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type EnumPropertyTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PropertyType | EnumPropertyTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.PropertyType[] | ListEnumPropertyTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PropertyType[] | ListEnumPropertyTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumPropertyTypeWithAggregatesFilter<$PrismaModel> | $Enums.PropertyType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPropertyTypeFilter<$PrismaModel>
+    _max?: NestedEnumPropertyTypeFilter<$PrismaModel>
   }
 
   export type CoHostCountOrderByAggregateInput = {
@@ -18799,6 +19019,7 @@ export namespace Prisma {
     comment?: SortOrder
     reviewerId?: SortOrder
     revieweeId?: SortOrder
+    propertyId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18812,6 +19033,7 @@ export namespace Prisma {
     comment?: SortOrder
     reviewerId?: SortOrder
     revieweeId?: SortOrder
+    propertyId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18821,6 +19043,7 @@ export namespace Prisma {
     comment?: SortOrder
     reviewerId?: SortOrder
     revieweeId?: SortOrder
+    propertyId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -19666,6 +19889,13 @@ export namespace Prisma {
     connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
   }
 
+  export type ReviewCreateNestedManyWithoutPropertyInput = {
+    create?: XOR<ReviewCreateWithoutPropertyInput, ReviewUncheckedCreateWithoutPropertyInput> | ReviewCreateWithoutPropertyInput[] | ReviewUncheckedCreateWithoutPropertyInput[]
+    connectOrCreate?: ReviewCreateOrConnectWithoutPropertyInput | ReviewCreateOrConnectWithoutPropertyInput[]
+    createMany?: ReviewCreateManyPropertyInputEnvelope
+    connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+  }
+
   export type CoHostUncheckedCreateNestedManyWithoutPropertiesInput = {
     create?: XOR<CoHostCreateWithoutPropertiesInput, CoHostUncheckedCreateWithoutPropertiesInput> | CoHostCreateWithoutPropertiesInput[] | CoHostUncheckedCreateWithoutPropertiesInput[]
     connectOrCreate?: CoHostCreateOrConnectWithoutPropertiesInput | CoHostCreateOrConnectWithoutPropertiesInput[]
@@ -19684,6 +19914,13 @@ export namespace Prisma {
     connectOrCreate?: BookingCreateOrConnectWithoutPropertyInput | BookingCreateOrConnectWithoutPropertyInput[]
     createMany?: BookingCreateManyPropertyInputEnvelope
     connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+  }
+
+  export type ReviewUncheckedCreateNestedManyWithoutPropertyInput = {
+    create?: XOR<ReviewCreateWithoutPropertyInput, ReviewUncheckedCreateWithoutPropertyInput> | ReviewCreateWithoutPropertyInput[] | ReviewUncheckedCreateWithoutPropertyInput[]
+    connectOrCreate?: ReviewCreateOrConnectWithoutPropertyInput | ReviewCreateOrConnectWithoutPropertyInput[]
+    createMany?: ReviewCreateManyPropertyInputEnvelope
+    connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
   }
 
   export type FloatFieldUpdateOperationsInput = {
@@ -19714,6 +19951,10 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type EnumPropertyTypeFieldUpdateOperationsInput = {
+    set?: $Enums.PropertyType
   }
 
   export type UserUpdateOneRequiredWithoutPropertiesNestedInput = {
@@ -19765,6 +20006,20 @@ export namespace Prisma {
     deleteMany?: BookingScalarWhereInput | BookingScalarWhereInput[]
   }
 
+  export type ReviewUpdateManyWithoutPropertyNestedInput = {
+    create?: XOR<ReviewCreateWithoutPropertyInput, ReviewUncheckedCreateWithoutPropertyInput> | ReviewCreateWithoutPropertyInput[] | ReviewUncheckedCreateWithoutPropertyInput[]
+    connectOrCreate?: ReviewCreateOrConnectWithoutPropertyInput | ReviewCreateOrConnectWithoutPropertyInput[]
+    upsert?: ReviewUpsertWithWhereUniqueWithoutPropertyInput | ReviewUpsertWithWhereUniqueWithoutPropertyInput[]
+    createMany?: ReviewCreateManyPropertyInputEnvelope
+    set?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+    disconnect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+    delete?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+    connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+    update?: ReviewUpdateWithWhereUniqueWithoutPropertyInput | ReviewUpdateWithWhereUniqueWithoutPropertyInput[]
+    updateMany?: ReviewUpdateManyWithWhereWithoutPropertyInput | ReviewUpdateManyWithWhereWithoutPropertyInput[]
+    deleteMany?: ReviewScalarWhereInput | ReviewScalarWhereInput[]
+  }
+
   export type CoHostUncheckedUpdateManyWithoutPropertiesNestedInput = {
     create?: XOR<CoHostCreateWithoutPropertiesInput, CoHostUncheckedCreateWithoutPropertiesInput> | CoHostCreateWithoutPropertiesInput[] | CoHostUncheckedCreateWithoutPropertiesInput[]
     connectOrCreate?: CoHostCreateOrConnectWithoutPropertiesInput | CoHostCreateOrConnectWithoutPropertiesInput[]
@@ -19804,6 +20059,20 @@ export namespace Prisma {
     update?: BookingUpdateWithWhereUniqueWithoutPropertyInput | BookingUpdateWithWhereUniqueWithoutPropertyInput[]
     updateMany?: BookingUpdateManyWithWhereWithoutPropertyInput | BookingUpdateManyWithWhereWithoutPropertyInput[]
     deleteMany?: BookingScalarWhereInput | BookingScalarWhereInput[]
+  }
+
+  export type ReviewUncheckedUpdateManyWithoutPropertyNestedInput = {
+    create?: XOR<ReviewCreateWithoutPropertyInput, ReviewUncheckedCreateWithoutPropertyInput> | ReviewCreateWithoutPropertyInput[] | ReviewUncheckedCreateWithoutPropertyInput[]
+    connectOrCreate?: ReviewCreateOrConnectWithoutPropertyInput | ReviewCreateOrConnectWithoutPropertyInput[]
+    upsert?: ReviewUpsertWithWhereUniqueWithoutPropertyInput | ReviewUpsertWithWhereUniqueWithoutPropertyInput[]
+    createMany?: ReviewCreateManyPropertyInputEnvelope
+    set?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+    disconnect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+    delete?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+    connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+    update?: ReviewUpdateWithWhereUniqueWithoutPropertyInput | ReviewUpdateWithWhereUniqueWithoutPropertyInput[]
+    updateMany?: ReviewUpdateManyWithWhereWithoutPropertyInput | ReviewUpdateManyWithWhereWithoutPropertyInput[]
+    deleteMany?: ReviewScalarWhereInput | ReviewScalarWhereInput[]
   }
 
   export type CoHostCreatelanguagesInput = {
@@ -19922,6 +20191,12 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type PropertyCreateNestedOneWithoutReviewsInput = {
+    create?: XOR<PropertyCreateWithoutReviewsInput, PropertyUncheckedCreateWithoutReviewsInput>
+    connectOrCreate?: PropertyCreateOrConnectWithoutReviewsInput
+    connect?: PropertyWhereUniqueInput
+  }
+
   export type UserUpdateOneRequiredWithoutReviewsWrittenNestedInput = {
     create?: XOR<UserCreateWithoutReviewsWrittenInput, UserUncheckedCreateWithoutReviewsWrittenInput>
     connectOrCreate?: UserCreateOrConnectWithoutReviewsWrittenInput
@@ -19936,6 +20211,16 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutReviewsReceivedInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutReviewsReceivedInput, UserUpdateWithoutReviewsReceivedInput>, UserUncheckedUpdateWithoutReviewsReceivedInput>
+  }
+
+  export type PropertyUpdateOneWithoutReviewsNestedInput = {
+    create?: XOR<PropertyCreateWithoutReviewsInput, PropertyUncheckedCreateWithoutReviewsInput>
+    connectOrCreate?: PropertyCreateOrConnectWithoutReviewsInput
+    upsert?: PropertyUpsertWithoutReviewsInput
+    disconnect?: PropertyWhereInput | boolean
+    delete?: PropertyWhereInput | boolean
+    connect?: PropertyWhereUniqueInput
+    update?: XOR<XOR<PropertyUpdateToOneWithWhereWithoutReviewsInput, PropertyUpdateWithoutReviewsInput>, PropertyUncheckedUpdateWithoutReviewsInput>
   }
 
   export type PropertyCreateNestedOneWithoutBookingsInput = {
@@ -20349,6 +20634,13 @@ export namespace Prisma {
     not?: NestedEnumPropertyStatusFilter<$PrismaModel> | $Enums.PropertyStatus
   }
 
+  export type NestedEnumPropertyTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.PropertyType | EnumPropertyTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.PropertyType[] | ListEnumPropertyTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PropertyType[] | ListEnumPropertyTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumPropertyTypeFilter<$PrismaModel> | $Enums.PropertyType
+  }
+
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -20389,6 +20681,16 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedEnumPropertyTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PropertyType | EnumPropertyTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.PropertyType[] | ListEnumPropertyTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PropertyType[] | ListEnumPropertyTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumPropertyTypeWithAggregatesFilter<$PrismaModel> | $Enums.PropertyType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPropertyTypeFilter<$PrismaModel>
+    _max?: NestedEnumPropertyTypeFilter<$PrismaModel>
   }
 
   export type NestedEnumJobStatusFilter<$PrismaModel = never> = {
@@ -20621,6 +20923,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -20673,6 +20977,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -20730,6 +21036,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -20782,6 +21090,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -20850,6 +21160,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20902,6 +21214,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20965,6 +21279,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21017,6 +21333,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21045,9 +21363,11 @@ export namespace Prisma {
     bedrooms?: number
     bathrooms?: number
     guests?: number
+    type: $Enums.PropertyType
     cohosts?: CoHostCreateNestedManyWithoutPropertiesInput
     jobs?: JobPostingCreateNestedManyWithoutPropertyInput
     bookings?: BookingCreateNestedManyWithoutPropertyInput
+    reviews?: ReviewCreateNestedManyWithoutPropertyInput
   }
 
   export type PropertyUncheckedCreateWithoutOwnerInput = {
@@ -21065,9 +21385,11 @@ export namespace Prisma {
     bedrooms?: number
     bathrooms?: number
     guests?: number
+    type: $Enums.PropertyType
     cohosts?: CoHostUncheckedCreateNestedManyWithoutPropertiesInput
     jobs?: JobPostingUncheckedCreateNestedManyWithoutPropertyInput
     bookings?: BookingUncheckedCreateNestedManyWithoutPropertyInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutPropertyInput
   }
 
   export type PropertyCreateOrConnectWithoutOwnerInput = {
@@ -21153,6 +21475,7 @@ export namespace Prisma {
     comment: string
     createdAt?: Date | string
     reviewee: UserCreateNestedOneWithoutReviewsReceivedInput
+    property?: PropertyCreateNestedOneWithoutReviewsInput
   }
 
   export type ReviewUncheckedCreateWithoutReviewerInput = {
@@ -21160,6 +21483,7 @@ export namespace Prisma {
     rating: number
     comment: string
     revieweeId: string
+    propertyId?: string | null
     createdAt?: Date | string
   }
 
@@ -21179,6 +21503,7 @@ export namespace Prisma {
     comment: string
     createdAt?: Date | string
     reviewer: UserCreateNestedOneWithoutReviewsWrittenInput
+    property?: PropertyCreateNestedOneWithoutReviewsInput
   }
 
   export type ReviewUncheckedCreateWithoutRevieweeInput = {
@@ -21186,6 +21511,7 @@ export namespace Prisma {
     rating: number
     comment: string
     reviewerId: string
+    propertyId?: string | null
     createdAt?: Date | string
   }
 
@@ -21358,6 +21684,7 @@ export namespace Prisma {
     bedrooms?: IntFilter<"Property"> | number
     bathrooms?: IntFilter<"Property"> | number
     guests?: IntFilter<"Property"> | number
+    type?: EnumPropertyTypeFilter<"Property"> | $Enums.PropertyType
   }
 
   export type CoHostUpsertWithoutUserInput = {
@@ -21456,6 +21783,7 @@ export namespace Prisma {
     comment?: StringFilter<"Review"> | string
     reviewerId?: UuidFilter<"Review"> | string
     revieweeId?: UuidFilter<"Review"> | string
+    propertyId?: UuidNullableFilter<"Review"> | string | null
     createdAt?: DateTimeFilter<"Review"> | Date | string
   }
 
@@ -21622,6 +21950,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -21674,6 +22004,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -21793,6 +22125,34 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ReviewCreateWithoutPropertyInput = {
+    id?: string
+    rating: number
+    comment: string
+    createdAt?: Date | string
+    reviewer: UserCreateNestedOneWithoutReviewsWrittenInput
+    reviewee: UserCreateNestedOneWithoutReviewsReceivedInput
+  }
+
+  export type ReviewUncheckedCreateWithoutPropertyInput = {
+    id?: string
+    rating: number
+    comment: string
+    reviewerId: string
+    revieweeId: string
+    createdAt?: Date | string
+  }
+
+  export type ReviewCreateOrConnectWithoutPropertyInput = {
+    where: ReviewWhereUniqueInput
+    create: XOR<ReviewCreateWithoutPropertyInput, ReviewUncheckedCreateWithoutPropertyInput>
+  }
+
+  export type ReviewCreateManyPropertyInputEnvelope = {
+    data: ReviewCreateManyPropertyInput | ReviewCreateManyPropertyInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutPropertiesInput = {
     update: XOR<UserUpdateWithoutPropertiesInput, UserUncheckedUpdateWithoutPropertiesInput>
     create: XOR<UserCreateWithoutPropertiesInput, UserUncheckedCreateWithoutPropertiesInput>
@@ -21843,6 +22203,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21895,6 +22257,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21973,6 +22337,22 @@ export namespace Prisma {
     data: XOR<BookingUpdateManyMutationInput, BookingUncheckedUpdateManyWithoutPropertyInput>
   }
 
+  export type ReviewUpsertWithWhereUniqueWithoutPropertyInput = {
+    where: ReviewWhereUniqueInput
+    update: XOR<ReviewUpdateWithoutPropertyInput, ReviewUncheckedUpdateWithoutPropertyInput>
+    create: XOR<ReviewCreateWithoutPropertyInput, ReviewUncheckedCreateWithoutPropertyInput>
+  }
+
+  export type ReviewUpdateWithWhereUniqueWithoutPropertyInput = {
+    where: ReviewWhereUniqueInput
+    data: XOR<ReviewUpdateWithoutPropertyInput, ReviewUncheckedUpdateWithoutPropertyInput>
+  }
+
+  export type ReviewUpdateManyWithWhereWithoutPropertyInput = {
+    where: ReviewScalarWhereInput
+    data: XOR<ReviewUpdateManyMutationInput, ReviewUncheckedUpdateManyWithoutPropertyInput>
+  }
+
   export type UserCreateWithoutCohostProfileInput = {
     id?: string
     email: string
@@ -22012,6 +22392,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -22064,6 +22446,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -22097,9 +22481,11 @@ export namespace Prisma {
     bedrooms?: number
     bathrooms?: number
     guests?: number
+    type: $Enums.PropertyType
     owner: UserCreateNestedOneWithoutPropertiesInput
     jobs?: JobPostingCreateNestedManyWithoutPropertyInput
     bookings?: BookingCreateNestedManyWithoutPropertyInput
+    reviews?: ReviewCreateNestedManyWithoutPropertyInput
   }
 
   export type PropertyUncheckedCreateWithoutCohostsInput = {
@@ -22118,8 +22504,10 @@ export namespace Prisma {
     bedrooms?: number
     bathrooms?: number
     guests?: number
+    type: $Enums.PropertyType
     jobs?: JobPostingUncheckedCreateNestedManyWithoutPropertyInput
     bookings?: BookingUncheckedCreateNestedManyWithoutPropertyInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutPropertyInput
   }
 
   export type PropertyCreateOrConnectWithoutCohostsInput = {
@@ -22177,6 +22565,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22229,6 +22619,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22297,6 +22689,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -22349,6 +22743,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -22382,9 +22778,11 @@ export namespace Prisma {
     bedrooms?: number
     bathrooms?: number
     guests?: number
+    type: $Enums.PropertyType
     owner: UserCreateNestedOneWithoutPropertiesInput
     cohosts?: CoHostCreateNestedManyWithoutPropertiesInput
     bookings?: BookingCreateNestedManyWithoutPropertyInput
+    reviews?: ReviewCreateNestedManyWithoutPropertyInput
   }
 
   export type PropertyUncheckedCreateWithoutJobsInput = {
@@ -22403,8 +22801,10 @@ export namespace Prisma {
     bedrooms?: number
     bathrooms?: number
     guests?: number
+    type: $Enums.PropertyType
     cohosts?: CoHostUncheckedCreateNestedManyWithoutPropertiesInput
     bookings?: BookingUncheckedCreateNestedManyWithoutPropertyInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutPropertyInput
   }
 
   export type PropertyCreateOrConnectWithoutJobsInput = {
@@ -22462,6 +22862,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22514,6 +22916,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22553,9 +22957,11 @@ export namespace Prisma {
     bedrooms?: IntFieldUpdateOperationsInput | number
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
+    type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
     owner?: UserUpdateOneRequiredWithoutPropertiesNestedInput
     cohosts?: CoHostUpdateManyWithoutPropertiesNestedInput
     bookings?: BookingUpdateManyWithoutPropertyNestedInput
+    reviews?: ReviewUpdateManyWithoutPropertyNestedInput
   }
 
   export type PropertyUncheckedUpdateWithoutJobsInput = {
@@ -22574,8 +22980,10 @@ export namespace Prisma {
     bedrooms?: IntFieldUpdateOperationsInput | number
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
+    type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
     cohosts?: CoHostUncheckedUpdateManyWithoutPropertiesNestedInput
     bookings?: BookingUncheckedUpdateManyWithoutPropertyNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutPropertyNestedInput
   }
 
   export type UserCreateWithoutReviewsWrittenInput = {
@@ -22617,6 +23025,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -22669,6 +23079,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -22726,6 +23138,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -22778,6 +23192,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -22794,6 +23210,55 @@ export namespace Prisma {
   export type UserCreateOrConnectWithoutReviewsReceivedInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutReviewsReceivedInput, UserUncheckedCreateWithoutReviewsReceivedInput>
+  }
+
+  export type PropertyCreateWithoutReviewsInput = {
+    id?: string
+    title: string
+    description: string
+    address: string
+    city: string
+    price: number
+    status?: $Enums.PropertyStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    images?: PropertyCreateimagesInput | string[]
+    amenities?: PropertyCreateamenitiesInput | string[]
+    bedrooms?: number
+    bathrooms?: number
+    guests?: number
+    type: $Enums.PropertyType
+    owner: UserCreateNestedOneWithoutPropertiesInput
+    cohosts?: CoHostCreateNestedManyWithoutPropertiesInput
+    jobs?: JobPostingCreateNestedManyWithoutPropertyInput
+    bookings?: BookingCreateNestedManyWithoutPropertyInput
+  }
+
+  export type PropertyUncheckedCreateWithoutReviewsInput = {
+    id?: string
+    title: string
+    description: string
+    address: string
+    city: string
+    price: number
+    status?: $Enums.PropertyStatus
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    images?: PropertyCreateimagesInput | string[]
+    amenities?: PropertyCreateamenitiesInput | string[]
+    bedrooms?: number
+    bathrooms?: number
+    guests?: number
+    type: $Enums.PropertyType
+    cohosts?: CoHostUncheckedCreateNestedManyWithoutPropertiesInput
+    jobs?: JobPostingUncheckedCreateNestedManyWithoutPropertyInput
+    bookings?: BookingUncheckedCreateNestedManyWithoutPropertyInput
+  }
+
+  export type PropertyCreateOrConnectWithoutReviewsInput = {
+    where: PropertyWhereUniqueInput
+    create: XOR<PropertyCreateWithoutReviewsInput, PropertyUncheckedCreateWithoutReviewsInput>
   }
 
   export type UserUpsertWithoutReviewsWrittenInput = {
@@ -22846,6 +23311,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22898,6 +23365,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22961,6 +23430,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23013,6 +23484,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23024,6 +23497,61 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     interviewsAsHost?: InterviewUncheckedUpdateManyWithoutHostNestedInput
     interviewsAsCandidate?: InterviewUncheckedUpdateManyWithoutCandidateNestedInput
+  }
+
+  export type PropertyUpsertWithoutReviewsInput = {
+    update: XOR<PropertyUpdateWithoutReviewsInput, PropertyUncheckedUpdateWithoutReviewsInput>
+    create: XOR<PropertyCreateWithoutReviewsInput, PropertyUncheckedCreateWithoutReviewsInput>
+    where?: PropertyWhereInput
+  }
+
+  export type PropertyUpdateToOneWithWhereWithoutReviewsInput = {
+    where?: PropertyWhereInput
+    data: XOR<PropertyUpdateWithoutReviewsInput, PropertyUncheckedUpdateWithoutReviewsInput>
+  }
+
+  export type PropertyUpdateWithoutReviewsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    status?: EnumPropertyStatusFieldUpdateOperationsInput | $Enums.PropertyStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    images?: PropertyUpdateimagesInput | string[]
+    amenities?: PropertyUpdateamenitiesInput | string[]
+    bedrooms?: IntFieldUpdateOperationsInput | number
+    bathrooms?: IntFieldUpdateOperationsInput | number
+    guests?: IntFieldUpdateOperationsInput | number
+    type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    owner?: UserUpdateOneRequiredWithoutPropertiesNestedInput
+    cohosts?: CoHostUpdateManyWithoutPropertiesNestedInput
+    jobs?: JobPostingUpdateManyWithoutPropertyNestedInput
+    bookings?: BookingUpdateManyWithoutPropertyNestedInput
+  }
+
+  export type PropertyUncheckedUpdateWithoutReviewsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    status?: EnumPropertyStatusFieldUpdateOperationsInput | $Enums.PropertyStatus
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    images?: PropertyUpdateimagesInput | string[]
+    amenities?: PropertyUpdateamenitiesInput | string[]
+    bedrooms?: IntFieldUpdateOperationsInput | number
+    bathrooms?: IntFieldUpdateOperationsInput | number
+    guests?: IntFieldUpdateOperationsInput | number
+    type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    cohosts?: CoHostUncheckedUpdateManyWithoutPropertiesNestedInput
+    jobs?: JobPostingUncheckedUpdateManyWithoutPropertyNestedInput
+    bookings?: BookingUncheckedUpdateManyWithoutPropertyNestedInput
   }
 
   export type PropertyCreateWithoutBookingsInput = {
@@ -23041,9 +23569,11 @@ export namespace Prisma {
     bedrooms?: number
     bathrooms?: number
     guests?: number
+    type: $Enums.PropertyType
     owner: UserCreateNestedOneWithoutPropertiesInput
     cohosts?: CoHostCreateNestedManyWithoutPropertiesInput
     jobs?: JobPostingCreateNestedManyWithoutPropertyInput
+    reviews?: ReviewCreateNestedManyWithoutPropertyInput
   }
 
   export type PropertyUncheckedCreateWithoutBookingsInput = {
@@ -23062,8 +23592,10 @@ export namespace Prisma {
     bedrooms?: number
     bathrooms?: number
     guests?: number
+    type: $Enums.PropertyType
     cohosts?: CoHostUncheckedCreateNestedManyWithoutPropertiesInput
     jobs?: JobPostingUncheckedCreateNestedManyWithoutPropertyInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutPropertyInput
   }
 
   export type PropertyCreateOrConnectWithoutBookingsInput = {
@@ -23110,6 +23642,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -23162,6 +23696,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -23206,9 +23742,11 @@ export namespace Prisma {
     bedrooms?: IntFieldUpdateOperationsInput | number
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
+    type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
     owner?: UserUpdateOneRequiredWithoutPropertiesNestedInput
     cohosts?: CoHostUpdateManyWithoutPropertiesNestedInput
     jobs?: JobPostingUpdateManyWithoutPropertyNestedInput
+    reviews?: ReviewUpdateManyWithoutPropertyNestedInput
   }
 
   export type PropertyUncheckedUpdateWithoutBookingsInput = {
@@ -23227,8 +23765,10 @@ export namespace Prisma {
     bedrooms?: IntFieldUpdateOperationsInput | number
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
+    type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
     cohosts?: CoHostUncheckedUpdateManyWithoutPropertiesNestedInput
     jobs?: JobPostingUncheckedUpdateManyWithoutPropertyNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutPropertyNestedInput
   }
 
   export type UserUpsertWithoutBookingsInput = {
@@ -23281,6 +23821,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23333,6 +23875,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23385,6 +23929,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -23437,6 +23983,8 @@ export namespace Prisma {
     availability?: string | null
     areasCovered?: string | null
     proofOfAddress?: string | null
+    resume?: string | null
+    coverLetter?: string | null
     references?: string | null
     insurance?: string | null
     approvalReason?: string | null
@@ -23505,6 +24053,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23557,6 +24107,8 @@ export namespace Prisma {
     availability?: NullableStringFieldUpdateOperationsInput | string | null
     areasCovered?: NullableStringFieldUpdateOperationsInput | string | null
     proofOfAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    resume?: NullableStringFieldUpdateOperationsInput | string | null
+    coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
     references?: NullableStringFieldUpdateOperationsInput | string | null
     insurance?: NullableStringFieldUpdateOperationsInput | string | null
     approvalReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23585,6 +24137,7 @@ export namespace Prisma {
     bedrooms?: number
     bathrooms?: number
     guests?: number
+    type: $Enums.PropertyType
   }
 
   export type JobPostingCreateManyAuthorInput = {
@@ -23604,6 +24157,7 @@ export namespace Prisma {
     rating: number
     comment: string
     revieweeId: string
+    propertyId?: string | null
     createdAt?: Date | string
   }
 
@@ -23612,6 +24166,7 @@ export namespace Prisma {
     rating: number
     comment: string
     reviewerId: string
+    propertyId?: string | null
     createdAt?: Date | string
   }
 
@@ -23672,9 +24227,11 @@ export namespace Prisma {
     bedrooms?: IntFieldUpdateOperationsInput | number
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
+    type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
     cohosts?: CoHostUpdateManyWithoutPropertiesNestedInput
     jobs?: JobPostingUpdateManyWithoutPropertyNestedInput
     bookings?: BookingUpdateManyWithoutPropertyNestedInput
+    reviews?: ReviewUpdateManyWithoutPropertyNestedInput
   }
 
   export type PropertyUncheckedUpdateWithoutOwnerInput = {
@@ -23692,9 +24249,11 @@ export namespace Prisma {
     bedrooms?: IntFieldUpdateOperationsInput | number
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
+    type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
     cohosts?: CoHostUncheckedUpdateManyWithoutPropertiesNestedInput
     jobs?: JobPostingUncheckedUpdateManyWithoutPropertyNestedInput
     bookings?: BookingUncheckedUpdateManyWithoutPropertyNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutPropertyNestedInput
   }
 
   export type PropertyUncheckedUpdateManyWithoutOwnerInput = {
@@ -23712,6 +24271,7 @@ export namespace Prisma {
     bedrooms?: IntFieldUpdateOperationsInput | number
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
+    type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
   }
 
   export type JobPostingUpdateWithoutAuthorInput = {
@@ -23756,6 +24316,7 @@ export namespace Prisma {
     comment?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reviewee?: UserUpdateOneRequiredWithoutReviewsReceivedNestedInput
+    property?: PropertyUpdateOneWithoutReviewsNestedInput
   }
 
   export type ReviewUncheckedUpdateWithoutReviewerInput = {
@@ -23763,6 +24324,7 @@ export namespace Prisma {
     rating?: IntFieldUpdateOperationsInput | number
     comment?: StringFieldUpdateOperationsInput | string
     revieweeId?: StringFieldUpdateOperationsInput | string
+    propertyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23771,6 +24333,7 @@ export namespace Prisma {
     rating?: IntFieldUpdateOperationsInput | number
     comment?: StringFieldUpdateOperationsInput | string
     revieweeId?: StringFieldUpdateOperationsInput | string
+    propertyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23780,6 +24343,7 @@ export namespace Prisma {
     comment?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reviewer?: UserUpdateOneRequiredWithoutReviewsWrittenNestedInput
+    property?: PropertyUpdateOneWithoutReviewsNestedInput
   }
 
   export type ReviewUncheckedUpdateWithoutRevieweeInput = {
@@ -23787,6 +24351,7 @@ export namespace Prisma {
     rating?: IntFieldUpdateOperationsInput | number
     comment?: StringFieldUpdateOperationsInput | string
     reviewerId?: StringFieldUpdateOperationsInput | string
+    propertyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23795,6 +24360,7 @@ export namespace Prisma {
     rating?: IntFieldUpdateOperationsInput | number
     comment?: StringFieldUpdateOperationsInput | string
     reviewerId?: StringFieldUpdateOperationsInput | string
+    propertyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23948,6 +24514,15 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type ReviewCreateManyPropertyInput = {
+    id?: string
+    rating: number
+    comment: string
+    reviewerId: string
+    revieweeId: string
+    createdAt?: Date | string
+  }
+
   export type CoHostUpdateWithoutPropertiesInput = {
     id?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24062,6 +24637,33 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ReviewUpdateWithoutPropertyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    rating?: IntFieldUpdateOperationsInput | number
+    comment?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewer?: UserUpdateOneRequiredWithoutReviewsWrittenNestedInput
+    reviewee?: UserUpdateOneRequiredWithoutReviewsReceivedNestedInput
+  }
+
+  export type ReviewUncheckedUpdateWithoutPropertyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    rating?: IntFieldUpdateOperationsInput | number
+    comment?: StringFieldUpdateOperationsInput | string
+    reviewerId?: StringFieldUpdateOperationsInput | string
+    revieweeId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ReviewUncheckedUpdateManyWithoutPropertyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    rating?: IntFieldUpdateOperationsInput | number
+    comment?: StringFieldUpdateOperationsInput | string
+    reviewerId?: StringFieldUpdateOperationsInput | string
+    revieweeId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type PropertyUpdateWithoutCohostsInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
@@ -24077,9 +24679,11 @@ export namespace Prisma {
     bedrooms?: IntFieldUpdateOperationsInput | number
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
+    type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
     owner?: UserUpdateOneRequiredWithoutPropertiesNestedInput
     jobs?: JobPostingUpdateManyWithoutPropertyNestedInput
     bookings?: BookingUpdateManyWithoutPropertyNestedInput
+    reviews?: ReviewUpdateManyWithoutPropertyNestedInput
   }
 
   export type PropertyUncheckedUpdateWithoutCohostsInput = {
@@ -24098,8 +24702,10 @@ export namespace Prisma {
     bedrooms?: IntFieldUpdateOperationsInput | number
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
+    type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
     jobs?: JobPostingUncheckedUpdateManyWithoutPropertyNestedInput
     bookings?: BookingUncheckedUpdateManyWithoutPropertyNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutPropertyNestedInput
   }
 
   export type PropertyUncheckedUpdateManyWithoutCohostsInput = {
@@ -24118,6 +24724,7 @@ export namespace Prisma {
     bedrooms?: IntFieldUpdateOperationsInput | number
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
+    type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
   }
 
 

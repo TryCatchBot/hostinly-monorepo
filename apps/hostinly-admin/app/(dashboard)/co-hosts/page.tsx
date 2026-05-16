@@ -13,9 +13,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DataTable } from "@/components/dashboard/data-table";
 import { StatCard } from "@/components/dashboard/stat-card";
-import { coHosts } from "@/lib/mock-data";
+import { useEffect, useState } from "react";
 import type { CoHost } from "@/lib/types";
-import { formatDate, getStatusColor, formatStatus } from "@/lib/utils";
+import { formatDate, getStatusColor, formatStatus, API_URL } from "@/lib/utils";
 import {
   MoreHorizontal,
   Eye,
@@ -172,27 +172,43 @@ const columns = [
   },
 ];
 
-const filters = [
-  {
-    key: "status",
-    label: "Status",
-    options: [
-      { value: "active", label: "Active" },
-      { value: "pending", label: "Pending" },
-      { value: "suspended", label: "Suspended" },
-      { value: "banned", label: "Banned" },
-    ],
-  },
-];
-
 export default function CoHostsPage() {
-  const activeCoHosts = coHosts.filter((c) => c.status === "active");
-  const pendingCoHosts = coHosts.filter((c) => c.status === "pending");
-  const suspendedCoHosts = coHosts.filter((c) => c.status === "suspended");
+  const [coHosts, setCoHosts] = useState<CoHost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCoHosts = async () => {
+      try {
+        const response = await fetch(`${API_URL}/cohosts`);
+        const data = await response.json();
+        if (data.success) {
+          setCoHosts(data.data);
+        } else {
+          setError(data.message);
+        }
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCoHosts();
+  }, []);
+
+  if (loading) return <div>Loading co-hosts...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  const totalCoHosts = coHosts.length;
+  const activeCoHosts = coHosts.filter((c) => c.status === "active").length;
   const avgRating =
-    activeCoHosts.length > 0
-      ? activeCoHosts.reduce((sum, c) => sum + c.rating, 0) / activeCoHosts.length
+    coHosts.length > 0
+      ? coHosts.reduce((sum, c) => sum + c.rating, 0) / coHosts.length
       : 0;
+  const totalProperties = coHosts.reduce(
+    (sum, c) => sum + c.activeProperties,
+    0
+  );
 
   return (
     <div className="space-y-6">
@@ -200,7 +216,7 @@ export default function CoHostsPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Co-hosts</h1>
           <p className="text-muted-foreground">
-            Manage co-host applications, performance, and assignments
+            Manage platform co-hosts and their performance
           </p>
         </div>
         <Button>
@@ -209,101 +225,35 @@ export default function CoHostsPage() {
         </Button>
       </div>
 
-      {/* Stats */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Co-hosts"
-          value={coHosts.length}
+          value={totalCoHosts}
           icon={<Users className="h-4 w-4" />}
+          change={5}
         />
         <StatCard
-          title="Active"
-          value={activeCoHosts.length}
+          title="Active Co-hosts"
+          value={activeCoHosts}
           icon={<UserCheck className="h-4 w-4" />}
-        />
-        <StatCard
-          title="Pending Approval"
-          value={pendingCoHosts.length}
-          icon={<Clock className="h-4 w-4" />}
+          change={2}
         />
         <StatCard
           title="Average Rating"
           value={avgRating.toFixed(1)}
           icon={<Star className="h-4 w-4" />}
         />
+        <StatCard
+          title="Managed Properties"
+          value={totalProperties}
+          icon={<Home className="h-4 w-4" />}
+        />
       </div>
 
-      {/* Pending Applications */}
-      {pendingCoHosts.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
-              Pending Applications
-              <Badge variant="secondary">{pendingCoHosts.length}</Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {pendingCoHosts.map((coHost) => (
-                <div
-                  key={coHost.id}
-                  className="flex items-center justify-between p-3 rounded-lg border"
-                >
-                  <div>
-                    <p className="font-medium">{coHost.name}</p>
-                    <p className="text-sm text-muted-foreground">{coHost.email}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Applied {formatDate(coHost.joinedAt)}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
-                      <Eye className="mr-2 h-4 w-4" />
-                      Review
-                    </Button>
-                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700">
-                      <CheckCircle className="mr-2 h-4 w-4" />
-                      Approve
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Suspended Co-hosts Alert */}
-      {suspendedCoHosts.length > 0 && (
-        <Card className="border-orange-500/50 bg-orange-500/5">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-orange-500">
-              <UserX className="h-5 w-5" />
-              Suspended Co-hosts
-              <Badge variant="outline" className="border-orange-500/50 text-orange-500">
-                {suspendedCoHosts.length}
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {suspendedCoHosts.map((coHost) => (
-                <Badge key={coHost.id} variant="outline" className="border-orange-500/30">
-                  {coHost.name}
-                </Badge>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* All Co-hosts Table */}
       <DataTable
         data={coHosts}
         columns={columns}
-        filters={filters}
-        searchPlaceholder="Search co-hosts..."
+        searchPlaceholder="Search co-hosts by name..."
         searchKey="name"
       />
     </div>

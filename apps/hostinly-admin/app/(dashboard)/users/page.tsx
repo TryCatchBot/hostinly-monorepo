@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,14 +20,14 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { DataTable } from "@/components/dashboard/data-table";
-import { platformUsers } from "@/lib/mock-data";
-import type { PlatformUser } from "@/lib/types";
+import type { User } from "@/lib/types"; // Assuming User type is updated to match backend
 import {
   formatDate,
   formatCurrency,
   getStatusColor,
   formatStatus,
   getInitials,
+  API_URL,
 } from "@/lib/utils";
 import {
   MoreHorizontal,
@@ -49,7 +49,7 @@ const columns = [
     key: "name",
     header: "User",
     sortable: true,
-    cell: (user: PlatformUser) => (
+    cell: (user: User) => (
       <div className="flex items-center gap-3">
         <Avatar className="h-9 w-9">
           <AvatarImage src={user.avatar} alt={user.name} />
@@ -63,18 +63,18 @@ const columns = [
     ),
   },
   {
-    key: "role",
+    key: "userType",
     header: "Role",
     sortable: true,
-    cell: (user: PlatformUser) => (
-      <Badge variant="outline">{formatStatus(user.role)}</Badge>
+    cell: (user: User) => (
+      <Badge variant="outline">{formatStatus(user.userType)}</Badge>
     ),
   },
   {
     key: "status",
     header: "Status",
     sortable: true,
-    cell: (user: PlatformUser) => (
+    cell: (user: User) => (
       <Badge variant="outline" className={getStatusColor(user.status)}>
         {formatStatus(user.status)}
       </Badge>
@@ -84,7 +84,7 @@ const columns = [
     key: "verificationStatus",
     header: "Verification",
     sortable: true,
-    cell: (user: PlatformUser) => (
+    cell: (user: User) => (
       <Badge variant="outline" className={getStatusColor(user.verificationStatus)}>
         {formatStatus(user.verificationStatus)}
       </Badge>
@@ -94,18 +94,18 @@ const columns = [
     key: "createdAt",
     header: "Joined",
     sortable: true,
-    cell: (user: PlatformUser) => (
+    cell: (user: User) => (
       <span className="text-muted-foreground">{formatDate(user.createdAt)}</span>
     ),
   },
   {
     key: "actions",
     header: "",
-    cell: (user: PlatformUser) => <UserActions user={user} />,
+    cell: (user: User) => <UserActions user={user} />,
   },
 ];
 
-function UserActions({ user }: { user: PlatformUser }) {
+function UserActions({ user }: { user: User }) {
   const [sheetOpen, setSheetOpen] = useState(false);
 
   return (
@@ -128,19 +128,19 @@ function UserActions({ user }: { user: PlatformUser }) {
             <Edit className="mr-2 h-4 w-4" />
             Edit User
           </DropdownMenuItem>
-          {user.verificationStatus !== "verified" && (
+          {user.verificationStatus !== "VERIFIED" && (
             <DropdownMenuItem>
               <CheckCircle className="mr-2 h-4 w-4" />
               Verify User
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
-          {user.status === "active" ? (
+          {user.status === "ACTIVE" ? (
             <DropdownMenuItem className="text-orange-500">
               <Ban className="mr-2 h-4 w-4" />
               Suspend User
             </DropdownMenuItem>
-          ) : user.status === "suspended" ? (
+          ) : user.status === "SUSPENDED" ? (
             <DropdownMenuItem className="text-emerald-500">
               <CheckCircle className="mr-2 h-4 w-4" />
               Restore User
@@ -172,7 +172,7 @@ function UserActions({ user }: { user: PlatformUser }) {
               </Avatar>
               <div>
                 <h3 className="text-lg font-semibold">{user.name}</h3>
-                <Badge variant="outline">{formatStatus(user.role)}</Badge>
+                <Badge variant="outline">{formatStatus(user.userType)}</Badge>
               </div>
             </div>
 
@@ -217,7 +217,7 @@ function UserActions({ user }: { user: PlatformUser }) {
             </div>
 
             {/* Stats */}
-            {(user.properties || user.bookings || user.revenue) && (
+            {(user.properties !== undefined || user.bookings !== undefined || user.revenue !== undefined) && (
               <div className="space-y-3">
                 <h4 className="font-medium">Activity</h4>
                 <div className="grid grid-cols-3 gap-4">
@@ -268,37 +268,70 @@ function UserActions({ user }: { user: PlatformUser }) {
 
 const filters = [
   {
-    key: "role",
+    key: "userType",
     label: "Role",
     options: [
-      { value: "owner", label: "Owner" },
-      { value: "co_host", label: "Co-host" },
-      { value: "guest", label: "Guest" },
+      { value: "HOST", label: "Host" },
+      { value: "COHOST", label: "Co-host" },
+      { value: "CLEANER", label: "Cleaner" },
+      { value: "SUPER_ADMIN", label: "Super Admin" },
+      { value: "ADMIN", label: "Admin" },
+      { value: "SUPERVISOR", label: "Supervisor" },
+      { value: "FACILITY_MANAGER", label: "Facility Manager" },
     ],
   },
   {
     key: "status",
     label: "Status",
     options: [
-      { value: "active", label: "Active" },
-      { value: "pending", label: "Pending" },
-      { value: "suspended", label: "Suspended" },
-      { value: "banned", label: "Banned" },
+      { value: "ACTIVE", label: "Active" },
+      { value: "INACTIVE", label: "Inactive" },
+      { value: "SUSPENDED", label: "Suspended" },
     ],
   },
   {
     key: "verificationStatus",
     label: "Verification",
     options: [
-      { value: "verified", label: "Verified" },
-      { value: "pending", label: "Pending" },
-      { value: "rejected", label: "Rejected" },
-      { value: "unverified", label: "Unverified" },
+      { value: "VERIFIED", label: "Verified" },
+      { value: "PENDING", label: "Pending" },
+      { value: "REJECTED", label: "Rejected" },
     ],
   },
 ];
 
 export default function UsersPage() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch(`${API_URL}/users`);
+        const data = await response.json();
+        if (data.success) {
+          setUsers(data.data);
+        } else {
+          setError(data.message);
+        }
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  if (loading) {
+    return <div>Loading users...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -315,7 +348,7 @@ export default function UsersPage() {
       </div>
 
       <DataTable
-        data={platformUsers}
+        data={users}
         columns={columns}
         filters={filters}
         searchPlaceholder="Search users by name..."
