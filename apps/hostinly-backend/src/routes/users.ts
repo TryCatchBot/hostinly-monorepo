@@ -149,11 +149,29 @@ router.patch('/:id', async (req, res) => {
     delete updateData.password;
     delete updateData.email;
 
+    const { languages, commissionPercentage, ...userData } = updateData;
+
     // First, perform the update
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: updateData,
+      data: userData,
     });
+
+    // Update cohostProfile if languages or commissionPercentage is provided
+    if (languages !== undefined || commissionPercentage !== undefined) {
+      await prisma.coHost.upsert({
+        where: { userId: id },
+        create: {
+          userId: id,
+          languages: Array.isArray(languages) ? languages : [],
+          commissionPercentage: commissionPercentage || 0,
+        },
+        update: {
+          languages: languages !== undefined ? (Array.isArray(languages) ? languages : []) : undefined,
+          commissionPercentage: commissionPercentage !== undefined ? commissionPercentage : undefined,
+        }
+      });
+    }
 
     // Then check if the update completed the onboarding
     const isOnboardingCompletedNow = checkOnboardingStatus(updatedUser);

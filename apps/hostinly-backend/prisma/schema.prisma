@@ -187,6 +187,7 @@ model CoHost {
   totalReviews     Int      @default(0) @map("total_reviews")
   location         String?
   hourlyRate       Float?   @map("hourly_rate")
+  commissionPercentage Float? @map("commission_percentage")
   languages        String[]
   specialties      String[]
   availabilityStatus String   @default("Available") @map("availability_status")

@@ -9,7 +9,7 @@ import {
   MapPin,
   Bed,
   Bath,
-  DollarSign,
+  PoundSterling,
   Search,
   ArrowLeft,
 } from "lucide-react";
@@ -230,8 +230,8 @@ function PropertyCard({ property }: { property: Property }) {
         </div>
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center font-semibold shrink-0 text-primary">
-            <DollarSign className="h-4 w-4 shrink-0" />
-            <span>{property.expectedRevenue}</span>
+            <PoundSterling className="h-4 w-4 shrink-0" />
+            <span>{property.expectedRevenue.replace('$', '£')}</span>
           </div>
           <Link href={`/properties/${property.id}`}>
             <Button

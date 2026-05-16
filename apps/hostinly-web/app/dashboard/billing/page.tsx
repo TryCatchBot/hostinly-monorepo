@@ -117,7 +117,7 @@ export default function BillingPage() {
                       <tr key={invoice.id} className="hover:bg-muted/10 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">{invoice.id}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{invoice.date}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">${invoice.amount.toFixed(2)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">£{invoice.amount.toFixed(2)}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border ${
                             invoice.status === 'Paid' 

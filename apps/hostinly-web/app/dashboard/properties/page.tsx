@@ -3,7 +3,7 @@
 import DashboardLayout from '@/components/DashboardLayout';
 import PropertyCard from '@/components/PropertyCard';
 import AddPropertyModal from '@/components/AddPropertyModal';
-import { type Property } from '@/lib/mockData';
+import { type Property } from '@/lib/provideData';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -39,19 +39,23 @@ export default function PropertiesPage() {
         const result = await response.json();
         if (result.success) {
           // Map backend properties to frontend Property type if necessary
-          const mappedProperties = result.data.map((p: any) => ({
-            id: p.id,
-            title: p.title,
-            location: `${p.address}, ${p.city}`,
-            price: p.price,
-            bedrooms: p.bedrooms,
-            bathrooms: p.bathrooms,
-            image: p.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop',
-            images: p.images,
-            rating: 4.5, // Default rating
-            reviews: 0,
-            status: p.status.toLowerCase(),
-          }));
+          const mappedProperties = result.data.map((p: any) => {
+            const trimmedImages = (p.images || []).map((img: string) => img.trim().replace(/^`|`$/g, ''));
+            return {
+              id: p.id,
+              title: p.title,
+              location: `${p.address}, ${p.city}`,
+              price: p.price,
+              bedrooms: p.bedrooms,
+              bathrooms: p.bathrooms,
+              image: trimmedImages[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop',
+              images: trimmedImages,
+              rating: 4.5, // Default rating
+              reviews: 0,
+              status: p.status.toLowerCase(),
+              ownerId: p.ownerId,
+            };
+          });
           setProperties(mappedProperties);
         }
       } catch (error) {
@@ -76,7 +80,7 @@ export default function PropertiesPage() {
 
   const isHost = user.userType === 'host';
   const displayProperties = isHost
-    ? properties.filter((p) => p.status !== 'available')
+    ? properties.filter((p) => p.ownerId === user.id)
     : properties.filter((p) => p.status === 'available');
 
   const handleAddProperty = (property: Property) => {

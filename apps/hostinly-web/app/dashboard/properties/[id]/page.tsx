@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import DashboardLayout from '@/components/DashboardLayout';
-import { type Property } from '@/lib/mockData';
+import { type Property } from '@/lib/provideData';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Star, MapPin, Bed, Bath, Edit2, Trash2, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Star, MapPin, Bed, Bath, Edit2, Trash2, AlertTriangle, Send, CheckCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import PropertyImageCarousel from '@/components/PropertyImageCarousel';
+import { toast } from 'sonner';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/api';
 
@@ -21,6 +23,8 @@ export default function PropertyDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -36,6 +40,7 @@ export default function PropertyDetailPage() {
         const result = await response.json();
         if (result.success) {
           const p = result.data;
+          const trimmedImages = (p.images || []).map((img: string) => img.trim().replace(/^`|`$/g, ''));
           setProperty({
             id: p.id,
             title: p.title,
@@ -43,12 +48,21 @@ export default function PropertyDetailPage() {
             price: p.price,
             bedrooms: p.bedrooms,
             bathrooms: p.bathrooms,
-            image: p.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop',
-            images: p.images,
+            image: trimmedImages[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop',
+            images: trimmedImages,
             rating: 4.5,
             reviews: 0,
             status: p.status.toLowerCase(),
+            ownerId: p.ownerId,
+            description: p.description,
           });
+
+          // Check if user has already applied (this would usually be a backend check)
+          // For now, we'll check local storage or a mock check
+          const appliedProperties = JSON.parse(localStorage.getItem('applied_properties') || '[]');
+          if (appliedProperties.includes(id)) {
+            setHasApplied(true);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch property:', error);
@@ -112,7 +126,45 @@ export default function PropertyDetailPage() {
     }
   };
 
+  const handleApply = async () => {
+    if (!user || !id) return;
+    setIsApplying(true);
+    try {
+      const token = localStorage.getItem('hostinly_token');
+      // Create an interview request as an application
+      const response = await fetch(`${API_URL}/interviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          hostId: property.ownerId || '', // We need ownerId here
+          candidateId: user.id,
+          notes: `Application to manage property: ${property.title}`,
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setHasApplied(true);
+        const appliedProperties = JSON.parse(localStorage.getItem('applied_properties') || '[]');
+        localStorage.setItem('applied_properties', JSON.stringify([...appliedProperties, id]));
+        toast.success('Application sent successfully!');
+      } else {
+        toast.error(result.error || 'Failed to send application');
+      }
+    } catch (error) {
+      console.error('Failed to apply:', error);
+      toast.error('An error occurred while sending your application');
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
   const currentStatus = property.status;
+  const isStaff = user?.userType === 'cohost' || user?.userType === 'cleaner';
+  const isHost = user?.userType === 'host';
 
   return (
     <DashboardLayout>
@@ -127,32 +179,34 @@ export default function PropertyDetailPage() {
             Back
           </button>
           <div className="flex gap-3">
-            <Button
-              variant="outline"
-              className="py-2 px-4"
-              onClick={() => router.push(`/dashboard/properties/${id}/edit`)}
-            >
-              <Edit2 className="h-4 w-4 mr-2" />
-              Edit
-            </Button>
-            <Button
-              variant="destructive"
-              className="py-2 px-4"
-              onClick={() => setShowDeleteConfirm(true)}
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete
-            </Button>
+            {isHost && (
+              <>
+                <Button
+                  variant="outline"
+                  className="py-2 px-4"
+                  onClick={() => router.push(`/dashboard/properties/${id}/edit`)}
+                >
+                  <Edit2 className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+                <Button
+                  variant="destructive"
+                  className="py-2 px-4"
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
-        {/* Property Image */}
-        <div className="relative w-full h-96 rounded-lg overflow-hidden mb-6 border border-border">
-          <Image
-            src={property.image}
-            alt={property.title}
-            fill
-            className="object-cover"
+        {/* Property Slideshow */}
+        <div className="mb-6">
+          <PropertyImageCarousel
+            images={property.images || [property.image]}
+            title={property.title}
           />
         </div>
 
@@ -207,11 +261,11 @@ export default function PropertyDetailPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Nightly Rate</p>
-                  <p className="text-3xl font-bold text-primary">${property.price}</p>
+                  <p className="text-3xl font-bold text-primary">£{property.price}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Estimated Monthly</p>
-                  <p className="text-3xl font-bold">${(property.price * 30).toLocaleString()}</p>
+                  <p className="text-3xl font-bold">£{(property.price * 30).toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -236,16 +290,50 @@ export default function PropertyDetailPage() {
               </div>
 
               <div className="space-y-4">
-                <Button
-                  className="w-full py-3"
-                  style={{
-                    background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
-                    color: '#ffffff',
-                  }}
-                >
-                  Contact Manager
-                </Button>
-                <Button variant="outline" className="w-full py-3">
+                {isStaff && (
+                  <Button
+                    className="w-full py-4 text-lg font-bold rounded-xl shadow-lg transition-all hover:scale-[1.02]"
+                    style={{
+                      background: hasApplied 
+                        ? 'hsl(142, 76%, 36%)' 
+                        : 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
+                      color: '#ffffff',
+                    }}
+                    onClick={handleApply}
+                    disabled={isApplying || hasApplied}
+                  >
+                    {isApplying ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Applying...
+                      </div>
+                    ) : hasApplied ? (
+                      <div className="flex items-center gap-2">
+                        <CheckCircle size={20} />
+                        Applied
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Send size={20} />
+                        Apply to Manage
+                      </div>
+                    )}
+                  </Button>
+                )}
+
+                {isHost && (
+                  <Button
+                    className="w-full py-3"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
+                      color: '#ffffff',
+                    }}
+                  >
+                    Contact Manager
+                  </Button>
+                )}
+                
+                <Button variant="outline" className="w-full py-3 font-semibold">
                   View Analytics
                 </Button>
               </div>

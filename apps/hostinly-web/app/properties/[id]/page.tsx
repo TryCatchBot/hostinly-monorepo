@@ -7,7 +7,7 @@ import {
   Bed,
   Bath,
   Users,
-  DollarSign,
+  PoundSterling,
   ArrowLeft,
   Mail,
   Phone,
@@ -87,8 +87,8 @@ export default function PropertyDetailsPage() {
                     <span>Up to {property.maxGuests} guests</span>
                   </div>
                   <div className="flex items-center gap-3 p-4 rounded-xl bg-[hsl(180,30%,96%)] border border-[hsl(180,25%,90%)] hover:border-[hsl(180,40%,85%)] transition-colors">
-                    <DollarSign className="h-5 w-5 text-primary shrink-0" />
-                    <span>{property.expectedRevenue}</span>
+                    <PoundSterling className="h-5 w-5 text-primary shrink-0" />
+                    <span>{property.expectedRevenue.replace('$', '£')}</span>
                   </div>
                 </div>
               </div>
@@ -185,7 +185,7 @@ export default function PropertyDetailsPage() {
 
                 <div className="p-6 rounded-2xl bg-gradient-to-br from-[hsl(40,100%,96%)] to-[hsl(40,90%,92%)] border border-[hsl(40,75%,85%)] shadow-soft">
                   <p className="text-sm text-[hsl(195,60%,25%)]">
-                    <strong>Expected revenue:</strong> {property.expectedRevenue}
+                    <strong>Expected revenue:</strong> {property.expectedRevenue.replace('$', '£')}
                     <br />
                     Interested in becoming the co-host for this property? Reach out
                     to the owner&apos;s contact above.

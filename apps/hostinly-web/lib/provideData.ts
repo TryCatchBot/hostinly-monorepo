@@ -12,6 +12,7 @@ export interface Property {
   reviews: number;
   status: 'available' | 'managing' | 'pending' | 'managed' | 'inactive';
   description?: string;
+  ownerId?: string;
 }
 
 export interface CoHost {
@@ -23,6 +24,8 @@ export interface CoHost {
   specialties: string[];
   image: string;
   hourlyRate?: number;
+  commissionPercentage?: number;
+  languages?: string[];
 }
 
 export interface JobPosting {
@@ -30,11 +33,14 @@ export interface JobPosting {
   title: string;
   description: string;
   propertyLocation: string;
-  budget: number;
+  budget: number | string;
   duration: string;
   experience: string;
-  status: 'open' | 'closed';
+  status: 'open' | 'closed' | 'in_progress' | 'completed' | 'cancelled';
   applications: number;
+  type: string;
+  requirements?: string;
+  skills?: string[];
 }
 
 export const mockProperties: Property[] = [
@@ -142,6 +148,7 @@ export const mockJobs: JobPosting[] = [
     experience: '2+ years',
     status: 'open',
     applications: 12,
+    type: 'Full-time',
   },
   {
     id: '2',
@@ -153,6 +160,7 @@ export const mockJobs: JobPosting[] = [
     experience: '1+ years',
     status: 'open',
     applications: 8,
+    type: 'Part-time',
   },
   {
     id: '3',
@@ -164,6 +172,7 @@ export const mockJobs: JobPosting[] = [
     experience: 'Any experience welcome',
     status: 'open',
     applications: 15,
+    type: 'Part-time',
   },
 ];
 

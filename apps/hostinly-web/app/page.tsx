@@ -6,6 +6,7 @@ import HeroSection from "@/components/HeroSection";
 import ServicesSection from "@/components/ServicesSection";
 import PropertyListingSection from "@/components/PropertyListingSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
+import CoHostsSection from "@/components/CoHostsSection";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -30,6 +31,7 @@ export default function Home() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-full overflow-hidden">
         <ServicesSection />
         <PropertyListingSection />
+        <CoHostsSection />
         <HowItWorksSection />
       </div>
       <Footer />

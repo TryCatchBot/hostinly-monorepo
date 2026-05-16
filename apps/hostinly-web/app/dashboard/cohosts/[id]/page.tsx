@@ -9,11 +9,11 @@ import {
   mockAvailableListings,
   updateProperty,
   type Property,
-} from '@/lib/mockData';
+} from '@/lib/provideData';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Star, MessageSquare, Mail, Phone, Badge, Calendar } from 'lucide-react';
+import { ArrowLeft, Star, MessageSquare, Mail, Phone, Badge, Calendar, Globe, Percent, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 type HireStatus = 'active' | 'probation' | 'ended';
@@ -33,8 +33,45 @@ export default function CoHostDetailPage() {
   const isHost = user?.userType === 'host';
   const [isHiring, setIsHiring] = useState(false);
   const [isBooking, setIsBooking] = useState(false);
+  const [cohost, setCohost] = useState<CoHost | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const cohost = id ? getCoHostById(id) : null;
+  useEffect(() => {
+    const fetchCohost = async () => {
+      if (!id) return;
+      setIsLoading(true);
+      try {
+        const token = localStorage.getItem('hostinly_token');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cohosts/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const result = await response.json();
+        if (result.success) {
+          const c = result.data;
+          setCohost({
+            id: c.id,
+            name: c.user.name,
+            title: c.specialties[0] || 'Property Expert',
+            rating: c.rating,
+            reviews: c.totalReviews,
+            image: c.user.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
+            specialties: c.specialties,
+            hourlyRate: c.hourlyRate,
+            commissionPercentage: c.commissionPercentage,
+            languages: c.languages
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch cohost:', err);
+        setCohost(getCoHostById(id) || null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchCohost();
+  }, [id]);
 
   const [hireRevision, setHireRevision] = useState(0);
   const [propertiesRevision, setPropertiesRevision] = useState(0);
@@ -44,10 +81,6 @@ export default function CoHostDetailPage() {
     setIsBooking(true);
     try {
       const token = localStorage.getItem('hostinly_token');
-      // In a real app, you'd find the candidate's actual userId from the backend.
-      // For this demo, we'll assume a dummy UUID if one isn't found.
-      const candidateId = "c8b4b1a4-92e3-4d6a-8f7b-9c2e4f6a8b1a"; 
-
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews`, {
         method: 'POST',
         headers: {
@@ -56,7 +89,8 @@ export default function CoHostDetailPage() {
         },
         body: JSON.stringify({
           hostId: user.id,
-          candidateId: candidateId,
+          candidateId: id,
+          date: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
           notes: `Interview request for ${cohost?.name}`
         })
       });
@@ -110,17 +144,75 @@ export default function CoHostDetailPage() {
     setHireRevision((r) => r + 1);
   };
 
-  const hireCohost = () => {
-    if (!hireKey || !id) return;
-    const now = new Date().toISOString();
-    const existing = hires.find((h) => h.cohostId === id);
-    const nextRecord: HireRecord = {
-      cohostId: id,
-      status: 'active',
-      hiredAt: existing?.hiredAt || now,
-    };
-    const next = [...hires.filter((h) => h.cohostId !== id), nextRecord];
-    writeHires(next);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
+  const hireCohost = async () => {
+    if (!user || !id) return;
+    setIsHiring(true);
+    try {
+      const token = localStorage.getItem('hostinly_token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/engagements`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          hostId: user.id,
+          staffId: id,
+          status: 'ACTIVE',
+          startDate: new Date().toISOString()
+        })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        toast.success('Co-host hired successfully!');
+        setHireRevision(r => r + 1);
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (err: any) {
+      toast.error('Failed to hire: ' + err.message);
+    } finally {
+      setIsHiring(false);
+    }
+  };
+
+  const submitReview = async () => {
+    if (!user || !id) return;
+    setIsSubmittingReview(true);
+    try {
+      const token = localStorage.getItem('hostinly_token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/engagements/rate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          rating: reviewRating,
+          comment: reviewComment,
+          reviewerId: user.id,
+          revieweeId: id
+        })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        toast.success('Review submitted successfully!');
+        setReviewComment('');
+        setReviewRating(5);
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (err: any) {
+      toast.error('Failed to submit review: ' + err.message);
+    } finally {
+      setIsSubmittingReview(false);
+    }
   };
 
   const endEngagement = () => {
@@ -202,15 +294,40 @@ export default function CoHostDetailPage() {
                     </div>
                   </div>
 
-                  {/* Hourly Rate */}
-                  {cohost.hourlyRate && (
-                    <div className="text-2xl font-bold text-primary">
-                      ${cohost.hourlyRate}/hour
+                  {/* Rate */}
+                  {cohost.commissionPercentage ? (
+                    <div className="flex items-center gap-2 text-2xl font-bold text-primary">
+                      <Percent size={24} />
+                      {cohost.commissionPercentage}% commission
                     </div>
-                  )}
+                  ) : cohost.hourlyRate ? (
+                    <div className="text-2xl font-bold text-primary">
+                      £{cohost.hourlyRate}/hour
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>
+
+            {/* Languages */}
+            {cohost.languages && cohost.languages.length > 0 && (
+              <div className="bg-background rounded-lg border border-border p-6 mb-6">
+                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <Globe size={24} className="text-primary" />
+                  Languages
+                </h2>
+                <div className="flex flex-wrap gap-3">
+                  {cohost.languages.map((lang, idx) => (
+                    <div
+                      key={idx}
+                      className="px-4 py-2 rounded-xl bg-muted font-semibold text-foreground border border-border"
+                    >
+                      {lang}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Specialties */}
             <div className="bg-background rounded-lg border border-border p-6 mb-6">
@@ -243,40 +360,42 @@ export default function CoHostDetailPage() {
               </p>
             </div>
 
+            {/* Review Section */}
             {isHost && (
               <div className="bg-background rounded-lg border border-border p-6 mb-6">
-                <h2 className="text-2xl font-bold mb-4">Property Status</h2>
-                <div className="space-y-3">
-                  {hostProperties.map((p) => (
-                    <div
-                      key={p.id}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border border-border rounded-lg p-4"
-                    >
-                      <div>
-                        <div className="font-semibold text-foreground">{p.title}</div>
-                        <div className="text-sm text-muted-foreground">{p.location}</div>
-                      </div>
-                      <select
-                        value={p.status}
-                        onChange={(e) => {
-                          updateProperty(p.id, {
-                            status: e.target.value as Property['status'],
-                          });
-                          setPropertiesRevision((r) => r + 1);
-                        }}
-                        className="px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary min-w-44"
-                      >
-                        <option value="pending">Pending</option>
-                        <option value="managing">Managing</option>
-                        <option value="available">Available</option>
-                      </select>
+                <h2 className="text-2xl font-bold mb-6">Leave a Review</h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-bold text-muted-foreground uppercase mb-2">Rating</label>
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          onClick={() => setReviewRating(star)}
+                          className={`p-2 transition-all ${reviewRating >= star ? 'text-yellow-500' : 'text-muted/40'}`}
+                        >
+                          <Star size={24} fill={reviewRating >= star ? 'currentColor' : 'none'} />
+                        </button>
+                      ))}
                     </div>
-                  ))}
-                  {hostProperties.length === 0 && (
-                    <div className="text-sm text-muted-foreground">
-                      No properties found.
-                    </div>
-                  )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-muted-foreground uppercase mb-2">Comment</label>
+                    <textarea
+                      value={reviewComment}
+                      onChange={(e) => setReviewComment(e.target.value)}
+                      placeholder="Share your experience working with this co-host..."
+                      className="w-full p-4 rounded-xl bg-muted/30 border border-border focus:ring-2 focus:ring-primary outline-none min-h-[120px] transition-all"
+                    />
+                  </div>
+                  <Button
+                    onClick={submitReview}
+                    disabled={isSubmittingReview || !reviewComment.trim()}
+                    className="w-full sm:w-auto px-8 py-2.5 font-bold"
+                  >
+                    {isSubmittingReview ? <Loader2 className="animate-spin mr-2" /> : null}
+                    Submit Review
+                  </Button>
                 </div>
               </div>
             )}

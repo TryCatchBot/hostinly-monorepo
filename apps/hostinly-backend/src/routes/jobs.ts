@@ -4,6 +4,28 @@ import { sendSuccess, sendError } from '../middleware';
 
 const router: Router = Router();
 
+router.post('/:id/apply', async (req, res) => {
+  try {
+    console.log(`User applying for job ${req.params.id}`);
+    const job = await prisma.jobPosting.findUnique({ where: { id: req.params.id } });
+    if (!job) return sendError(res, 'Job not found', 404);
+    sendSuccess(res, { message: 'Application submitted successfully' });
+  } catch (error: any) {
+    sendError(res, error.message);
+  }
+});
+
+router.post('/:id/save', async (req, res) => {
+  try {
+    console.log(`User saving job ${req.params.id}`);
+    const job = await prisma.jobPosting.findUnique({ where: { id: req.params.id } });
+    if (!job) return sendError(res, 'Job not found', 404);
+    sendSuccess(res, { message: 'Job saved successfully' });
+  } catch (error: any) {
+    sendError(res, error.message);
+  }
+});
+
 router.get('/', async (req, res) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
