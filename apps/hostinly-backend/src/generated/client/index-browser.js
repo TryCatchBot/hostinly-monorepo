@@ -149,7 +149,6 @@ exports.Prisma.UserScalarFieldEnum = {
   verificationStatus: 'verificationStatus',
   createdAt: 'createdAt',
   lastActive: 'lastActive',
-  isOnboardingCompleted: 'isOnboardingCompleted',
   dateOfBirth: 'dateOfBirth',
   numberOfProperties: 'numberOfProperties',
   hostingExperience: 'hostingExperience',
@@ -171,11 +170,12 @@ exports.Prisma.UserScalarFieldEnum = {
   availability: 'availability',
   areasCovered: 'areasCovered',
   proofOfAddress: 'proofOfAddress',
-  resume: 'resume',
-  coverLetter: 'coverLetter',
   references: 'references',
   insurance: 'insurance',
-  approvalReason: 'approvalReason'
+  approvalReason: 'approvalReason',
+  isOnboardingCompleted: 'isOnboardingCompleted',
+  resume: 'resume',
+  coverLetter: 'coverLetter'
 };
 
 exports.Prisma.EngagementScalarFieldEnum = {
@@ -216,7 +216,6 @@ exports.Prisma.CoHostScalarFieldEnum = {
   totalReviews: 'totalReviews',
   location: 'location',
   hourlyRate: 'hourlyRate',
-  commissionPercentage: 'commissionPercentage',
   languages: 'languages',
   specialties: 'specialties',
   availabilityStatus: 'availabilityStatus'
@@ -232,10 +231,10 @@ exports.Prisma.JobPostingScalarFieldEnum = {
   propertyId: 'propertyId',
   location: 'location',
   type: 'type',
+  createdAt: 'createdAt',
   duration: 'duration',
   requirements: 'requirements',
-  skills: 'skills',
-  createdAt: 'createdAt'
+  skills: 'skills'
 };
 
 exports.Prisma.ReviewScalarFieldEnum = {
@@ -323,8 +322,8 @@ exports.InterviewStatus = exports.$Enums.InterviewStatus = {
 exports.UserType = exports.$Enums.UserType = {
   HOST: 'HOST',
   COHOST: 'COHOST',
-  CLEANER: 'CLEANER',
-  ADMIN: 'ADMIN'
+  ADMIN: 'ADMIN',
+  CLEANER: 'CLEANER'
 };
 
 exports.UserStatus = exports.$Enums.UserStatus = {
