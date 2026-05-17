@@ -27,7 +27,6 @@ import {
   formatCurrency,
   getStatusColor,
   formatStatus,
-  API_URL,
 } from "@/lib/utils";
 import {
   MoreHorizontal,
@@ -44,6 +43,7 @@ import {
   LayoutGrid,
   List,
 } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 const columns = [
   {
@@ -75,6 +75,26 @@ const columns = [
     sortable: true,
     cell: (property: Property) => (
       <Badge variant="outline">{formatStatus(property.type)}</Badge>
+    ),
+  },
+  {
+    key: "airbnbLink",
+    header: "Airbnb",
+    sortable: false,
+    cell: (property: Property) => (
+      property.airbnbLink ? (
+        <a
+          href={property.airbnbLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary hover:underline flex items-center gap-1 font-medium text-xs"
+        >
+          <ExternalLink className="h-3 w-3" />
+          Link
+        </a>
+      ) : (
+        <span className="text-muted-foreground text-xs">-</span>
+      )
     ),
   },
   {
@@ -207,6 +227,19 @@ function PropertyActions({ property }: { property: Property }) {
                   {property.location.address}, {property.location.city}
                 </span>
               </div>
+              {property.airbnbLink && (
+                <div className="mt-3">
+                  <a
+                    href={property.airbnbLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-primary hover:underline font-bold text-sm bg-primary/10 px-3 py-1.5 rounded-lg"
+                  >
+                    <ExternalLink size={14} />
+                    View on Airbnb
+                  </a>
+                </div>
+              )}
             </div>
 
             {/* Quick Stats */}
@@ -383,6 +416,19 @@ function PropertyCard({ property }: { property: Property }) {
                   {property.location.address}, {property.location.city}
                 </span>
               </div>
+              {property.airbnbLink && (
+                <div className="mt-3">
+                  <a
+                    href={property.airbnbLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-primary hover:underline font-bold text-sm bg-primary/10 px-3 py-1.5 rounded-lg"
+                  >
+                    <ExternalLink size={14} />
+                    View on Airbnb
+                  </a>
+                </div>
+              )}
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Price per night</p>

@@ -32,6 +32,7 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
     is_listed_on_airbnb: '',
     airbnb_listing_link: '',
     expected_monthly_bookings: '',
+    monthly_revenue: '',
     preferred_commission_structure: '',
     services_required: '',
     upload_property_photos: [] as { url: string; isFavorite: boolean }[],
@@ -57,6 +58,7 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
         !listForm.maximum_guest_capacity ||
         !listForm.is_listed_on_airbnb ||
         !listForm.expected_monthly_bookings ||
+        !listForm.monthly_revenue ||
         !listForm.preferred_commission_structure ||
         !listForm.services_required
       ) {
@@ -89,6 +91,7 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
       is_listed_on_airbnb: '',
       airbnb_listing_link: '',
       expected_monthly_bookings: '',
+      monthly_revenue: '',
       preferred_commission_structure: '',
       services_required: '',
       upload_property_photos: [],
@@ -215,7 +218,9 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
         description: `Type: ${listForm.property_type}. Services: ${listForm.services_required}`,
         address: listForm.full_address,
         city: listForm.city,
-        price: 0,
+        price: parseFloat(listForm.monthly_revenue) || 0,
+        type: listForm.property_type.toLowerCase(),
+        airbnbLink: listForm.airbnb_listing_link,
         ownerId: user?.id,
         images: imageUrls,
         amenities: listForm.services_required.split(',').map((s) => s.trim()),
@@ -489,21 +494,39 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Preferred commission structure *
+                      Expected monthly revenue (£) *
                     </label>
                     <input
-                      type="text"
-                      value={listForm.preferred_commission_structure}
+                      type="number"
+                      value={listForm.monthly_revenue}
                       onChange={(e) =>
                         setListForm((p) => ({
                           ...p,
-                          preferred_commission_structure: e.target.value,
+                          monthly_revenue: e.target.value,
                         }))
                       }
-                      placeholder="e.g. 15% per booking"
+                      placeholder="e.g. 2500"
                       className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Preferred commission structure *
+                  </label>
+                  <input
+                    type="text"
+                    value={listForm.preferred_commission_structure}
+                    onChange={(e) =>
+                      setListForm((p) => ({
+                        ...p,
+                        preferred_commission_structure: e.target.value,
+                      }))
+                    }
+                    placeholder="e.g. 15% per booking"
+                    className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
                 </div>
 
                 <div>

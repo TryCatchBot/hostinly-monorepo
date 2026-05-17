@@ -12,6 +12,7 @@ export interface Property {
   reviews: number;
   status: 'available' | 'managing' | 'pending' | 'managed' | 'inactive';
   description?: string;
+  airbnbLink?: string;
   ownerId?: string;
 }
 
