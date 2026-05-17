@@ -38,6 +38,22 @@ async function main() {
   });
 
   console.log('Super admin seeded:', superAdmin.email);
+
+  // Seed the specific user that was reported as missing
+  const testUser = await prisma.user.upsert({
+    where: { id: '1f35ec5f-2462-482e-8c37-f0f8dd5b3839' },
+    update: {},
+    create: {
+      id: '1f35ec5f-2462-482e-8c37-f0f8dd5b3839',
+      email: 'test@yopmail.com',
+      name: 'Test User',
+      passwordHash: await bcrypt.hash('Password1*', 10),
+      userType: 'HOST',
+      status: 'ACTIVE',
+      verificationStatus: 'VERIFIED',
+    },
+  });
+  console.log('Test user seeded:', testUser.id);
 }
 
 main()
