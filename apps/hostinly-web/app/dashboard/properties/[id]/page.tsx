@@ -6,7 +6,7 @@ import Image from 'next/image';
 import DashboardLayout from '@/components/DashboardLayout';
 import { type Property } from '@/lib/provideData';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Star, MapPin, Bed, Bath, Edit2, Trash2, AlertTriangle, Send, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Star, MapPin, Bed, Bath, Edit2, Trash2, AlertTriangle, Send, CheckCircle, ExternalLink } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import PropertyImageCarousel from '@/components/PropertyImageCarousel';
 import { toast } from 'sonner';
@@ -55,6 +55,7 @@ export default function PropertyDetailPage() {
             status: p.status.toLowerCase(),
             ownerId: p.ownerId,
             description: p.description,
+            airbnbLink: p.airbnbLink,
           });
 
           // Check if user has already applied (this would usually be a backend check)
@@ -217,7 +218,7 @@ export default function PropertyDetailPage() {
             <h1 className="text-4xl font-bold text-foreground mb-4">{property.title}</h1>
 
             {/* Location and Rating */}
-            <div className="flex items-center gap-6 mb-6 pb-6 border-b border-border">
+            <div className="flex flex-wrap items-center gap-6 mb-6 pb-6 border-b border-border">
               <div className="flex items-center gap-2">
                 <MapPin size={20} className="text-muted-foreground" />
                 <span className="text-muted-foreground">{property.location}</span>
@@ -227,6 +228,17 @@ export default function PropertyDetailPage() {
                 <span className="font-semibold">{property.rating}</span>
                 <span className="text-muted-foreground">({property.reviews} reviews)</span>
               </div>
+              {property.airbnbLink && (
+                <a 
+                  href={property.airbnbLink} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-primary hover:underline font-bold text-sm"
+                >
+                  <ExternalLink size={16} />
+                  View on Airbnb
+                </a>
+              )}
             </div>
 
             {/* Property Features */}

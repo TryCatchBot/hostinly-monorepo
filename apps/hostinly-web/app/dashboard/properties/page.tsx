@@ -54,6 +54,7 @@ export default function PropertiesPage() {
               reviews: 0,
               status: p.status.toLowerCase(),
               ownerId: p.ownerId,
+              airbnbLink: p.airbnbLink,
             };
           });
           setProperties(mappedProperties);

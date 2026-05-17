@@ -27,6 +27,7 @@ export default function EditPropertyPage() {
     bedrooms: '',
     bathrooms: '',
     guests: '',
+    airbnbLink: '',
     status: '',
   });
 
@@ -52,6 +53,7 @@ export default function EditPropertyPage() {
             bedrooms: p.bedrooms?.toString() || '1',
             bathrooms: p.bathrooms?.toString() || '1',
             guests: p.guests?.toString() || '2',
+            airbnbLink: p.airbnbLink || '',
             status: p.status || 'AVAILABLE',
           });
         }
@@ -151,6 +153,17 @@ export default function EditPropertyPage() {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 className="w-full px-4 py-2 rounded-lg border border-border bg-background focus:ring-2 focus:ring-primary outline-none min-h-[120px]"
                 required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Airbnb Listing Link</label>
+              <input
+                type="url"
+                value={formData.airbnbLink}
+                onChange={(e) => setFormData({ ...formData, airbnbLink: e.target.value })}
+                className="w-full px-4 py-2 rounded-lg border border-border bg-background focus:ring-2 focus:ring-primary outline-none"
+                placeholder="https://airbnb.com/rooms/..."
               />
             </div>
 

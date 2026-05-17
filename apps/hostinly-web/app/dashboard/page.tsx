@@ -138,6 +138,7 @@ export default function DashboardPage() {
             reviews: 0,
             status: p.status.toLowerCase(),
             ownerId: p.ownerId,
+            airbnbLink: p.airbnbLink,
           };
         });
         setProperties(fetchedProperties);

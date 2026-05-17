@@ -46,6 +46,7 @@ export interface Property {
   description: string;
   type: PropertyType;
   status: PropertyStatus;
+  airbnbLink?: string;
   ownerId: string;
   ownerName: string;
   location: {
