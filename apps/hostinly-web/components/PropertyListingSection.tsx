@@ -20,17 +20,20 @@ export default function PropertyListingSection() {
     const fetchProperties = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/properties`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const result = await response.json();
-        if (result.success) {
+        if (result.success && Array.isArray(result.data)) {
           setProperties(result.data.slice(0, 3).map((p: any) => ({
             id: p.id,
             title: p.title,
-            location: `${p.address}, ${p.city}`,
-            expectedRevenue: `£${p.price.toLocaleString()}/mo`,
-            bedrooms: p.bedrooms,
-            bathrooms: p.bathrooms,
+            location: p.location ? `${p.location.address}, ${p.location.city}` : 'Location unavailable',
+            expectedRevenue: p.pricing?.nightlyRate ? `£${p.pricing.nightlyRate.toLocaleString()}/mo` : 'Price unavailable',
+            bedrooms: p.bedrooms || 0,
+            bathrooms: p.bathrooms || 0,
             image: (p.images && p.images.length > 0) ? p.images[0].replace(/`/g, '') : 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop',
-            status: p.status.toLowerCase()
+            status: (p.status || 'available').toLowerCase()
           })));
         } else {
           setProperties(fallbackProperties.slice(0, 3));

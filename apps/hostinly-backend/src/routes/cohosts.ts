@@ -13,6 +13,7 @@ router.get('/', async (req, res) => {
             name: true,
             email: true,
             phone: true,
+            avatar: true,
             status: true,
             createdAt: true,
             lastActive: true,
@@ -30,10 +31,13 @@ router.get('/', async (req, res) => {
       id: cohost.id,
       userId: cohost.userId,
       name: cohost.user.name,
+      avatar: cohost.user.avatar,
       email: cohost.user.email,
       phone: cohost.user.phone,
       status: cohost.user.status.toLowerCase(), // Map UserStatus to CoHostStatus
       rating: cohost.rating,
+      totalReviews: cohost.totalReviews,
+      specialties: cohost.specialties,
       responseTime: 0, // Placeholder
       completedBookings: 0, // Placeholder
       activeProperties: cohost._count.properties,

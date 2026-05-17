@@ -18,16 +18,19 @@ export default function CoHostsSection() {
     const fetchCohosts = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cohosts`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const result = await response.json();
-        if (result.success) {
+        if (result.success && Array.isArray(result.data)) {
           setCohosts(result.data.slice(0, 3).map((c: any) => ({
             id: c.id,
-            name: c.user.name,
-            title: c.specialties[0] || 'Property Expert',
-            rating: c.rating,
-            reviews: c.totalReviews,
-            image: c.user.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop',
-            specialties: c.specialties
+            name: c.name || 'Anonymous',
+            title: (c.specialties && c.specialties[0]) || 'Property Expert',
+            rating: c.rating || 5,
+            reviews: c.totalReviews || 0,
+            image: c.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop',
+            specialties: c.specialties || []
           })));
         } else {
           setCohosts(mockCoHosts.slice(0, 3));

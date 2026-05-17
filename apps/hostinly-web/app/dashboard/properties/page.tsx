@@ -36,23 +36,26 @@ export default function PropertiesPage() {
             Authorization: `Bearer ${token}`,
           },
         });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const result = await response.json();
-        if (result.success) {
+        if (result.success && Array.isArray(result.data)) {
           // Map backend properties to frontend Property type if necessary
           const mappedProperties = result.data.map((p: any) => {
             const trimmedImages = (p.images || []).map((img: string) => img.trim().replace(/^`|`$/g, ''));
             return {
               id: p.id,
               title: p.title,
-              location: `${p.address}, ${p.city}`,
-              price: p.price,
-              bedrooms: p.bedrooms,
-              bathrooms: p.bathrooms,
+              location: p.location ? `${p.location.address}, ${p.location.city}` : 'Location unavailable',
+              price: p.pricing?.nightlyRate || 0,
+              bedrooms: p.bedrooms || 0,
+              bathrooms: p.bathrooms || 0,
               image: trimmedImages[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop',
               images: trimmedImages,
-              rating: 4.5, // Default rating
-              reviews: 0,
-              status: p.status.toLowerCase(),
+              rating: p.rating || 4.5,
+              reviews: p.reviewCount || 0,
+              status: (p.status || 'available').toLowerCase(),
               ownerId: p.ownerId,
               airbnbLink: p.airbnbLink,
             };
