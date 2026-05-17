@@ -139,6 +139,11 @@ router.put('/:id', async (req, res) => {
   try {
     const { password, ...rest } = req.body;
     
+    // Convert numeric fields to string if schema expects string
+    if (rest.monthlyIncomeTarget !== undefined && typeof rest.monthlyIncomeTarget === 'number') {
+      rest.monthlyIncomeTarget = rest.monthlyIncomeTarget.toString();
+    }
+
     // First, perform the update
     const updatedUser = await prisma.user.update({
       where: { id: req.params.id },
@@ -168,6 +173,11 @@ router.patch('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
+
+    // Convert numeric fields to string if schema expects string
+    if (updateData.monthlyIncomeTarget !== undefined && typeof updateData.monthlyIncomeTarget === 'number') {
+      updateData.monthlyIncomeTarget = updateData.monthlyIncomeTarget.toString();
+    }
 
     // Remove fields that shouldn't be updated via patch directly or need special handling
     delete updateData.id;
