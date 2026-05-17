@@ -131,7 +131,8 @@ export type EngagementStatus = (typeof EngagementStatus)[keyof typeof Engagement
 export const PropertyStatus: {
   AVAILABLE: 'AVAILABLE',
   MANAGED: 'MANAGED',
-  INACTIVE: 'INACTIVE'
+  INACTIVE: 'INACTIVE',
+  PENDING: 'PENDING'
 };
 
 export type PropertyStatus = (typeof PropertyStatus)[keyof typeof PropertyStatus]

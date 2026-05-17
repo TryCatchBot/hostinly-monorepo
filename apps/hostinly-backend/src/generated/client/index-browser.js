@@ -355,7 +355,8 @@ exports.EngagementStatus = exports.$Enums.EngagementStatus = {
 exports.PropertyStatus = exports.$Enums.PropertyStatus = {
   AVAILABLE: 'AVAILABLE',
   MANAGED: 'MANAGED',
-  INACTIVE: 'INACTIVE'
+  INACTIVE: 'INACTIVE',
+  PENDING: 'PENDING'
 };
 
 exports.PropertyType = exports.$Enums.PropertyType = {
