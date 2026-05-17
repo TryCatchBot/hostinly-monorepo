@@ -8,7 +8,7 @@ const router: Router = Router();
 
 // Cloudinary configuration
 cloudinary.config({
-  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'pastorcoder',
   api_key: process.env.CLOUDINARY_API_KEY || '291416415584249',
   api_secret: process.env.CLOUDINARY_API_SECRET || 'keSB-2ZO1umy0pEQAqMRtHB2gWI',
 });
@@ -25,40 +25,55 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 // Single upload endpoint
-router.post('/upload', upload.single('file'), (req: any, res) => {
-  try {
-    if (!req.file) {
-      return sendError(res, 'No file uploaded', 400);
+router.post('/upload', (req, res, next) => {
+  upload.single('file')(req, res, (err) => {
+    if (err) {
+      console.error('Multer/Cloudinary Upload Error:', err);
+      return sendError(res, err.message || 'Upload failed', 500);
     }
-    sendSuccess(res, { url: req.file.path });
-  } catch (error: any) {
-    sendError(res, error.message);
-  }
+    
+    try {
+      if (!req.file) {
+        return sendError(res, 'No file uploaded', 400);
+      }
+      sendSuccess(res, { url: req.file.path });
+    } catch (error: any) {
+      sendError(res, error.message);
+    }
+  });
 });
 
 // Multiple upload for signup documents
 router.post(
   '/upload-documents',
-  upload.fields([
-    { name: 'uploadId', maxCount: 1 },
-    { name: 'proofOfOwnership', maxCount: 1 },
-    { name: 'businessRegistration', maxCount: 1 },
-    { name: 'proofOfAddress', maxCount: 1 },
-  ]),
-  (req: any, res) => {
-    try {
-      const files = req.files;
-      const urls: Record<string, string> = {};
+  (req, res) => {
+    const uploadFields = upload.fields([
+      { name: 'uploadId', maxCount: 1 },
+      { name: 'proofOfOwnership', maxCount: 1 },
+      { name: 'businessRegistration', maxCount: 1 },
+      { name: 'proofOfAddress', maxCount: 1 },
+    ]);
 
-      if (files.uploadId) urls.uploadId = files.uploadId[0].path;
-      if (files.proofOfOwnership) urls.proofOfOwnership = files.proofOfOwnership[0].path;
-      if (files.businessRegistration) urls.businessRegistration = files.businessRegistration[0].path;
-      if (files.proofOfAddress) urls.proofOfAddress = files.proofOfAddress[0].path;
+    uploadFields(req, res, (err) => {
+      if (err) {
+        console.error('Multer/Cloudinary Multi-Upload Error:', err);
+        return sendError(res, err.message || 'Multi-upload failed', 500);
+      }
 
-      sendSuccess(res, urls);
-    } catch (error: any) {
-      sendError(res, error.message);
-    }
+      try {
+        const files = req.files as any;
+        const urls: Record<string, string> = {};
+
+        if (files.uploadId) urls.uploadId = files.uploadId[0].path;
+        if (files.proofOfOwnership) urls.proofOfOwnership = files.proofOfOwnership[0].path;
+        if (files.businessRegistration) urls.businessRegistration = files.businessRegistration[0].path;
+        if (files.proofOfAddress) urls.proofOfAddress = files.proofOfAddress[0].path;
+
+        sendSuccess(res, urls);
+      } catch (error: any) {
+        sendError(res, error.message);
+      }
+    });
   }
 );
 

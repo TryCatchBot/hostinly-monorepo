@@ -1,5 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
+dotenv.config();
+
 import { corsMiddleware } from './middleware';
 import { API_PREFIX, DEFAULT_PORT, DEFAULT_HOST } from './constants';
 
@@ -14,8 +16,6 @@ import uploadRoutes from './routes/uploads';
 import interviewRoutes from './routes/interviews';
 import serviceRoutes from './routes/services';
 import engagementRoutes from './routes/engagements';
-
-dotenv.config();
 
 const host = process.env.HOST ?? DEFAULT_HOST;
 const port = process.env.PORT ? Number(process.env.PORT) : DEFAULT_PORT;
@@ -39,6 +39,16 @@ app.use(`${API_PREFIX}/uploads`, uploadRoutes);
 app.use(`${API_PREFIX}/interviews`, interviewRoutes);
 app.use(`${API_PREFIX}/services`, serviceRoutes);
 app.use(`${API_PREFIX}/engagements`, engagementRoutes);
+
+// Global Error Handler
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('[ Error ]', err);
+  res.status(err.status || 500).json({
+    success: false,
+    error: err.message || 'Internal Server Error',
+    data: null
+  });
+});
 
 app.listen(port, host, () => {
   console.log(`[ ready ] http://${host}:${port}`);
