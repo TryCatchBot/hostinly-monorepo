@@ -183,6 +183,8 @@ exports.Prisma.EngagementScalarFieldEnum = {
   hostId: 'hostId',
   staffId: 'staffId',
   status: 'status',
+  startDate: 'startDate',
+  endDate: 'endDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

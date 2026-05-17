@@ -19,7 +19,7 @@
     "customConditions": ["@org/source"],
     "baseUrl": ".",
     "paths": {
-      "@org/hostinly-backend-client": ["apps/hostinly-backend/src/generated/client/index.js"]
+      "@org/hostinly-backend-client": ["apps/hostinly-backend/src/generated/client"]
     }
   }
 }

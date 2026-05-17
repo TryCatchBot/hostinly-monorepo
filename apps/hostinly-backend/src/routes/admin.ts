@@ -99,10 +99,10 @@ router.get('/recent-activity', async (req, res) => {
     ]);
 
     const activity = [
-      ...recentUsers.map(u => ({ type: 'USER_SIGNUP', data: u, date: u.createdAt })),
-      ...recentJobs.map(j => ({ type: 'JOB_POSTED', data: j, date: j.createdAt })),
-      ...recentProperties.map(p => ({ type: 'PROPERTY_ADDED', data: p, date: p.createdAt }))
-    ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 8);
+      ...recentUsers.map((u: any) => ({ type: 'USER_SIGNUP', data: u, date: u.createdAt })),
+      ...recentJobs.map((j: any) => ({ type: 'JOB_POSTED', data: j, date: j.createdAt })),
+      ...recentProperties.map((p: any) => ({ type: 'PROPERTY_ADDED', data: p, date: p.createdAt }))
+    ].sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 8);
 
     sendSuccess(res, activity);
   } catch (error: any) {
