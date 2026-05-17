@@ -44,6 +44,7 @@ function ProfilePageContent() {
   const [hostingExperience, setHostingExperience] = useState('');
   const [propertyLocations, setPropertyLocations] = useState('');
   const [propertyTypes, setPropertyTypes] = useState<string[]>([]);
+  const [otherPropertyType, setOtherPropertyType] = useState('');
   const [platformsUsed, setPlatformsUsed] = useState('');
   const [monthlyIncomeTarget, setMonthlyIncomeTarget] = useState('');
   const [usesCoHost, setUsesCoHost] = useState('');
@@ -116,12 +117,42 @@ function ProfilePageContent() {
             if (typeof u.propertyTypes === 'string') {
               try {
                 const parsed = JSON.parse(u.propertyTypes);
-                setPropertyTypes(Array.isArray(parsed) ? parsed : [parsed]);
+                const types = Array.isArray(parsed) ? parsed : [parsed];
+                setPropertyTypes(types);
+                
+                // Find any type that isn't in our standard list and set it as "Other"
+                const standardTypes = ['Apartment', 'House', 'Villa', 'Studio', 'Penthouse', 'Cottage'];
+                const customType = types.find((t: string) => !standardTypes.includes(t));
+                if (customType) {
+                  setOtherPropertyType(customType);
+                  // Ensure 'Other' is selected in the UI if we have a custom type
+                  if (!types.includes('Other')) {
+                    setPropertyTypes(prev => [...prev, 'Other']);
+                  }
+                }
               } catch {
-                setPropertyTypes(u.propertyTypes.split(',').map((s: string) => s.trim()).filter(Boolean));
+                const types = u.propertyTypes.split(',').map((s: string) => s.trim()).filter(Boolean);
+                setPropertyTypes(types);
+                
+                const standardTypes = ['Apartment', 'House', 'Villa', 'Studio', 'Penthouse', 'Cottage'];
+                const customType = types.find((t: string) => !standardTypes.includes(t));
+                if (customType) {
+                  setOtherPropertyType(customType);
+                  if (!types.includes('Other')) {
+                    setPropertyTypes(prev => [...prev, 'Other']);
+                  }
+                }
               }
             } else if (Array.isArray(u.propertyTypes)) {
               setPropertyTypes(u.propertyTypes);
+              const standardTypes = ['Apartment', 'House', 'Villa', 'Studio', 'Penthouse', 'Cottage'];
+              const customType = u.propertyTypes.find((t: string) => !standardTypes.includes(t));
+              if (customType) {
+                setOtherPropertyType(customType);
+                if (!u.propertyTypes.includes('Other')) {
+                  setPropertyTypes(prev => [...prev, 'Other']);
+                }
+              }
             }
 
             setPlatformsUsed(u.platformsUsed || '');
@@ -242,7 +273,14 @@ function ProfilePageContent() {
         updatedData.numberOfProperties = parseInt(numberOfProperties) || 0;
         updatedData.hostingExperience = parseInt(hostingExperience) || 0;
         updatedData.propertyLocations = propertyLocations;
-        updatedData.propertyTypes = JSON.stringify(propertyTypes);
+        
+        // Handle "Other" property type
+        const finalPropertyTypes = propertyTypes.filter(t => t !== 'Other');
+        if (propertyTypes.includes('Other') && otherPropertyType.trim()) {
+          finalPropertyTypes.push(otherPropertyType.trim());
+        }
+        updatedData.propertyTypes = JSON.stringify(finalPropertyTypes);
+        
         updatedData.platformsUsed = platformsUsed;
         updatedData.monthlyIncomeTarget = parseFloat(monthlyIncomeTarget.replace(/,/g, '')) || 0;
         updatedData.usesCoHost = usesCoHost === 'yes';
@@ -682,6 +720,18 @@ function ProfilePageContent() {
                       </button>
                     ))}
                   </div>
+                  {propertyTypes.includes('Other') && (
+                    <div className="mt-3 animate-in fade-in slide-in-from-top-1 duration-200">
+                      <input
+                        type="text"
+                        value={otherPropertyType}
+                        onChange={(e) => setOtherPropertyType(e.target.value)}
+                        disabled={!isEditMode}
+                        placeholder="Please specify other property type"
+                        className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+                      />
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">Current platforms used</label>
