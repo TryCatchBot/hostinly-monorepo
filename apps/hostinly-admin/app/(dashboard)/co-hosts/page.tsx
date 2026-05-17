@@ -14,6 +14,7 @@ import {
 import { DataTable } from "@/components/dashboard/data-table";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import type { CoHost } from "@/lib/types";
 import { formatDate, getStatusColor, formatStatus, API_URL } from "@/lib/utils";
 import {
@@ -130,39 +131,39 @@ const columns = [
             <span className="sr-only">Actions</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
+        <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-xl border-border/50 bg-background animate-in fade-in zoom-in duration-200">
+          <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Actions</DropdownMenuLabel>
+          <DropdownMenuSeparator className="my-1" />
+          <DropdownMenuItem className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
             <Eye className="mr-2 h-4 w-4" />
             View Profile
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
             <Edit className="mr-2 h-4 w-4" />
             Edit Co-host
           </DropdownMenuItem>
           {coHost.status === "pending" && (
             <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-emerald-500">
+              <DropdownMenuSeparator className="my-1" />
+              <DropdownMenuItem className="rounded-md px-2 py-2 text-sm text-emerald-500 focus:bg-emerald-50 focus:text-emerald-600 transition-colors cursor-pointer font-medium">
                 <CheckCircle className="mr-2 h-4 w-4" />
                 Approve
               </DropdownMenuItem>
             </>
           )}
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator className="my-1" />
           {coHost.status === "active" ? (
-            <DropdownMenuItem className="text-orange-500">
+            <DropdownMenuItem className="rounded-md px-2 py-2 text-sm text-orange-500 focus:bg-orange-50 focus:text-orange-600 transition-colors cursor-pointer font-medium">
               <Ban className="mr-2 h-4 w-4" />
               Suspend
             </DropdownMenuItem>
           ) : coHost.status === "suspended" ? (
-            <DropdownMenuItem className="text-emerald-500">
+            <DropdownMenuItem className="rounded-md px-2 py-2 text-sm text-emerald-500 focus:bg-emerald-50 focus:text-emerald-600 transition-colors cursor-pointer font-medium">
               <CheckCircle className="mr-2 h-4 w-4" />
               Restore
             </DropdownMenuItem>
           ) : null}
-          <DropdownMenuItem className="text-destructive">
+          <DropdownMenuItem className="rounded-md px-2 py-2 text-sm text-destructive focus:bg-destructive/10 focus:text-destructive transition-colors cursor-pointer font-medium">
             <Trash2 className="mr-2 h-4 w-4" />
             Remove
           </DropdownMenuItem>
@@ -186,9 +187,11 @@ export default function CoHostsPage() {
           setCoHosts(data.data);
         } else {
           setError(data.message);
+          toast.error(data.message || "Failed to fetch co-hosts");
         }
       } catch (err: any) {
         setError(err.message);
+        toast.error(err.message || "An unexpected error occurred");
       } finally {
         setLoading(false);
       }

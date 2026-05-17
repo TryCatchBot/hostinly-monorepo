@@ -216,8 +216,17 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
-      {/* Subtitle */}
-      {properties.length > 0 && (
+      {isDataLoading ? (
+        <div className="flex flex-col items-center justify-center py-32">
+          <div className="w-16 h-16 rounded-full border-4 border-primary border-t-transparent animate-spin mb-6"></div>
+          <p className="text-xl font-medium text-muted-foreground animate-pulse">
+            Preparing your dashboard...
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* Subtitle */}
+          {properties.length > 0 && (
         <div className="mb-6 sm:mb-8 flex justify-between items-center">
           <div>
             <p className="text-sm sm:text-base text-muted-foreground">
@@ -582,10 +591,20 @@ export default function DashboardPage() {
               </h2>
               <div className="space-y-4">
                 {interviews.length > 0 ? interviews.map((interview, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-4 bg-muted/30 rounded-xl border border-border/50">
+                  <div 
+                    key={idx} 
+                    className="flex items-center justify-between p-4 bg-muted/30 rounded-xl border border-border/50 hover:border-primary/30 transition-all cursor-pointer group"
+                    onClick={() => router.push(`/dashboard/interviews/${interview.id}`)}
+                  >
                     <div>
-                      <p className="font-bold text-foreground">{interview.host?.name || 'Host'}</p>
-                      <p className="text-xs text-muted-foreground">{new Date(interview.date).toLocaleDateString()} • {new Date(interview.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                      <p className="font-bold text-foreground group-hover:text-primary transition-colors">{interview.host?.name || 'Host'}</p>
+                      <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-1">
+                        <Calendar size={12} />
+                        {new Date(interview.date).toLocaleDateString()}
+                        <span className="mx-1">•</span>
+                        <Clock size={12} />
+                        {new Date(interview.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </div>
                     </div>
                     <div className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded-full">
                       {interview.status}
@@ -729,6 +748,8 @@ export default function DashboardPage() {
         onClose={() => setShowPostJobModal(false)}
         onPost={handlePostJob}
       />
-    </DashboardLayout>
-  );
+    </>
+  )}
+</DashboardLayout>
+);
 }

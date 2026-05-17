@@ -93,7 +93,7 @@ export default function PropertiesPage() {
     <DashboardLayout>
       <div>
         <div className="flex items-center justify-between mb-8">
-          {displayProperties.length > 0 && (
+          {(displayProperties.length > 0 || isLoading) && (
             <div>
               <h1 className="text-4xl font-bold text-foreground mb-2">
                 {isHost ? 'My Properties' : 'Available Properties'}
@@ -118,16 +118,33 @@ export default function PropertiesPage() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayProperties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
-          ))}
-        </div>
-
-        {displayProperties.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground mb-4">No properties found</p>
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin mb-4"></div>
+            <p className="text-muted-foreground animate-pulse">Loading properties...</p>
           </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {displayProperties.map((property) => (
+                <PropertyCard key={property.id} property={property} />
+              ))}
+            </div>
+
+            {displayProperties.length === 0 && (
+              <div className="text-center py-12 bg-muted/30 rounded-xl border border-dashed border-border">
+                <p className="text-muted-foreground mb-4">No properties found</p>
+                {isHost && (
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowAddPropertyModal(true)}
+                  >
+                    List your first property
+                  </Button>
+                )}
+              </div>
+            )}
+          </>
         )}
 
         <AddPropertyModal

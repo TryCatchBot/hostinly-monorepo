@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Building2, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,20 +24,19 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const success = await login(email, password, "super_admin");
+      const success = await login(email, password);
       if (success) {
+        toast.success("Welcome back! Redirecting to dashboard...");
         router.push("/");
       } else {
-        setError("Invalid credentials. Password must be at least 4 characters.");
+        toast.error("Invalid credentials. Only admin users can log in.");
       }
     } catch {
-      setError("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
-
-  console.log("LoginPage mounted");
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -62,6 +62,7 @@ export default function LoginPage() {
                 placeholder="admin@hostinly.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="placeholder:text-gray-300"
               />
             </div>
             <div className="space-y-2">
@@ -72,11 +73,9 @@ export default function LoginPage() {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="placeholder:text-gray-300"
               />
             </div>
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
             <Button type="submit"   className="w-full bg-[#1a4d66] text-white hover:bg-[#236680]" disabled={isLoading}>
               {isLoading ? (
                 <>

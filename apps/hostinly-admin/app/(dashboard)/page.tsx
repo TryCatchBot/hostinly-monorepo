@@ -56,10 +56,16 @@ export default function DashboardPage() {
           setStats(statsData.data);
         }
         if (bookingsData.success) {
-          setRecentBookings(bookingsData.data);
+          // Check if data is an array or an object with data property
+          const bookings = Array.isArray(bookingsData.data) ? bookingsData.data : [];
+          setRecentBookings(bookings);
         }
         if (usersData.success) {
-          setRecentUsers(usersData.data);
+          // Extract users from the activity data
+          const users = usersData.data
+            .filter((a: any) => a.type === 'USER_SIGNUP')
+            .map((a: any) => a.data);
+          setRecentUsers(users);
         }
         if (chartDataData.success) {
           setChartData(chartDataData.data);

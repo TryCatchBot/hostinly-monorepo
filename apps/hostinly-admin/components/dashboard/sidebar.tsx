@@ -87,11 +87,11 @@ export function Sidebar({ collapsed, onCollapsedChange }: SidebarProps) {
             <TooltipTrigger asChild>
               <Link href={item.href}>
                 <Button
-                  variant={isActive ? "secondary" : "ghost"}
+                  variant="ghost"
                   size="icon"
                   className={cn(
-                    "w-10 h-10",
-                    isActive && "bg-sidebar-accent text-sidebar-accent-foreground"
+                    "w-10 h-10 transition-all duration-200 hover:bg-primary/10 hover:text-primary",
+                    isActive ? "bg-primary/20 text-primary shadow-sm" : "text-muted-foreground"
                   )}
                 >
                   <Icon className="h-5 w-5" />
@@ -109,13 +109,15 @@ export function Sidebar({ collapsed, onCollapsedChange }: SidebarProps) {
       return (
         <Link key={item.href} href={item.href}>
           <Button
-            variant={isActive ? "secondary" : "ghost"}
+            variant="ghost"
             className={cn(
-              "w-full justify-start gap-3",
-              isActive && "bg-sidebar-accent text-sidebar-accent-foreground"
+              "w-full justify-start gap-3 px-3 py-6 transition-all duration-200 font-medium hover:bg-primary/10 hover:text-primary group",
+              isActive 
+                ? "bg-primary/20 text-primary shadow-sm border-r-4 border-primary rounded-r-none" 
+                : "text-muted-foreground"
             )}
           >
-            <Icon className="h-5 w-5" />
+            <Icon className={cn("h-5 w-5 transition-colors", isActive ? "text-primary" : "group-hover:text-primary")} />
             {item.title}
           </Button>
         </Link>

@@ -61,7 +61,7 @@ export default function JobDetailPage() {
               duration: j.duration || j.type,
               experience: 'Any experience welcome',
               status: j.status.toLowerCase(),
-              applications: 0,
+              applications: j.applications || 0,
               type: j.type,
               requirements: j.requirements,
               skills: j.skills || [],
@@ -102,7 +102,7 @@ export default function JobDetailPage() {
   }
 
   const handleApply = async () => {
-    if (!id) return;
+    if (!id || !user) return;
     setIsApplying(true);
     try {
       const token = localStorage.getItem('hostinly_token');
@@ -112,10 +112,12 @@ export default function JobDetailPage() {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
+        body: JSON.stringify({ applicantId: user.id })
       });
       const result = await response.json();
       if (result.success) {
         setHasApplied(true);
+        setJob(prev => prev ? { ...prev, applications: prev.applications + 1 } : null);
         toast.success('Application sent successfully!');
       } else {
         toast.error(result.error || 'Failed to apply for job');
@@ -255,25 +257,25 @@ export default function JobDetailPage() {
 
               {/* Budget and Applications */}
               <div className="grid grid-cols-2 gap-6">
-                <div className="bg-green-50/30 p-5 rounded-2xl border border-green-100 group hover:bg-green-50 transition-colors">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="p-1.5 bg-green-100 rounded-lg">
-                      {/* <PoundSterling size={20} className="text-green-600" /> */}
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50/30 p-6 rounded-2xl border border-green-100 shadow-sm group hover:shadow-md transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-green-100 rounded-xl text-green-600 group-hover:scale-110 transition-transform">
+                      <PoundSterling size={20} />
                     </div>
-                    <p className="text-xs text-green-700 font-bold uppercase tracking-wider">Budget</p>
+                    <p className="text-[10px] text-green-700 font-black uppercase tracking-[0.2em]">Budget</p>
                   </div>
-                  <p className="text-3xl font-black text-green-700">
+                  <p className="text-3xl font-black text-green-800 tracking-tight">
                     {typeof job.budget === 'number' ? `£${job.budget.toLocaleString('en-GB')}` : (job.budget as string).replace('$', '£')}
                   </p>
                 </div>
-                <div className="bg-blue-50/30 p-5 rounded-2xl border border-blue-100 group hover:bg-blue-50 transition-colors">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="p-1.5 bg-blue-100 rounded-lg">
-                      <Users size={20} className="text-blue-600" />
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50/30 p-6 rounded-2xl border border-blue-100 shadow-sm group hover:shadow-md transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-blue-100 rounded-xl text-blue-600 group-hover:scale-110 transition-transform">
+                      <Users size={20} />
                     </div>
-                    <p className="text-xs text-blue-700 font-bold uppercase tracking-wider">Applicants</p>
+                    <p className="text-[10px] text-blue-700 font-black uppercase tracking-[0.2em]">Applicants</p>
                   </div>
-                  <p className="text-3xl font-black text-blue-700">{job.applications}</p>
+                  <p className="text-3xl font-black text-blue-800 tracking-tight">{job.applications}</p>
                 </div>
               </div>
             </div>
