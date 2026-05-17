@@ -38,19 +38,59 @@ enum InterviewStatus {
   CANCELLED
 }
 
-model Interview {
-  id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  hostId      String          @map("host_id") @db.Uuid
-  candidateId String          @map("candidate_id") @db.Uuid
-  status      InterviewStatus @default(PENDING)
-  date        DateTime?
-  notes       String?
-  createdAt   DateTime        @default(now()) @map("created_at")
-  updatedAt   DateTime        @updatedAt @map("updated_at")
-  candidate   User            @relation("CandidateInterviews", fields: [candidateId], references: [id])
-  host        User            @relation("HostInterviews", fields: [hostId], references: [id])
+enum PropertyStatus {
+  AVAILABLE
+  MANAGED
+  INACTIVE
+  PENDING
+}
 
-  @@map("interviews")
+enum PropertyType {
+  apartment
+  house
+  villa
+  condo
+  studio
+  penthouse
+}
+
+enum JobStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum BookingStatus {
+  confirmed
+  pending
+  cancelled
+  completed
+  no_show
+}
+
+enum MessageStatus {
+  unread
+  read
+  archived
+}
+
+enum PlanInterval {
+  month
+  year
+}
+
+enum PaymentStatus {
+  succeeded
+  pending
+  failed
+  refunded
+}
+
+enum EngagementStatus {
+  ACTIVE
+  PROBATION
+  ENDED
 }
 
 model User {
@@ -97,35 +137,50 @@ model User {
   isOnboardingCompleted Boolean            @default(false) @map("is_onboarding_completed")
   resume                String?            @map("resume")
   coverLetter           String?            @map("cover_letter")
-  bookings              Booking[]
+
+  properties            Property[]
   cohostProfile         CoHost?
+  jobs                  JobPosting[]
+  reviewsWritten        Review[]           @relation("Reviewer")
+  reviewsReceived       Review[]           @relation("Reviewee")
+  bookings              Booking[]
+  payments              Payment[]
+  interviewsAsHost      Interview[]        @relation("HostInterviews")
+  interviewsAsCandidate Interview[]        @relation("CandidateInterviews")
   engagementsAsHost     Engagement[]       @relation("HostEngagements")
   engagementsAsStaff    Engagement[]       @relation("StaffEngagements")
-  interviewsAsCandidate Interview[]        @relation("CandidateInterviews")
-  interviewsAsHost      Interview[]        @relation("HostInterviews")
-  jobs                  JobPosting[]
-  payments              Payment[]
-  properties            Property[]
-  reviewsReceived       Review[]           @relation("Reviewee")
-  reviewsWritten        Review[]           @relation("Reviewer")
 
   @@map("users")
 }
 
-enum PropertyStatus {
-  AVAILABLE
-  MANAGED
-  INACTIVE
-  PENDING
+model Interview {
+  id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  hostId      String          @map("host_id") @db.Uuid
+  candidateId String          @map("candidate_id") @db.Uuid
+  status      InterviewStatus @default(PENDING)
+  date        DateTime?
+  notes       String?
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  candidate   User            @relation("CandidateInterviews", fields: [candidateId], references: [id])
+  host        User            @relation("HostInterviews", fields: [hostId], references: [id])
+
+  @@map("interviews")
 }
 
-enum PropertyType {
-  apartment
-  house
-  villa
-  condo
-  studio
-  penthouse
+model Engagement {
+  id        String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  hostId    String           @map("host_id") @db.Uuid
+  staffId   String           @map("staff_id") @db.Uuid
+  status    EngagementStatus @default(ACTIVE)
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+
+  host      User             @relation("HostEngagements", fields: [hostId], references: [id])
+  staff     User             @relation("StaffEngagements", fields: [staffId], references: [id])
+
+  @@map("engagements")
 }
 
 model Property {
@@ -146,6 +201,7 @@ model Property {
   guests      Int            @default(2)
   type        PropertyType
 
+  owner       User           @relation(fields: [ownerId], references: [id])
   cohosts     CoHost[]
   jobs        JobPosting[]
   bookings    Booking[]
@@ -163,12 +219,13 @@ model CoHost {
   totalReviews       Int        @default(0) @map("total_reviews")
   location           String?
   hourlyRate         Float?     @map("hourly_rate")
-  commissionPercentage Float? @map("commission_percentage")
+  commissionPercentage Float?   @map("commission_percentage")
   languages          String[]
   specialties        String[]
   availabilityStatus String     @default("Available") @map("availability_status")
+
   user               User       @relation(fields: [userId], references: [id])
-  properties         Property[] @relation("CoHostToProperty")
+  properties         Property[]
 
   @@map("cohosts")
 }
@@ -187,6 +244,7 @@ model JobPosting {
   duration     String?
   requirements String?
   skills       String[]
+
   author       User      @relation(fields: [authorId], references: [id])
   property     Property? @relation(fields: [propertyId], references: [id])
 
@@ -198,12 +256,13 @@ model Review {
   rating      Int
   comment     String
   reviewerId  String   @map("reviewer_id") @db.Uuid
-  reviewer    User     @relation("Reviewer", fields: [reviewerId], references: [id])
   revieweeId  String   @map("reviewee_id") @db.Uuid
-  reviewee    User     @relation("Reviewee", fields: [revieweeId], references: [id])
   propertyId  String?  @map("property_id") @db.Uuid
-  property    Property? @relation(fields: [propertyId], references: [id])
   createdAt   DateTime @default(now()) @map("created_at")
+
+  reviewer    User     @relation("Reviewer", fields: [reviewerId], references: [id])
+  reviewee    User     @relation("Reviewee", fields: [revieweeId], references: [id])
+  property    Property? @relation(fields: [propertyId], references: [id])
 
   @@map("reviews")
 }
@@ -219,6 +278,7 @@ model Booking {
   amount        Decimal       @db.Decimal
   status        BookingStatus @default(pending)
   createdAt     DateTime      @default(now()) @map("created_at")
+
   guest         User?         @relation(fields: [guestId], references: [id])
   property      Property?     @relation(fields: [propertyId], references: [id])
 
@@ -257,6 +317,7 @@ model Payment {
   paymentMethod String?       @map("payment_method")
   description   String?
   createdAt     DateTime      @default(now()) @map("created_at")
+
   user          User?         @relation(fields: [userId], references: [id])
 
   @@map("payments")
@@ -271,84 +332,4 @@ model Service {
   createdAt   DateTime @default(now()) @map("created_at")
 
   @@map("services")
-}
-
-enum UserType {
-  HOST
-  COHOST
-  ADMIN
-  CLEANER
-}
-
-enum UserStatus {
-  ACTIVE
-  INACTIVE
-  SUSPENDED
-}
-
-enum VerificationStatus {
-  PENDING
-  VERIFIED
-  REJECTED
-}
-
-enum InterviewStatus {
-  PENDING
-  SCHEDULED
-  COMPLETED
-  CANCELLED
-}
-
-enum EngagementStatus {
-  ACTIVE
-  PROBATION
-  ENDED
-}
-
-enum PropertyStatus {
-  AVAILABLE
-  MANAGED
-  INACTIVE
-}
-
-enum PropertyType {
-  apartment
-  house
-  villa
-  condo
-  studio
-  penthouse
-}
-
-enum JobStatus {
-  OPEN
-  IN_PROGRESS
-  COMPLETED
-  CANCELLED
-}
-
-enum BookingStatus {
-  confirmed
-  pending
-  cancelled
-  completed
-  no_show
-}
-
-enum MessageStatus {
-  unread
-  read
-  archived
-}
-
-enum PlanInterval {
-  month
-  year
-}
-
-enum PaymentStatus {
-  succeeded
-  pending
-  failed
-  refunded
 }
