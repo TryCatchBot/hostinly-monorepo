@@ -73,7 +73,8 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const { ownerId, price, type, ...rest } = req.body;
+    console.log('[ Property Create ] Request Body:', JSON.stringify(req.body, null, 2));
+    const { ownerId, price, type, airbnbLink, ...rest } = req.body;
     
     // Ensure type is a valid PropertyType or default to apartment
     const propertyType = type ? type.toLowerCase() : 'apartment';
@@ -83,24 +84,28 @@ router.post('/', async (req, res) => {
         ...rest,
         type: propertyType as any,
         price: price ? parseFloat(price) : 0,
+        airbnbLink: airbnbLink || null,
         owner: { connect: { id: ownerId } }
       }
     });
+    console.log('[ Property Create ] Success:', JSON.stringify(data, null, 2));
     sendSuccess(res, data);
   } catch (error: any) {
+    console.error('[ Property Create ] Error:', error);
     sendError(res, error.message);
   }
 });
 
 router.put('/:id', async (req, res) => {
   try {
-    const { price, ownerId, type, ...rest } = req.body;
+    const { price, ownerId, type, airbnbLink, ...rest } = req.body;
     const data = await prisma.property.update({
       where: { id: req.params.id },
       data: {
         ...rest,
         type: type ? type.toLowerCase() : undefined,
         price: price ? parseFloat(price) : undefined,
+        airbnbLink: airbnbLink !== undefined ? airbnbLink : undefined,
         owner: ownerId ? { connect: { id: ownerId } } : undefined
       },
     });
@@ -112,13 +117,14 @@ router.put('/:id', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
   try {
-    const { price, ownerId, type, ...rest } = req.body;
+    const { price, ownerId, type, airbnbLink, ...rest } = req.body;
     const data = await prisma.property.update({
       where: { id: req.params.id },
       data: {
         ...rest,
         type: type ? type.toLowerCase() : undefined,
         price: price !== undefined ? parseFloat(price) : undefined,
+        airbnbLink: airbnbLink !== undefined ? airbnbLink : undefined,
         owner: ownerId ? { connect: { id: ownerId } } : undefined
       },
     });
