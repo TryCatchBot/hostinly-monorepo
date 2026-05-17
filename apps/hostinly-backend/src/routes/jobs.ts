@@ -6,10 +6,30 @@ const router: Router = Router();
 
 router.post('/:id/apply', async (req, res) => {
   try {
-    console.log(`User applying for job ${req.params.id}`);
+    const { applicantId } = req.body;
+    console.log(`User ${applicantId} applying for job ${req.params.id}`);
+    
     const job = await prisma.jobPosting.findUnique({ where: { id: req.params.id } });
     if (!job) return sendError(res, 'Job not found', 404);
-    sendSuccess(res, { message: 'Application submitted successfully' });
+
+    const application = await prisma.jobApplication.upsert({
+      where: {
+        jobId_applicantId: {
+          jobId: req.params.id,
+          applicantId: applicantId
+        }
+      },
+      update: {
+        status: 'PENDING'
+      },
+      create: {
+        jobId: req.params.id,
+        applicantId: applicantId,
+        status: 'PENDING'
+      }
+    });
+
+    sendSuccess(res, application);
   } catch (error: any) {
     sendError(res, error.message);
   }
@@ -36,14 +56,23 @@ router.get('/', async (req, res) => {
       prisma.jobPosting.findMany({
         skip,
         take: limit,
-        include: { author: true, property: true },
+        include: { 
+          author: true, 
+          property: true,
+          _count: {
+            select: { applications: true }
+          }
+        },
         orderBy: { createdAt: 'desc' }
       }),
       prisma.jobPosting.count()
     ]);
 
     sendSuccess(res, { 
-      jobs: data, 
+      jobs: data.map(j => ({
+        ...j,
+        applications: j._count.applications
+      })), 
       pagination: {
         total,
         page,
@@ -60,10 +89,20 @@ router.get('/:id', async (req, res) => {
   try {
     const data = await prisma.jobPosting.findUnique({
       where: { id: req.params.id },
-      include: { author: true, property: true }
+      include: { 
+        author: true, 
+        property: true,
+        _count: {
+          select: { applications: true }
+        }
+      }
     });
     if (!data) return sendError(res, 'Job not found', 404);
-    sendSuccess(res, data);
+    
+    sendSuccess(res, {
+      ...data,
+      applications: data._count.applications
+    });
   } catch (error: any) {
     sendError(res, error.message);
   }

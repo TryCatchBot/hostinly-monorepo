@@ -49,15 +49,11 @@ export interface Property {
   airbnbLink?: string;
   ownerId: string;
   ownerName: string;
-  location: {
-    address: string;
-    city: string;
-    country: string;
-  };
-  pricing: {
-    nightlyRate: number;
-    currency: string;
-  };
+  address: string;
+  city: string;
+  country: string;
+  price: number;
+  currency: string;
   images: string[];
   amenities: string[];
   bedrooms: number;

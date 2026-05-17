@@ -61,7 +61,7 @@ export default function JobsPage() {
           duration: j.type,
           experience: 'Any experience welcome', // Default
           status: j.status.toLowerCase(),
-          applications: 0,
+          applications: j.applications || 0,
         }));
         setJobs(mappedJobs);
         setPagination(result.data.pagination);

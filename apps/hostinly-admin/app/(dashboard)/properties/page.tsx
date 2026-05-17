@@ -27,7 +27,9 @@ import {
   formatCurrency,
   getStatusColor,
   formatStatus,
+  API_URL,
 } from "@/lib/utils";
+import { toast } from "sonner";
 import {
   MoreHorizontal,
   Eye,
@@ -63,7 +65,7 @@ const columns = [
         <div className="min-w-0">
           <p className="font-medium truncate">{property.title}</p>
           <p className="text-sm text-muted-foreground truncate">
-            {property.location.city}, {property.location.country}
+            {property.city}, {property.country}
           </p>
         </div>
       </div>
@@ -106,12 +108,12 @@ const columns = [
     ),
   },
   {
-    key: "pricing",
+    key: "price",
     header: "Price/Night",
     sortable: false,
     cell: (property: Property) => (
       <span className="font-medium">
-        {formatCurrency(property.pricing.nightlyRate)}
+        {formatCurrency(property.price)}
       </span>
     ),
   },
@@ -159,32 +161,32 @@ function PropertyActions({ property }: { property: Property }) {
             <span className="sr-only">Actions</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setSheetOpen(true)}>
+        <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-xl border-border/50 bg-background animate-in fade-in zoom-in duration-200">
+          <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Actions</DropdownMenuLabel>
+          <DropdownMenuSeparator className="my-1" />
+          <DropdownMenuItem onClick={() => setSheetOpen(true)} className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
             <Eye className="mr-2 h-4 w-4" />
             View Details
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
             <Edit className="mr-2 h-4 w-4" />
             Edit Property
           </DropdownMenuItem>
           {property.status === "PENDING" && (
             <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-emerald-500">
+              <DropdownMenuSeparator className="my-1" />
+              <DropdownMenuItem className="rounded-md px-2 py-2 text-sm text-emerald-500 focus:bg-emerald-50 focus:text-emerald-600 transition-colors cursor-pointer font-medium">
                 <CheckCircle className="mr-2 h-4 w-4" />
                 Approve
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive">
+              <DropdownMenuItem className="rounded-md px-2 py-2 text-sm text-destructive focus:bg-destructive/10 focus:text-destructive transition-colors cursor-pointer font-medium">
                 <XCircle className="mr-2 h-4 w-4" />
                 Reject
               </DropdownMenuItem>
             </>
           )}
-          <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-destructive">
+          <DropdownMenuSeparator className="my-1" />
+          <DropdownMenuItem className="rounded-md px-2 py-2 text-sm text-destructive focus:bg-destructive/10 focus:text-destructive transition-colors cursor-pointer font-medium">
             <Trash2 className="mr-2 h-4 w-4" />
             Delete Property
           </DropdownMenuItem>
@@ -224,7 +226,7 @@ function PropertyActions({ property }: { property: Property }) {
               <div className="flex items-center gap-1 text-muted-foreground mt-1">
                 <MapPin className="h-4 w-4" />
                 <span>
-                  {property.location.address}, {property.location.city}
+                  {property.address}, {property.city}
                 </span>
               </div>
               {property.airbnbLink && (
@@ -272,7 +274,7 @@ function PropertyActions({ property }: { property: Property }) {
             <div>
               <p className="text-sm text-muted-foreground">Price per night</p>
               <p className="text-2xl font-bold">
-                {formatCurrency(property.pricing.nightlyRate)}
+                {formatCurrency(property.price)}
               </p>
             </div>
 
@@ -355,7 +357,7 @@ function PropertyCard({ property }: { property: Property }) {
             </div>
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <MapPin className="h-3 w-3" />
-              {property.location.city}, {property.location.country}
+              {property.city}, {property.country}
             </div>
             <div className="flex items-center gap-3 text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
@@ -370,7 +372,7 @@ function PropertyCard({ property }: { property: Property }) {
             </div>
             <div className="flex items-center justify-between pt-2 border-t">
               <span className="font-semibold">
-                {formatCurrency(property.pricing.nightlyRate)}
+                {formatCurrency(property.price)}
                 <span className="text-sm font-normal text-muted-foreground">
                   {" "}
                   / night
@@ -413,7 +415,7 @@ function PropertyCard({ property }: { property: Property }) {
               <div className="flex items-center gap-1 text-muted-foreground mt-1">
                 <MapPin className="h-4 w-4" />
                 <span>
-                  {property.location.address}, {property.location.city}
+                  {property.address}, {property.city}
                 </span>
               </div>
               {property.airbnbLink && (
@@ -433,7 +435,7 @@ function PropertyCard({ property }: { property: Property }) {
             <div>
               <p className="text-sm text-muted-foreground">Price per night</p>
               <p className="text-2xl font-bold">
-                {formatCurrency(property.pricing.nightlyRate)}
+                {formatCurrency(property.price)}
               </p>
             </div>
             <div>
@@ -488,15 +490,17 @@ export default function PropertiesPage() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch("/api/properties");
+        const response = await fetch(`${API_URL}/properties`);
         const data = await response.json();
         if (data.success) {
           setProperties(data.data);
         } else {
           setError(data.message);
+          toast.error(data.message || "Failed to fetch properties");
         }
       } catch (err: any) {
         setError(err.message);
+        toast.error(err.message || "An unexpected error occurred");
       } finally {
         setLoading(false);
       }
@@ -505,11 +509,33 @@ export default function PropertiesPage() {
   }, []);
 
   if (loading) {
-    return <div>Loading properties...</div>;
+    return (
+      <div className="flex h-[400px] w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="text-sm text-muted-foreground font-medium">Loading properties...</p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div className="flex h-[400px] w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center">
+            <XCircle className="h-6 w-6 text-destructive" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="font-semibold text-lg">Failed to load properties</h3>
+            <p className="text-sm text-muted-foreground max-w-[300px]">{error}</p>
+          </div>
+          <Button onClick={() => window.location.reload()} variant="outline">
+            Try again
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");

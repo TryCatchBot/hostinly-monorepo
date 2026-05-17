@@ -145,19 +145,23 @@ export default function InterviewsPage() {
                         {getStatusBadge(interview.status)}
                       </div>
                       
-                      <div className="space-y-3 mb-6">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Calendar size={14} />
-                          {interview.date ? new Date(interview.date).toLocaleDateString() : 'TBD'}
+                      <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div className="flex items-center gap-2 p-2.5 bg-muted/50 rounded-xl border border-border/50">
+                          <Calendar size={14} className="text-primary" />
+                          <span className="text-xs font-bold text-foreground">
+                            {interview.date ? new Date(interview.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : 'TBD'}
+                          </span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Clock size={14} />
-                          {interview.date ? new Date(interview.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'TBD'}
+                        <div className="flex items-center gap-2 p-2.5 bg-muted/50 rounded-xl border border-border/50">
+                          <Clock size={14} className="text-primary" />
+                          <span className="text-xs font-bold text-foreground">
+                            {interview.date ? new Date(interview.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'TBD'}
+                          </span>
                         </div>
                       </div>
 
                       <div className="flex flex-wrap gap-2 pt-2">
-                        {interview.status === 'PENDING' && (
+                        {interview.status === 'PENDING' && user?.id !== interview.hostId && (
                           <>
                             <Button 
                               size="sm" 

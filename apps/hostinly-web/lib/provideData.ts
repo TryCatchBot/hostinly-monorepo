@@ -18,6 +18,7 @@ export interface Property {
 
 export interface CoHost {
   id: string;
+  userId?: string;
   name: string;
   title: string;
   rating: number;
@@ -27,6 +28,13 @@ export interface CoHost {
   hourlyRate?: number;
   commissionPercentage?: number;
   languages?: string[];
+  bio?: string;
+  location?: string;
+  email?: string;
+  phone?: string;
+  areasCovered?: string;
+  experience?: number;
+  availability?: string;
 }
 
 export interface JobPosting {

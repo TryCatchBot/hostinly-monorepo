@@ -11,10 +11,11 @@ import {
   type Property,
 } from '@/lib/provideData';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Star, MessageSquare, Mail, Phone, Badge, Calendar, Globe, Percent, Loader2 } from 'lucide-react';
+import { ArrowLeft, Star, MessageSquare, Mail, Phone, Badge, Calendar, Globe, Percent, Loader2, MapPin, Briefcase, Clock, X, Save } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
+import { CoHost } from '@/lib/provideData';
 
 type HireStatus = 'active' | 'probation' | 'ended';
 type HireRecord = {
@@ -35,6 +36,9 @@ export default function CoHostDetailPage() {
   const [isBooking, setIsBooking] = useState(false);
   const [cohost, setCohost] = useState<CoHost | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [bookingDate, setBookingDate] = useState('');
+  const [bookingTime, setBookingTime] = useState('');
 
   useEffect(() => {
     const fetchCohost = async () => {
@@ -52,15 +56,23 @@ export default function CoHostDetailPage() {
           const c = result.data;
           setCohost({
             id: c.id,
+            userId: c.user.id,
             name: c.user.name,
-            title: c.specialties[0] || 'Property Expert',
+            title: c.user.servicesOffered?.split(',')?.[0] || 'Property Expert',
             rating: c.rating,
             reviews: c.totalReviews,
-            image: c.user.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
-            specialties: c.specialties,
+            image: c.user.avatar || '',
+            specialties: c.specialties.length > 0 ? c.specialties : (c.user.servicesOffered ? c.user.servicesOffered.split(',').map((s: string) => s.trim()) : []),
             hourlyRate: c.hourlyRate,
             commissionPercentage: c.commissionPercentage,
-            languages: c.languages
+            languages: c.languages,
+            bio: c.bio || `Professional co-host specializing in ${c.user.servicesOffered || 'property management'}.`,
+            location: c.user.city || c.user.country || 'Location not specified',
+            email: c.user.email,
+            phone: c.user.phone,
+            areasCovered: c.user.areasCovered,
+            experience: c.user.yearsOfExperience || c.experience,
+            availability: c.user.availability || c.availabilityStatus
           });
         }
       } catch (err) {
@@ -77,9 +89,10 @@ export default function CoHostDetailPage() {
   const [propertiesRevision, setPropertiesRevision] = useState(0);
 
   const bookInterview = async () => {
-    if (!user || !id) return;
+    if (!user || !cohost?.userId || !bookingDate || !bookingTime) return;
     setIsBooking(true);
     try {
+      const combinedDateTime = new Date(`${bookingDate}T${bookingTime}`);
       const token = localStorage.getItem('hostinly_token');
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews`, {
         method: 'POST',
@@ -89,8 +102,8 @@ export default function CoHostDetailPage() {
         },
         body: JSON.stringify({
           hostId: user.id,
-          candidateId: id,
-          date: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
+          candidateId: cohost.userId,
+          date: combinedDateTime.toISOString(),
           notes: `Interview request for ${cohost?.name}`
         })
       });
@@ -98,6 +111,7 @@ export default function CoHostDetailPage() {
       const result = await response.json();
       if (result.success) {
         toast.success('Interview request sent!');
+        setShowBookingModal(false);
         router.push('/dashboard/interviews');
       } else {
         throw new Error(result.error);
@@ -149,7 +163,7 @@ export default function CoHostDetailPage() {
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
   const hireCohost = async () => {
-    if (!user || !id) return;
+    if (!user || !cohost?.userId) return;
     setIsHiring(true);
     try {
       const token = localStorage.getItem('hostinly_token');
@@ -161,7 +175,7 @@ export default function CoHostDetailPage() {
         },
         body: JSON.stringify({
           hostId: user.id,
-          staffId: id,
+          staffId: cohost.userId,
           status: 'ACTIVE',
           startDate: new Date().toISOString()
         })
@@ -182,7 +196,7 @@ export default function CoHostDetailPage() {
   };
 
   const submitReview = async () => {
-    if (!user || !id) return;
+    if (!user || !cohost?.userId) return;
     setIsSubmittingReview(true);
     try {
       const token = localStorage.getItem('hostinly_token');
@@ -196,7 +210,7 @@ export default function CoHostDetailPage() {
           rating: reviewRating,
           comment: reviewComment,
           reviewerId: user.id,
-          revieweeId: id
+          revieweeId: cohost.userId
         })
       });
 
@@ -236,6 +250,19 @@ export default function CoHostDetailPage() {
     writeHires(next);
   };
 
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex flex-col items-center justify-center min-h-screen">
+          <div className="w-16 h-16 rounded-full border-4 border-primary border-t-transparent animate-spin mb-6"></div>
+          <p className="text-xl font-medium text-muted-foreground animate-pulse">
+            Loading co-host details...
+          </p>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   if (!cohost) {
     return (
       <DashboardLayout>
@@ -273,13 +300,19 @@ export default function CoHostDetailPage() {
             {/* Profile Card */}
             <div className="bg-background rounded-lg border border-border p-8 mb-6">
               <div className="flex flex-col sm:flex-row gap-6 mb-6">
-                <div className="relative w-32 h-32 rounded-lg overflow-hidden flex-shrink-0">
-                  <Image
-                    src={cohost.image}
-                    alt={cohost.name}
-                    fill
-                    className="object-cover"
-                  />
+                <div className="relative w-32 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-primary/10 flex items-center justify-center border border-border">
+                  {cohost.image ? (
+                    <Image
+                      src={cohost.image}
+                      alt={cohost.name}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <span className="text-4xl font-black text-primary">
+                      {cohost.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    </span>
+                  )}
                 </div>
                 <div className="flex-1">
                   <h1 className="text-4xl font-bold text-foreground mb-2">{cohost.name}</h1>
@@ -353,11 +386,35 @@ export default function CoHostDetailPage() {
             <div className="bg-background rounded-lg border border-border p-6 mb-6">
               <h2 className="text-2xl font-bold mb-4">About</h2>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                {cohost.name} is a highly experienced property manager with a passion for providing exceptional service. With {cohost.reviews} reviews and a {cohost.rating} rating, they have proven their expertise in {cohost.specialties[0].toLowerCase()}.
+                {cohost.bio}
               </p>
-              <p className="text-muted-foreground leading-relaxed">
-                Known for professionalism, quick response times, and thorough property care, {cohost.name} is an excellent choice for hosts looking to expand their portfolio.
-              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                {cohost.location && (
+                  <div className="flex items-center gap-3 text-muted-foreground">
+                    <MapPin size={20} className="text-primary" />
+                    <span>{cohost.location}</span>
+                  </div>
+                )}
+                {cohost.experience !== undefined && (
+                  <div className="flex items-center gap-3 text-muted-foreground">
+                    <Briefcase size={20} className="text-primary" />
+                    <span>{cohost.experience} years experience</span>
+                  </div>
+                )}
+                {cohost.availability && (
+                  <div className="flex items-center gap-3 text-muted-foreground">
+                    <Clock size={20} className="text-primary" />
+                    <span>{cohost.availability}</span>
+                  </div>
+                )}
+                {cohost.areasCovered && (
+                  <div className="flex items-center gap-3 text-muted-foreground">
+                    <Globe size={20} className="text-primary" />
+                    <span>Covers {cohost.areasCovered}</span>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Review Section */}
@@ -471,11 +528,11 @@ export default function CoHostDetailPage() {
                     background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
                     color: '#ffffff',
                   }}
-                  onClick={bookInterview}
+                  onClick={() => setShowBookingModal(true)}
                   disabled={isBooking}
                 >
                   <Calendar size={18} />
-                  {isBooking ? 'Booking...' : 'Book Interview'}
+                  Book Interview
                 </Button>
 
                 <Button
@@ -486,15 +543,21 @@ export default function CoHostDetailPage() {
                   Send Message
                 </Button>
 
-              <Button variant="outline" className="w-full py-3 flex items-center justify-center gap-2">
+              <a 
+                href={`mailto:${cohost.email}`}
+                className="w-full py-3 flex items-center justify-center gap-2 border border-input bg-transparent hover:bg-accent hover:text-accent-foreground rounded-md font-medium transition-colors"
+              >
                 <Mail size={18} />
                 Email
-              </Button>
+              </a>
 
-              <Button variant="outline" className="w-full py-3 flex items-center justify-center gap-2">
+              <a 
+                href={`tel:${cohost.phone}`}
+                className="w-full py-3 flex items-center justify-center gap-2 border border-input bg-transparent hover:bg-accent hover:text-accent-foreground rounded-md font-medium transition-colors"
+              >
                 <Phone size={18} />
                 Call
-              </Button>
+              </a>
 
               {/* Stats */}
               <div className="mt-8 pt-6 border-t border-border">
@@ -513,6 +576,74 @@ export default function CoHostDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Booking Modal */}
+      {showBookingModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background rounded-2xl shadow-xl max-w-md w-full border border-border overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="flex items-center justify-between p-6 border-b border-border">
+              <h2 className="text-xl font-bold text-foreground">Schedule Interview</h2>
+              <button
+                onClick={() => setShowBookingModal(false)}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-muted-foreground uppercase mb-2">Select Date</label>
+                <input
+                  type="date"
+                  value={bookingDate}
+                  onChange={(e) => setBookingDate(e.target.value)}
+                  min={new Date().toISOString().split('T')[0]}
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-muted-foreground uppercase mb-2">Select Time</label>
+                <input
+                  type="time"
+                  value={bookingTime}
+                  onChange={(e) => setBookingTime(e.target.value)}
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+            </div>
+            <div className="p-6 bg-muted/30 border-t border-border flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setShowBookingModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="flex-1"
+                disabled={!bookingDate || !bookingTime || isBooking}
+                onClick={bookInterview}
+                style={{
+                  background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
+                  color: '#ffffff',
+                }}
+              >
+                {isBooking ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Booking...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    Confirm Booking
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }

@@ -19,6 +19,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { getInitials } from "@/lib/utils";
 import { Bell, Search, Menu, LogOut, User, Settings } from "lucide-react";
 import { MobileSidebar } from "./mobile-sidebar";
+import { toast } from "sonner";
 
 interface HeaderProps {
   onMobileMenuClick?: () => void;
@@ -30,6 +31,7 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
 
   const handleLogout = () => {
     logout();
+    toast.success("Signed out successfully");
     router.push("/login");
   };
 
@@ -119,19 +121,19 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
               </div>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
+          <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-xl border-border/50 bg-background animate-in fade-in zoom-in duration-200">
+            <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator className="my-1" />
+            <DropdownMenuItem className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
               <User className="mr-2 h-4 w-4" />
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
               <Settings className="mr-2 h-4 w-4" />
               Settings
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} className="text-destructive">
+            <DropdownMenuSeparator className="my-1" />
+            <DropdownMenuItem onClick={handleLogout} className="rounded-md px-2 py-2 text-sm text-destructive focus:bg-destructive/10 focus:text-destructive transition-colors cursor-pointer font-medium">
               <LogOut className="mr-2 h-4 w-4" />
               Sign out
             </DropdownMenuItem>

@@ -20,6 +20,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { DataTable } from "@/components/dashboard/data-table";
+import { toast } from "sonner";
 import type { User } from "@/lib/types"; // Assuming User type is updated to match backend
 import {
   formatDate,
@@ -117,36 +118,36 @@ function UserActions({ user }: { user: User }) {
             <span className="sr-only">Actions</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setSheetOpen(true)}>
+        <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-xl border-border/50 bg-background animate-in fade-in zoom-in duration-200">
+          <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Actions</DropdownMenuLabel>
+          <DropdownMenuSeparator className="my-1" />
+          <DropdownMenuItem onClick={() => setSheetOpen(true)} className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
             <Eye className="mr-2 h-4 w-4" />
             View Details
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
             <Edit className="mr-2 h-4 w-4" />
             Edit User
           </DropdownMenuItem>
           {user.verificationStatus !== "VERIFIED" && (
-            <DropdownMenuItem>
+            <DropdownMenuItem className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
               <CheckCircle className="mr-2 h-4 w-4" />
               Verify User
             </DropdownMenuItem>
           )}
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator className="my-1" />
           {user.status === "ACTIVE" ? (
-            <DropdownMenuItem className="text-orange-500">
+            <DropdownMenuItem className="rounded-md px-2 py-2 text-sm text-orange-500 focus:bg-orange-50 focus:text-orange-600 transition-colors cursor-pointer font-medium">
               <Ban className="mr-2 h-4 w-4" />
               Suspend User
             </DropdownMenuItem>
           ) : user.status === "SUSPENDED" ? (
-            <DropdownMenuItem className="text-emerald-500">
+            <DropdownMenuItem className="rounded-md px-2 py-2 text-sm text-emerald-500 focus:bg-emerald-50 focus:text-emerald-600 transition-colors cursor-pointer font-medium">
               <CheckCircle className="mr-2 h-4 w-4" />
               Restore User
             </DropdownMenuItem>
           ) : null}
-          <DropdownMenuItem className="text-destructive">
+          <DropdownMenuItem className="rounded-md px-2 py-2 text-sm text-destructive focus:bg-destructive/10 focus:text-destructive transition-colors cursor-pointer font-medium">
             <Trash2 className="mr-2 h-4 w-4" />
             Delete User
           </DropdownMenuItem>
@@ -314,9 +315,11 @@ export default function UsersPage() {
           setUsers(data.data);
         } else {
           setError(data.message);
+          toast.error(data.message || "Failed to fetch users");
         }
       } catch (err: any) {
         setError(err.message);
+        toast.error(err.message || "An unexpected error occurred");
       } finally {
         setLoading(false);
       }

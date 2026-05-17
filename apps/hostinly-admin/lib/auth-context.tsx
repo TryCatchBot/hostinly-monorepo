@@ -2,51 +2,17 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import { type AdminUser, type AdminRole, ROLE_PERMISSIONS, type RolePermissions } from "./types";
+import { API_URL } from "./utils";
 
 interface AuthContextType {
   user: AdminUser | null;
   isLoading: boolean;
-  login: (email: string, password: string, role: AdminRole) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   permissions: RolePermissions | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const MOCK_ADMIN_USERS: Record<AdminRole, Omit<AdminUser, "role">> = {
-  super_admin: {
-    id: "admin-1",
-    email: "super@hostinly.com",
-    name: "Sarah Johnson",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-    createdAt: "2024-01-01",
-    lastLogin: new Date().toISOString(),
-  },
-  admin: {
-    id: "admin-2",
-    email: "admin@hostinly.com",
-    name: "Michael Chen",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Michael",
-    createdAt: "2024-02-15",
-    lastLogin: new Date().toISOString(),
-  },
-  supervisor: {
-    id: "admin-3",
-    email: "supervisor@hostinly.com",
-    name: "Emily Roberts",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily",
-    createdAt: "2024-03-01",
-    lastLogin: new Date().toISOString(),
-  },
-  facilityManager: {
-    id: "admin-4",
-    email: "fm@hostinly.com",
-    name: "David Kim",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David",
-    createdAt: "2024-03-10",
-    lastLogin: new Date().toISOString(),
-  },
-};
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AdminUser | null>(null);
@@ -55,40 +21,57 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Check for existing session
     const storedUser = localStorage.getItem("hostinly_admin_user");
-    if (storedUser) {
+    const token = localStorage.getItem("hostinly_admin_token");
+    
+    if (storedUser && token) {
       try {
         const parsedUser = JSON.parse(storedUser) as AdminUser;
-        queueMicrotask(() => setUser(parsedUser));
+        setUser(parsedUser);
       } catch {
         localStorage.removeItem("hostinly_admin_user");
+        localStorage.removeItem("hostinly_admin_token");
       }
     }
-    queueMicrotask(() => setIsLoading(false));
+    setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string, role: AdminRole): Promise<boolean> => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
+  const login = async (email: string, password: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    // Mock authentication - in production, this would be a real API call
-    if (password.length >= 4) {
-      const mockUser = MOCK_ADMIN_USERS[role];
-      const adminUser: AdminUser = {
-        ...mockUser,
-        role,
-        email: email || mockUser.email,
-        lastLogin: new Date().toISOString(),
-      };
-      setUser(adminUser);
-      localStorage.setItem("hostinly_admin_user", JSON.stringify(adminUser));
-      return true;
+      const result = await response.json();
+
+      if (result.success && (result.data.user.userType === "ADMIN" || result.data.user.userType === "SUPER_ADMIN")) {
+        const adminUser: AdminUser = {
+          id: result.data.user.id,
+          email: result.data.user.email,
+          name: result.data.user.name,
+          role: result.data.user.userType === "SUPER_ADMIN" ? "super_admin" : "admin",
+          avatar: result.data.user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${result.data.user.name}`,
+          createdAt: result.data.user.createdAt,
+          lastLogin: new Date().toISOString(),
+        };
+
+        setUser(adminUser);
+        localStorage.setItem("hostinly_admin_user", JSON.stringify(adminUser));
+        localStorage.setItem("hostinly_admin_token", result.data.token);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Login error:", error);
+      return false;
     }
-    return false;
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("hostinly_admin_user");
+    localStorage.removeItem("hostinly_admin_token");
   };
 
   const permissions = user ? ROLE_PERMISSIONS[user.role] : null;

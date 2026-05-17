@@ -125,11 +125,11 @@ export default function PaymentsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Type</TableHead>
+                      <TableHead className="w-[100px]">ID</TableHead>
+                      <TableHead className="hidden sm:table-cell">Type</TableHead>
                       <TableHead>User</TableHead>
                       <TableHead>Amount</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead className="hidden sm:table-cell">Status</TableHead>
                       <TableHead className="hidden md:table-cell">Date</TableHead>
                       <TableHead className="w-12" />
                     </TableRow>
@@ -137,16 +137,16 @@ export default function PaymentsPage() {
                   <TableBody>
                     {filteredTransactions.map((t) => (
                       <TableRow key={t.id}>
-                        <TableCell className="font-mono text-xs">{t.id}</TableCell>
-                        <TableCell className="capitalize">{formatStatus(t.type)}</TableCell>
-                        <TableCell className="max-w-[260px] truncate">{t.userName}</TableCell>
-                        <TableCell>{formatCurrency(t.amount, t.currency)}</TableCell>
-                        <TableCell>
+                        <TableCell className="font-mono text-xs truncate max-w-[100px]">{t.id}</TableCell>
+                        <TableCell className="capitalize hidden sm:table-cell">{formatStatus(t.type)}</TableCell>
+                        <TableCell className="max-w-[150px] sm:max-w-[260px] truncate">{t.userName}</TableCell>
+                        <TableCell className="whitespace-nowrap">{formatCurrency(t.amount, t.currency)}</TableCell>
+                        <TableCell className="hidden sm:table-cell">
                           <Badge variant="outline" className={getStatusColor(t.status)}>
                             {formatStatus(t.status)}
                           </Badge>
                         </TableCell>
-                        <TableCell className="hidden md:table-cell text-muted-foreground">
+                        <TableCell className="hidden md:table-cell text-muted-foreground whitespace-nowrap">
                           {formatDate(t.createdAt)}
                         </TableCell>
                         <TableCell>
@@ -166,10 +166,10 @@ export default function PaymentsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>ID</TableHead>
+                      <TableHead className="w-[100px]">ID</TableHead>
                       <TableHead>Host</TableHead>
                       <TableHead>Amount</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead className="hidden sm:table-cell">Status</TableHead>
                       <TableHead className="hidden md:table-cell">Date</TableHead>
                       <TableHead className="w-12" />
                     </TableRow>
@@ -177,15 +177,15 @@ export default function PaymentsPage() {
                   <TableBody>
                     {payoutTransactions.map((t) => (
                       <TableRow key={t.id}>
-                        <TableCell className="font-mono text-xs">{t.id}</TableCell>
-                        <TableCell className="max-w-[260px] truncate">{t.userName}</TableCell>
-                        <TableCell>{formatCurrency(t.amount, t.currency)}</TableCell>
-                        <TableCell>
+                        <TableCell className="font-mono text-xs truncate max-w-[100px]">{t.id}</TableCell>
+                        <TableCell className="max-w-[150px] sm:max-w-[260px] truncate">{t.userName}</TableCell>
+                        <TableCell className="whitespace-nowrap">{formatCurrency(t.amount, t.currency)}</TableCell>
+                        <TableCell className="hidden sm:table-cell">
                           <Badge variant="outline" className={getStatusColor(t.status)}>
                             {formatStatus(t.status)}
                           </Badge>
                         </TableCell>
-                        <TableCell className="hidden md:table-cell text-muted-foreground">{formatDate(t.createdAt)}</TableCell>
+                        <TableCell className="hidden md:table-cell text-muted-foreground whitespace-nowrap">{formatDate(t.createdAt)}</TableCell>
                         <TableCell>
                           <Button variant="ghost" size="icon" onClick={() => setSelectedTransaction(t)} aria-label="View">
                             <Eye className="h-4 w-4" />

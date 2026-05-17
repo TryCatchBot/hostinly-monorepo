@@ -47,7 +47,7 @@ router.get('/chart-data', async (req, res) => {
         COALESCE(COUNT(b.id), 0)::int AS bookings
       FROM months m
       LEFT JOIN payments p ON date_trunc('month', p.created_at) = m.month AND p.status = 'succeeded'
-      LEFT JOIN bookings b ON date_trunc('month', b.createdAt) = m.month AND b.status = 'confirmed'
+      LEFT JOIN bookings b ON date_trunc('month', b.created_at) = m.month AND b.status = 'confirmed'
       GROUP BY m.month
       ORDER BY m.month;
     `;
