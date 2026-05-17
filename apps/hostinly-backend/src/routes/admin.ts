@@ -6,42 +6,73 @@ const router: Router = Router();
 
 router.get('/stats', async (req, res) => {
   try {
-    const [userCount, propertyCount, cohostCount, jobCount, activeJobCount] = await Promise.all([
+    const [userCount, propertyCount, cohostCount, jobCount, bookingCount, totalRevenueResult, openTickets] = await Promise.all([
       prisma.user.count(),
       prisma.property.count(),
       prisma.coHost.count(),
       prisma.jobPosting.count(),
-      prisma.jobPosting.count({ where: { status: 'OPEN' } }),
+      prisma.booking.count(),
+      prisma.payment.aggregate({
+        _sum: {
+          amount: true,
+        },
+        where: {
+          status: 'succeeded',
+        },
+      }),
+      prisma.contactMessage.count({
+        where: {
+          status: 'unread',
+        },
+      }),
     ]);
 
-    // Group properties by status
-    const propertyStats = await prisma.property.groupBy({
-      by: ['status'],
-      _count: true,
-    });
+    const totalRevenue = totalRevenueResult._sum.amount?.toNumber() || 0;
 
-    // Get new users in last 7 days
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const newUsersLast7Days = await prisma.user.count({
-      where: {
-        createdAt: {
-          gte: sevenDaysAgo,
-        },
+    sendSuccess(res, { userCount, propertyCount, cohostCount, jobCount, bookingCount, totalRevenue, openTickets });
+  } catch (error: any) {
+    sendError(res, error.message);
+  }
+});
+
+router.get('/chart-data', async (req, res) => {
+  try {
+    const monthlyData = await prisma.$queryRaw`
+      WITH months AS (
+        SELECT generate_series(date_trunc('month', now() - interval '11 months'), date_trunc('month', now()), '1 month') AS month
+      )
+      SELECT
+        to_char(m.month, 'YYYY-MM') AS date,
+        COALESCE(SUM(p.amount), 0)::float AS revenue,
+        COALESCE(COUNT(b.id), 0)::int AS bookings
+      FROM months m
+      LEFT JOIN payments p ON date_trunc('month', p.created_at) = m.month AND p.status = 'succeeded'
+      LEFT JOIN bookings b ON date_trunc('month', b.createdAt) = m.month AND b.status = 'confirmed'
+      GROUP BY m.month
+      ORDER BY m.month;
+    `;
+
+    sendSuccess(res, monthlyData);
+  } catch (error: any) {
+    sendError(res, error.message);
+  }
+});
+
+router.get('/recent-bookings', async (req, res) => {
+  try {
+    const recentBookings = await prisma.booking.findMany({
+      take: 5,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        propertyTitle: true,
+        guestName: true,
+        amount: true,
+        status: true,
+        createdAt: true,
       },
     });
-
-    sendSuccess(res, { 
-      userCount, 
-      propertyCount, 
-      cohostCount, 
-      jobCount, 
-      activeJobCount,
-      propertyStats,
-      newUsersLast7Days,
-      growthRate: 12.5, // Mock growth rate
-      totalRevenue: 45200, // Mock revenue
-    });
+    sendSuccess(res, recentBookings);
   } catch (error: any) {
     sendError(res, error.message);
   }

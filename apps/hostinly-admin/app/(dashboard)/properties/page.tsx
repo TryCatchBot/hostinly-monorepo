@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,12 +22,12 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { DataTable } from "@/components/dashboard/data-table";
-import { properties } from "@/lib/mock-data";
 import type { Property } from "@/lib/types";
 import {
   formatCurrency,
   getStatusColor,
   formatStatus,
+  API_URL,
 } from "@/lib/utils";
 import {
   MoreHorizontal,
@@ -103,7 +103,7 @@ const columns = [
       property.rating ? (
         <div className="flex items-center gap-1">
           <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-          <span>{property.rating}</span>
+          <span>{property.rating.toFixed(1)}</span>
           <span className="text-muted-foreground">({property.reviewCount})</span>
         </div>
       ) : (
@@ -150,7 +150,7 @@ function PropertyActions({ property }: { property: Property }) {
             <Edit className="mr-2 h-4 w-4" />
             Edit Property
           </DropdownMenuItem>
-          {property.status === "pending" && (
+          {property.status === "PENDING" && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-emerald-500">
@@ -223,13 +223,13 @@ function PropertyActions({ property }: { property: Property }) {
               </div>
               <div className="p-3 rounded-lg bg-muted/50 text-center">
                 <Users className="h-5 w-5 mx-auto text-muted-foreground" />
-                <p className="text-lg font-semibold mt-1">{property.maxGuests}</p>
+                <p className="text-lg font-semibold mt-1">{property.guests}</p>
                 <p className="text-xs text-muted-foreground">Guests</p>
               </div>
               <div className="p-3 rounded-lg bg-muted/50 text-center">
                 <Star className="h-5 w-5 mx-auto text-muted-foreground" />
                 <p className="text-lg font-semibold mt-1">
-                  {property.rating || "-"}
+                  {property.rating ? property.rating.toFixed(1) : "-"}
                 </p>
                 <p className="text-xs text-muted-foreground">Rating</p>
               </div>
@@ -275,7 +275,7 @@ function PropertyActions({ property }: { property: Property }) {
                 <Edit className="mr-2 h-4 w-4" />
                 Edit Property
               </Button>
-              {property.status === "pending" && (
+              {property.status === "PENDING" && (
                 <Button variant="outline" className="flex-1 text-emerald-500">
                   <CheckCircle className="mr-2 h-4 w-4" />
                   Approve
@@ -316,7 +316,7 @@ function PropertyCard({ property }: { property: Property }) {
               {property.rating && (
                 <div className="flex items-center gap-0.5 flex-shrink-0">
                   <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-                  <span className="text-sm">{property.rating}</span>
+                  <span className="text-sm">{property.rating.toFixed(1)}</span>
                 </div>
               )}
             </div>
@@ -332,7 +332,7 @@ function PropertyCard({ property }: { property: Property }) {
                 <Bath className="h-3 w-3" /> {property.bathrooms}
               </span>
               <span className="flex items-center gap-1">
-                <Users className="h-3 w-3" /> {property.maxGuests}
+                <Users className="h-3 w-3" /> {property.guests}
               </span>
             </div>
             <div className="flex items-center justify-between pt-2 border-t">
@@ -414,28 +414,58 @@ const filters = [
     key: "type",
     label: "Type",
     options: [
-      { value: "apartment", label: "Apartment" },
-      { value: "house", label: "House" },
-      { value: "villa", label: "Villa" },
-      { value: "condo", label: "Condo" },
-      { value: "studio", label: "Studio" },
-      { value: "penthouse", label: "Penthouse" },
+      { value: "APARTMENT", label: "Apartment" },
+      { value: "HOUSE", label: "House" },
+      { value: "VILLA", label: "Villa" },
+      { value: "CONDO", label: "Condo" },
+      { value: "STUDIO", label: "Studio" },
+      { value: "PENTHOUSE", label: "Penthouse" },
     ],
   },
   {
     key: "status",
     label: "Status",
     options: [
-      { value: "active", label: "Active" },
-      { value: "pending", label: "Pending" },
-      { value: "under_review", label: "Under Review" },
-      { value: "rejected", label: "Rejected" },
-      { value: "inactive", label: "Inactive" },
+      { value: "AVAILABLE", label: "Available" },
+      { value: "MANAGED", label: "Managed" },
+      { value: "INACTIVE", label: "Inactive" },
+      { value: "PENDING", label: "Pending" },
     ],
   },
 ];
 
 export default function PropertiesPage() {
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const response = await fetch("/api/properties");
+        const data = await response.json();
+        if (data.success) {
+          setProperties(data.data);
+        } else {
+          setError(data.message);
+        }
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProperties();
+  }, []);
+
+  if (loading) {
+    return <div>Loading properties...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
 
   return (
@@ -473,7 +503,7 @@ export default function PropertiesPage() {
           <TabsTrigger value="pending">
             Pending Approval
             <Badge variant="secondary" className="ml-2">
-              {properties.filter((p) => p.status === "pending").length}
+              {properties.filter((p) => p.status === "PENDING").length}
             </Badge>
           </TabsTrigger>
           <TabsTrigger value="active">Active</TabsTrigger>
@@ -500,37 +530,34 @@ export default function PropertiesPage() {
         <TabsContent value="pending">
           {viewMode === "table" ? (
             <DataTable
-              data={properties.filter((p) => p.status === "pending")}
+              data={properties.filter((p) => p.status === "PENDING")}
               columns={columns}
-              searchPlaceholder="Search pending properties..."
+              filters={filters}
+              searchPlaceholder="Search properties..."
               searchKey="title"
             />
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {properties
-                .filter((p) => p.status === "pending")
-                .map((property) => (
-                  <PropertyCard key={property.id} property={property} />
-                ))}
+              {properties.filter((p) => p.status === "PENDING").map((property) => (
+                <PropertyCard key={property.id} property={property} />
+              ))}
             </div>
           )}
         </TabsContent>
-
         <TabsContent value="active">
           {viewMode === "table" ? (
             <DataTable
-              data={properties.filter((p) => p.status === "active")}
+              data={properties.filter((p) => p.status === "AVAILABLE" || p.status === "MANAGED")}
               columns={columns}
-              searchPlaceholder="Search active properties..."
+              filters={filters}
+              searchPlaceholder="Search properties..."
               searchKey="title"
             />
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {properties
-                .filter((p) => p.status === "active")
-                .map((property) => (
-                  <PropertyCard key={property.id} property={property} />
-                ))}
+              {properties.filter((p) => p.status === "AVAILABLE" || p.status === "MANAGED").map((property) => (
+                <PropertyCard key={property.id} property={property} />
+              ))}
             </div>
           )}
         </TabsContent>

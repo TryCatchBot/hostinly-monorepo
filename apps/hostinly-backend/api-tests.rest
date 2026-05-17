@@ -1,61 +1,14 @@
 @baseUrl = http://localhost:3333/api
 
-@userId = 7c6d8823-245d-4495-96f8-056b9d2e4986
-@propertyId = 12345678901234567890123456789012
-@jobId = 12345678901234567890123456789012
-@cohostId = 12345678901234567890123456789012
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxZjM1ZWM1Zi0yNDYyLTQ4MmUtOGMzNy1mMGY4ZGQ1YjM4MzkiLCJlbWFpbCI6ImRlZW5AeW9wbWFpbC5jb20iLCJ1c2VyVHlwZSI6IkhPU1QiLCJpYXQiOjE3Nzg2ODEwNjQsImV4cCI6MTc3ODc2NzQ2NH0._7JJ6MkGLleb9jxfhtSUWGeUIUhahHWDdDL7wnKYOLw
-@email = deen@yopmail.com
-@password = Password1*
-@interviewId = 12345678901234567890123456789012
-@engagementId = 12345678901234567890123456789012
-
-###
-# --- Interviews ---
-###
-
-# Get all interviews
-GET {{baseUrl}}/interviews
-Authorization: Bearer {{token}}
-
-###
-
-# Get individual interview by id
-GET {{baseUrl}}/interviews/{{interviewId}}
-Authorization: Bearer {{token}}
-
-###
-
-# Create an interview request (Host books interview)
-POST {{baseUrl}}/interviews
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-  "hostId": "{{userId}}",
-  "candidateId": "{{cohostId}}",
-  "date": "2026-06-01T14:00:00Z",
-  "notes": "Let's discuss the property management for London apartment."
-}
-
-###
-
-# Accept/Reject/Cancel interview
-PATCH {{baseUrl}}/interviews/{{interviewId}}
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-  "status": "SCHEDULED"
-}
-
-###
-# --- Engagements (Hire & Management) ---
-###
-
-# Get all engagements
-GET {{baseUrl}}/engagements
-Authorization: Bearer {{token}}
+@userId = "7c6d8823-245d-4495-96f8-056b9d2e4986"
+@propertyId = "12345678901234567890123456789012"
+@jobId = "12345678901234567890123456789012"
+@cohostId = "12345678901234567890123456789012"
+@token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxZjM1ZWM1Zi0yNDYyLTQ4MmUtOGMzNy1mMGY4ZGQ1YjM4MzkiLCJlbWFpbCI6ImRlZW5AeW9wbWFpbC5jb20iLCJ1c2VyVHlwZSI6IkhPU1QiLCJpYXQiOjE3Nzg2ODEwNjQsImV4cCI6MTc3ODc2NzQ2NH0._7JJ6MkGLleb9jxfhtSUWGeUIUhahHWDdDL7wnKYOLw"
+@email = "deen@yopmail.com"
+@password = "Password1*"
+@superAdminEmail = "joshua@yopmail.com"
+@superAdminPassword = "Password1*"
 
 ###
 
@@ -124,10 +77,17 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  # "email": "{{email}}",
-  # "password": "{{password}}",
   "email": "deen@yopmail.com",
   "password": "Password1*"
+}
+
+### Super Admin Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{superAdminEmail}}",
+  "password": "{{superAdminPassword}}"
 }
 
 
@@ -174,8 +134,10 @@ Content-Type: image/jpeg
 GET {{baseUrl}}/users
 
 ### Get User Profile
-# GET {{baseUrl}}/users/{{userId}}
 GET {{baseUrl}}/users/7c6d8823-245d-4495-96f8-056b9d2e4986
+
+### Get User Profile (Reported 404)
+GET {{baseUrl}}/users/1f35ec5f-2462-482e-8c37-f0f8dd5b3839
 
 
 
@@ -257,6 +219,14 @@ Content-Type: application/json
 ### Get Job Detail
 GET {{baseUrl}}/jobs/{{jobId}}
 
+# --- SERVICES ---
+
+### Get Service Providers
+GET {{baseUrl}}/services/providers
+
+### Get Service Requests
+GET {{baseUrl}}/services/requests
+
 # --- ADMIN ---
 
 ### Get Admin Stats
@@ -264,3 +234,9 @@ GET {{baseUrl}}/admin/stats
 
 ### Get Recent Activity
 GET {{baseUrl}}/admin/recent-activity
+
+### Get Chart Data
+GET {{baseUrl}}/admin/chart-data
+
+### Get Recent Bookings
+GET {{baseUrl}}/admin/recent-bookings

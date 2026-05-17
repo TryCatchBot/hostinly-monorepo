@@ -170,6 +170,8 @@ exports.Prisma.UserScalarFieldEnum = {
   availability: 'availability',
   areasCovered: 'areasCovered',
   proofOfAddress: 'proofOfAddress',
+  resume: 'resume',
+  coverLetter: 'coverLetter',
   references: 'references',
   insurance: 'insurance',
   approvalReason: 'approvalReason',
@@ -204,7 +206,8 @@ exports.Prisma.PropertyScalarFieldEnum = {
   amenities: 'amenities',
   bedrooms: 'bedrooms',
   bathrooms: 'bathrooms',
-  guests: 'guests'
+  guests: 'guests',
+  type: 'type'
 };
 
 exports.Prisma.CoHostScalarFieldEnum = {
@@ -244,6 +247,7 @@ exports.Prisma.ReviewScalarFieldEnum = {
   comment: 'comment',
   reviewerId: 'reviewerId',
   revieweeId: 'revieweeId',
+  propertyId: 'propertyId',
   createdAt: 'createdAt'
 };
 
@@ -323,8 +327,11 @@ exports.InterviewStatus = exports.$Enums.InterviewStatus = {
 exports.UserType = exports.$Enums.UserType = {
   HOST: 'HOST',
   COHOST: 'COHOST',
+  CLEANER: 'CLEANER',
+  SUPER_ADMIN: 'SUPER_ADMIN',
   ADMIN: 'ADMIN',
-  CLEANER: 'CLEANER'
+  SUPERVISOR: 'SUPERVISOR',
+  FACILITY_MANAGER: 'FACILITY_MANAGER'
 };
 
 exports.UserStatus = exports.$Enums.UserStatus = {
@@ -349,6 +356,15 @@ exports.PropertyStatus = exports.$Enums.PropertyStatus = {
   AVAILABLE: 'AVAILABLE',
   MANAGED: 'MANAGED',
   INACTIVE: 'INACTIVE'
+};
+
+exports.PropertyType = exports.$Enums.PropertyType = {
+  apartment: 'apartment',
+  house: 'house',
+  villa: 'villa',
+  condo: 'condo',
+  studio: 'studio',
+  penthouse: 'penthouse'
 };
 
 exports.JobStatus = exports.$Enums.JobStatus = {

@@ -7,9 +7,42 @@ const router: Router = Router();
 router.get('/', async (req, res) => {
   try {
     const data = await prisma.coHost.findMany({
-      include: { user: true }
+      include: { 
+        user: {
+          select: {
+            name: true,
+            email: true,
+            phone: true,
+            status: true,
+            createdAt: true,
+            lastActive: true,
+          }
+        },
+        _count: {
+          select: {
+            properties: true,
+          }
+        }
+      }
     });
-    sendSuccess(res, data);
+
+    const mappedData = data.map(cohost => ({
+      id: cohost.id,
+      userId: cohost.userId,
+      name: cohost.user.name,
+      email: cohost.user.email,
+      phone: cohost.user.phone,
+      status: cohost.user.status.toLowerCase(), // Map UserStatus to CoHostStatus
+      rating: cohost.rating,
+      responseTime: 0, // Placeholder
+      completedBookings: 0, // Placeholder
+      activeProperties: cohost._count.properties,
+      commissionRate: cohost.hourlyRate || 0,
+      joinedAt: cohost.user.createdAt,
+      lastActive: cohost.user.lastActive,
+    }));
+
+    sendSuccess(res, mappedData);
   } catch (error: any) {
     sendError(res, error.message);
   }

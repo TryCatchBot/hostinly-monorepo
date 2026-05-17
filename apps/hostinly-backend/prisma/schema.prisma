@@ -5,9 +5,37 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserType {
+  HOST
+  COHOST
+  CLEANER
+  SUPER_ADMIN
+  ADMIN
+  SUPERVISOR
+  FACILITY_MANAGER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum InterviewStatus {
+  PENDING
+  SCHEDULED
+  COMPLETED
+  CANCELLED
 }
 
 model Interview {
@@ -84,19 +112,20 @@ model User {
   @@map("users")
 }
 
-model Engagement {
-  id        String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  hostId    String           @map("host_id") @db.Uuid
-  staffId   String           @map("staff_id") @db.Uuid
-  status    EngagementStatus @default(ACTIVE)
-  startDate DateTime         @default(now()) @map("start_date")
-  endDate   DateTime?        @map("end_date")
-  createdAt DateTime         @default(now()) @map("created_at")
-  updatedAt DateTime         @updatedAt @map("updated_at")
-  host      User             @relation("HostEngagements", fields: [hostId], references: [id])
-  staff     User             @relation("StaffEngagements", fields: [staffId], references: [id])
+enum PropertyStatus {
+  AVAILABLE
+  MANAGED
+  INACTIVE
+  PENDING
+}
 
-  @@map("engagements")
+enum PropertyType {
+  apartment
+  house
+  villa
+  condo
+  studio
+  penthouse
 }
 
 model Property {
@@ -115,10 +144,12 @@ model Property {
   bedrooms    Int            @default(1)
   bathrooms   Int            @default(1)
   guests      Int            @default(2)
-  bookings    Booking[]
+  type        PropertyType
+
+  cohosts     CoHost[]
   jobs        JobPosting[]
-  owner       User           @relation(fields: [ownerId], references: [id])
-  cohosts     CoHost[]       @relation("CoHostToProperty")
+  bookings    Booking[]
+  reviews     Review[]
 
   @@map("properties")
 }
@@ -163,14 +194,16 @@ model JobPosting {
 }
 
 model Review {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  rating     Int
-  comment    String
-  reviewerId String   @map("reviewer_id") @db.Uuid
-  revieweeId String   @map("reviewee_id") @db.Uuid
-  createdAt  DateTime @default(now()) @map("created_at")
-  reviewee   User     @relation("Reviewee", fields: [revieweeId], references: [id])
-  reviewer   User     @relation("Reviewer", fields: [reviewerId], references: [id])
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  rating      Int
+  comment     String
+  reviewerId  String   @map("reviewer_id") @db.Uuid
+  reviewer    User     @relation("Reviewer", fields: [reviewerId], references: [id])
+  revieweeId  String   @map("reviewee_id") @db.Uuid
+  reviewee    User     @relation("Reviewee", fields: [revieweeId], references: [id])
+  propertyId  String?  @map("property_id") @db.Uuid
+  property    Property? @relation(fields: [propertyId], references: [id])
+  createdAt   DateTime @default(now()) @map("created_at")
 
   @@map("reviews")
 }
