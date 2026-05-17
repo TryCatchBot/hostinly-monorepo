@@ -123,7 +123,7 @@ export default function DashboardPage() {
         }
       }
       if (propertiesData.success) {
-        setProperties(propertiesData.data.map((p: any) => {
+        const fetchedProperties = propertiesData.data.map((p: any) => {
           const trimmedImages = (p.images || []).map((img: string) => img.trim().replace(/^`|`$/g, ''));
           return {
             id: p.id,
@@ -139,7 +139,17 @@ export default function DashboardPage() {
             status: p.status.toLowerCase(),
             ownerId: p.ownerId,
           };
-        }));
+        });
+        setProperties(fetchedProperties);
+
+        // Set default tab based on user type and property availability
+        if (fetchedProperties.length === 0) {
+          if (user?.userType === 'host') {
+            setActiveTab('cohost');
+          } else {
+            setActiveTab('jobs');
+          }
+        }
       }
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
@@ -206,15 +216,17 @@ export default function DashboardPage() {
   return (
     <DashboardLayout>
       {/* Subtitle */}
-      <div className="mb-6 sm:mb-8 flex justify-between items-center">
-        <div>
-          <p className="text-sm sm:text-base text-muted-foreground">
-            {isHost
-              ? 'Here is what is happening with your properties today.'
-              : 'Explore properties and co-hosting opportunities'}
-          </p>
+      {properties.length > 0 && (
+        <div className="mb-6 sm:mb-8 flex justify-between items-center">
+          <div>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              {isHost
+                ? 'Manage your rental properties'
+                : 'Find properties to co-host'}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       {!isOnboarded && (
         <div className="mb-6 sm:mb-8 p-4 sm:p-5 bg-yellow-50 border border-yellow-200 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -326,7 +338,20 @@ export default function DashboardPage() {
         <div className="flex overflow-x-auto no-scrollbar border-b border-border bg-muted/30">
           {isHost ? (
             <>
-
+              {properties.length > 0 && (
+                <button
+                  onClick={() => setActiveTab('overview')}
+                  className={`whitespace-nowrap px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
+                    activeTab === 'overview'
+                      ? 'border-primary text-primary bg-background'
+                      : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                  }`}
+                  disabled={!isOnboarded}
+                >
+                  <Home className="inline mr-2 h-4 w-4" />
+                  My Properties
+                </button>
+              )}
               <button
                 onClick={() => setActiveTab('cohost')}
                 className={`whitespace-nowrap px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
@@ -366,17 +391,19 @@ export default function DashboardPage() {
             </>
           ) : (
             <>
-              <button
-                onClick={() => setActiveTab('browse')}
-                className={`whitespace-nowrap px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
-                  activeTab === 'browse'
-                    ? 'border-primary text-primary bg-background'
-                    : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                }`}
-              >
-                <Home className="inline mr-2 h-4 w-4" />
-                Browse Properties
-              </button>
+              {properties.length > 0 && (
+                <button
+                  onClick={() => setActiveTab('browse')}
+                  className={`whitespace-nowrap px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
+                    activeTab === 'browse'
+                      ? 'border-primary text-primary bg-background'
+                      : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                  }`}
+                >
+                  <Home className="inline mr-2 h-4 w-4" />
+                  Available Properties
+                </button>
+              )}
               <button
                 onClick={() => setActiveTab('jobs')}
                 className={`whitespace-nowrap px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
@@ -531,7 +558,7 @@ export default function DashboardPage() {
           {/* CoHost - Browse Properties Tab */}
           {!isHost && activeTab === 'browse' && (
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-6">Properties Looking for Co-Hosts</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-6">Available Properties</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {availableProperties.map((property) => (
                   <PropertyCard key={property.id} property={property} />

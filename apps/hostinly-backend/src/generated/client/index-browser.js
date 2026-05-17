@@ -205,7 +205,8 @@ exports.Prisma.PropertyScalarFieldEnum = {
   bedrooms: 'bedrooms',
   bathrooms: 'bathrooms',
   guests: 'guests',
-  type: 'type'
+  type: 'type',
+  airbnbLink: 'airbnbLink'
 };
 
 exports.Prisma.CoHostScalarFieldEnum = {

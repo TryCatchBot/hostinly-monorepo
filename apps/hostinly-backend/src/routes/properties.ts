@@ -44,6 +44,7 @@ router.get('/', async (req, res) => {
         bedrooms: property.bedrooms,
         bathrooms: property.bathrooms,
         guests: property.guests,
+        airbnbLink: property.airbnbLink,
         rating: averageRating,
         reviewCount: property.reviews.length,
         createdAt: property.createdAt,
@@ -72,11 +73,16 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const { ownerId, price, ...rest } = req.body;
+    const { ownerId, price, type, ...rest } = req.body;
+    
+    // Ensure type is a valid PropertyType or default to apartment
+    const propertyType = type ? type.toLowerCase() : 'apartment';
+    
     const data = await prisma.property.create({
       data: {
         ...rest,
-        price: parseFloat(price),
+        type: propertyType as any,
+        price: price ? parseFloat(price) : 0,
         owner: { connect: { id: ownerId } }
       }
     });
@@ -88,11 +94,12 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   try {
-    const { price, ownerId, ...rest } = req.body;
+    const { price, ownerId, type, ...rest } = req.body;
     const data = await prisma.property.update({
       where: { id: req.params.id },
       data: {
         ...rest,
+        type: type ? type.toLowerCase() : undefined,
         price: price ? parseFloat(price) : undefined,
         owner: ownerId ? { connect: { id: ownerId } } : undefined
       },
@@ -105,11 +112,12 @@ router.put('/:id', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
   try {
-    const { price, ownerId, ...rest } = req.body;
+    const { price, ownerId, type, ...rest } = req.body;
     const data = await prisma.property.update({
       where: { id: req.params.id },
       data: {
         ...rest,
+        type: type ? type.toLowerCase() : undefined,
         price: price !== undefined ? parseFloat(price) : undefined,
         owner: ownerId ? { connect: { id: ownerId } } : undefined
       },

@@ -6375,6 +6375,7 @@ export namespace Prisma {
     bathrooms: number | null
     guests: number | null
     type: $Enums.PropertyType | null
+    airbnbLink: string | null
   }
 
   export type PropertyMaxAggregateOutputType = {
@@ -6392,6 +6393,7 @@ export namespace Prisma {
     bathrooms: number | null
     guests: number | null
     type: $Enums.PropertyType | null
+    airbnbLink: string | null
   }
 
   export type PropertyCountAggregateOutputType = {
@@ -6411,6 +6413,7 @@ export namespace Prisma {
     bathrooms: number
     guests: number
     type: number
+    airbnbLink: number
     _all: number
   }
 
@@ -6444,6 +6447,7 @@ export namespace Prisma {
     bathrooms?: true
     guests?: true
     type?: true
+    airbnbLink?: true
   }
 
   export type PropertyMaxAggregateInputType = {
@@ -6461,6 +6465,7 @@ export namespace Prisma {
     bathrooms?: true
     guests?: true
     type?: true
+    airbnbLink?: true
   }
 
   export type PropertyCountAggregateInputType = {
@@ -6480,6 +6485,7 @@ export namespace Prisma {
     bathrooms?: true
     guests?: true
     type?: true
+    airbnbLink?: true
     _all?: true
   }
 
@@ -6586,6 +6592,7 @@ export namespace Prisma {
     bathrooms: number
     guests: number
     type: $Enums.PropertyType
+    airbnbLink: string | null
     _count: PropertyCountAggregateOutputType | null
     _avg: PropertyAvgAggregateOutputType | null
     _sum: PropertySumAggregateOutputType | null
@@ -6624,6 +6631,7 @@ export namespace Prisma {
     bathrooms?: boolean
     guests?: boolean
     type?: boolean
+    airbnbLink?: boolean
     owner?: boolean | UserDefaultArgs<ExtArgs>
     cohosts?: boolean | Property$cohostsArgs<ExtArgs>
     jobs?: boolean | Property$jobsArgs<ExtArgs>
@@ -6649,6 +6657,7 @@ export namespace Prisma {
     bathrooms?: boolean
     guests?: boolean
     type?: boolean
+    airbnbLink?: boolean
     owner?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["property"]>
 
@@ -6669,6 +6678,7 @@ export namespace Prisma {
     bathrooms?: boolean
     guests?: boolean
     type?: boolean
+    airbnbLink?: boolean
     owner?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["property"]>
 
@@ -6689,9 +6699,10 @@ export namespace Prisma {
     bathrooms?: boolean
     guests?: boolean
     type?: boolean
+    airbnbLink?: boolean
   }
 
-  export type PropertyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "address" | "city" | "price" | "status" | "ownerId" | "createdAt" | "updatedAt" | "images" | "amenities" | "bedrooms" | "bathrooms" | "guests" | "type", ExtArgs["result"]["property"]>
+  export type PropertyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "address" | "city" | "price" | "status" | "ownerId" | "createdAt" | "updatedAt" | "images" | "amenities" | "bedrooms" | "bathrooms" | "guests" | "type" | "airbnbLink", ExtArgs["result"]["property"]>
   export type PropertyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     owner?: boolean | UserDefaultArgs<ExtArgs>
     cohosts?: boolean | Property$cohostsArgs<ExtArgs>
@@ -6733,6 +6744,7 @@ export namespace Prisma {
       bathrooms: number
       guests: number
       type: $Enums.PropertyType
+      airbnbLink: string | null
     }, ExtArgs["result"]["property"]>
     composites: {}
   }
@@ -7177,6 +7189,7 @@ export namespace Prisma {
     readonly bathrooms: FieldRef<"Property", 'Int'>
     readonly guests: FieldRef<"Property", 'Int'>
     readonly type: FieldRef<"Property", 'PropertyType'>
+    readonly airbnbLink: FieldRef<"Property", 'String'>
   }
     
 
@@ -16849,7 +16862,8 @@ export namespace Prisma {
     bedrooms: 'bedrooms',
     bathrooms: 'bathrooms',
     guests: 'guests',
-    type: 'type'
+    type: 'type',
+    airbnbLink: 'airbnbLink'
   };
 
   export type PropertyScalarFieldEnum = (typeof PropertyScalarFieldEnum)[keyof typeof PropertyScalarFieldEnum]
@@ -17706,6 +17720,7 @@ export namespace Prisma {
     bathrooms?: IntFilter<"Property"> | number
     guests?: IntFilter<"Property"> | number
     type?: EnumPropertyTypeFilter<"Property"> | $Enums.PropertyType
+    airbnbLink?: StringNullableFilter<"Property"> | string | null
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     cohosts?: CoHostListRelationFilter
     jobs?: JobPostingListRelationFilter
@@ -17730,6 +17745,7 @@ export namespace Prisma {
     bathrooms?: SortOrder
     guests?: SortOrder
     type?: SortOrder
+    airbnbLink?: SortOrderInput | SortOrder
     owner?: UserOrderByWithRelationInput
     cohosts?: CoHostOrderByRelationAggregateInput
     jobs?: JobPostingOrderByRelationAggregateInput
@@ -17757,6 +17773,7 @@ export namespace Prisma {
     bathrooms?: IntFilter<"Property"> | number
     guests?: IntFilter<"Property"> | number
     type?: EnumPropertyTypeFilter<"Property"> | $Enums.PropertyType
+    airbnbLink?: StringNullableFilter<"Property"> | string | null
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     cohosts?: CoHostListRelationFilter
     jobs?: JobPostingListRelationFilter
@@ -17781,6 +17798,7 @@ export namespace Prisma {
     bathrooms?: SortOrder
     guests?: SortOrder
     type?: SortOrder
+    airbnbLink?: SortOrderInput | SortOrder
     _count?: PropertyCountOrderByAggregateInput
     _avg?: PropertyAvgOrderByAggregateInput
     _max?: PropertyMaxOrderByAggregateInput
@@ -17808,6 +17826,7 @@ export namespace Prisma {
     bathrooms?: IntWithAggregatesFilter<"Property"> | number
     guests?: IntWithAggregatesFilter<"Property"> | number
     type?: EnumPropertyTypeWithAggregatesFilter<"Property"> | $Enums.PropertyType
+    airbnbLink?: StringNullableWithAggregatesFilter<"Property"> | string | null
   }
 
   export type CoHostWhereInput = {
@@ -18947,6 +18966,7 @@ export namespace Prisma {
     bathrooms?: number
     guests?: number
     type: $Enums.PropertyType
+    airbnbLink?: string | null
     owner: UserCreateNestedOneWithoutPropertiesInput
     cohosts?: CoHostCreateNestedManyWithoutPropertiesInput
     jobs?: JobPostingCreateNestedManyWithoutPropertyInput
@@ -18971,6 +18991,7 @@ export namespace Prisma {
     bathrooms?: number
     guests?: number
     type: $Enums.PropertyType
+    airbnbLink?: string | null
     cohosts?: CoHostUncheckedCreateNestedManyWithoutPropertiesInput
     jobs?: JobPostingUncheckedCreateNestedManyWithoutPropertyInput
     bookings?: BookingUncheckedCreateNestedManyWithoutPropertyInput
@@ -18993,6 +19014,7 @@ export namespace Prisma {
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
     type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    airbnbLink?: NullableStringFieldUpdateOperationsInput | string | null
     owner?: UserUpdateOneRequiredWithoutPropertiesNestedInput
     cohosts?: CoHostUpdateManyWithoutPropertiesNestedInput
     jobs?: JobPostingUpdateManyWithoutPropertyNestedInput
@@ -19017,6 +19039,7 @@ export namespace Prisma {
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
     type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    airbnbLink?: NullableStringFieldUpdateOperationsInput | string | null
     cohosts?: CoHostUncheckedUpdateManyWithoutPropertiesNestedInput
     jobs?: JobPostingUncheckedUpdateManyWithoutPropertyNestedInput
     bookings?: BookingUncheckedUpdateManyWithoutPropertyNestedInput
@@ -19040,6 +19063,7 @@ export namespace Prisma {
     bathrooms?: number
     guests?: number
     type: $Enums.PropertyType
+    airbnbLink?: string | null
   }
 
   export type PropertyUpdateManyMutationInput = {
@@ -19058,6 +19082,7 @@ export namespace Prisma {
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
     type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    airbnbLink?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type PropertyUncheckedUpdateManyInput = {
@@ -19077,6 +19102,7 @@ export namespace Prisma {
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
     type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    airbnbLink?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CoHostCreateInput = {
@@ -20409,6 +20435,7 @@ export namespace Prisma {
     bathrooms?: SortOrder
     guests?: SortOrder
     type?: SortOrder
+    airbnbLink?: SortOrder
   }
 
   export type PropertyAvgOrderByAggregateInput = {
@@ -20433,6 +20460,7 @@ export namespace Prisma {
     bathrooms?: SortOrder
     guests?: SortOrder
     type?: SortOrder
+    airbnbLink?: SortOrder
   }
 
   export type PropertyMinOrderByAggregateInput = {
@@ -20450,6 +20478,7 @@ export namespace Prisma {
     bathrooms?: SortOrder
     guests?: SortOrder
     type?: SortOrder
+    airbnbLink?: SortOrder
   }
 
   export type PropertySumOrderByAggregateInput = {
@@ -22692,6 +22721,7 @@ export namespace Prisma {
     bathrooms?: number
     guests?: number
     type: $Enums.PropertyType
+    airbnbLink?: string | null
     cohosts?: CoHostCreateNestedManyWithoutPropertiesInput
     jobs?: JobPostingCreateNestedManyWithoutPropertyInput
     bookings?: BookingCreateNestedManyWithoutPropertyInput
@@ -22714,6 +22744,7 @@ export namespace Prisma {
     bathrooms?: number
     guests?: number
     type: $Enums.PropertyType
+    airbnbLink?: string | null
     cohosts?: CoHostUncheckedCreateNestedManyWithoutPropertiesInput
     jobs?: JobPostingUncheckedCreateNestedManyWithoutPropertyInput
     bookings?: BookingUncheckedCreateNestedManyWithoutPropertyInput
@@ -23081,6 +23112,7 @@ export namespace Prisma {
     bathrooms?: IntFilter<"Property"> | number
     guests?: IntFilter<"Property"> | number
     type?: EnumPropertyTypeFilter<"Property"> | $Enums.PropertyType
+    airbnbLink?: StringNullableFilter<"Property"> | string | null
   }
 
   export type CoHostUpsertWithoutUserInput = {
@@ -24910,6 +24942,7 @@ export namespace Prisma {
     bathrooms?: number
     guests?: number
     type: $Enums.PropertyType
+    airbnbLink?: string | null
     owner: UserCreateNestedOneWithoutPropertiesInput
     jobs?: JobPostingCreateNestedManyWithoutPropertyInput
     bookings?: BookingCreateNestedManyWithoutPropertyInput
@@ -24933,6 +24966,7 @@ export namespace Prisma {
     bathrooms?: number
     guests?: number
     type: $Enums.PropertyType
+    airbnbLink?: string | null
     jobs?: JobPostingUncheckedCreateNestedManyWithoutPropertyInput
     bookings?: BookingUncheckedCreateNestedManyWithoutPropertyInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutPropertyInput
@@ -25215,6 +25249,7 @@ export namespace Prisma {
     bathrooms?: number
     guests?: number
     type: $Enums.PropertyType
+    airbnbLink?: string | null
     owner: UserCreateNestedOneWithoutPropertiesInput
     cohosts?: CoHostCreateNestedManyWithoutPropertiesInput
     bookings?: BookingCreateNestedManyWithoutPropertyInput
@@ -25238,6 +25273,7 @@ export namespace Prisma {
     bathrooms?: number
     guests?: number
     type: $Enums.PropertyType
+    airbnbLink?: string | null
     cohosts?: CoHostUncheckedCreateNestedManyWithoutPropertiesInput
     bookings?: BookingUncheckedCreateNestedManyWithoutPropertyInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutPropertyInput
@@ -25398,6 +25434,7 @@ export namespace Prisma {
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
     type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    airbnbLink?: NullableStringFieldUpdateOperationsInput | string | null
     owner?: UserUpdateOneRequiredWithoutPropertiesNestedInput
     cohosts?: CoHostUpdateManyWithoutPropertiesNestedInput
     bookings?: BookingUpdateManyWithoutPropertyNestedInput
@@ -25421,6 +25458,7 @@ export namespace Prisma {
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
     type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    airbnbLink?: NullableStringFieldUpdateOperationsInput | string | null
     cohosts?: CoHostUncheckedUpdateManyWithoutPropertiesNestedInput
     bookings?: BookingUncheckedUpdateManyWithoutPropertyNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutPropertyNestedInput
@@ -25676,6 +25714,7 @@ export namespace Prisma {
     bathrooms?: number
     guests?: number
     type: $Enums.PropertyType
+    airbnbLink?: string | null
     owner: UserCreateNestedOneWithoutPropertiesInput
     cohosts?: CoHostCreateNestedManyWithoutPropertiesInput
     jobs?: JobPostingCreateNestedManyWithoutPropertyInput
@@ -25699,6 +25738,7 @@ export namespace Prisma {
     bathrooms?: number
     guests?: number
     type: $Enums.PropertyType
+    airbnbLink?: string | null
     cohosts?: CoHostUncheckedCreateNestedManyWithoutPropertiesInput
     jobs?: JobPostingUncheckedCreateNestedManyWithoutPropertyInput
     bookings?: BookingUncheckedCreateNestedManyWithoutPropertyInput
@@ -25982,6 +26022,7 @@ export namespace Prisma {
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
     type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    airbnbLink?: NullableStringFieldUpdateOperationsInput | string | null
     owner?: UserUpdateOneRequiredWithoutPropertiesNestedInput
     cohosts?: CoHostUpdateManyWithoutPropertiesNestedInput
     jobs?: JobPostingUpdateManyWithoutPropertyNestedInput
@@ -26005,6 +26046,7 @@ export namespace Prisma {
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
     type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    airbnbLink?: NullableStringFieldUpdateOperationsInput | string | null
     cohosts?: CoHostUncheckedUpdateManyWithoutPropertiesNestedInput
     jobs?: JobPostingUncheckedUpdateManyWithoutPropertyNestedInput
     bookings?: BookingUncheckedUpdateManyWithoutPropertyNestedInput
@@ -26143,6 +26185,7 @@ export namespace Prisma {
     bathrooms?: number
     guests?: number
     type: $Enums.PropertyType
+    airbnbLink?: string | null
     owner: UserCreateNestedOneWithoutPropertiesInput
     cohosts?: CoHostCreateNestedManyWithoutPropertiesInput
     jobs?: JobPostingCreateNestedManyWithoutPropertyInput
@@ -26166,6 +26209,7 @@ export namespace Prisma {
     bathrooms?: number
     guests?: number
     type: $Enums.PropertyType
+    airbnbLink?: string | null
     cohosts?: CoHostUncheckedCreateNestedManyWithoutPropertiesInput
     jobs?: JobPostingUncheckedCreateNestedManyWithoutPropertyInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutPropertyInput
@@ -26326,6 +26370,7 @@ export namespace Prisma {
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
     type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    airbnbLink?: NullableStringFieldUpdateOperationsInput | string | null
     owner?: UserUpdateOneRequiredWithoutPropertiesNestedInput
     cohosts?: CoHostUpdateManyWithoutPropertiesNestedInput
     jobs?: JobPostingUpdateManyWithoutPropertyNestedInput
@@ -26349,6 +26394,7 @@ export namespace Prisma {
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
     type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    airbnbLink?: NullableStringFieldUpdateOperationsInput | string | null
     cohosts?: CoHostUncheckedUpdateManyWithoutPropertiesNestedInput
     jobs?: JobPostingUncheckedUpdateManyWithoutPropertyNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutPropertyNestedInput
@@ -26610,6 +26656,7 @@ export namespace Prisma {
     bathrooms?: number
     guests?: number
     type: $Enums.PropertyType
+    airbnbLink?: string | null
   }
 
   export type JobPostingCreateManyAuthorInput = {
@@ -26723,6 +26770,7 @@ export namespace Prisma {
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
     type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    airbnbLink?: NullableStringFieldUpdateOperationsInput | string | null
     cohosts?: CoHostUpdateManyWithoutPropertiesNestedInput
     jobs?: JobPostingUpdateManyWithoutPropertyNestedInput
     bookings?: BookingUpdateManyWithoutPropertyNestedInput
@@ -26745,6 +26793,7 @@ export namespace Prisma {
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
     type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    airbnbLink?: NullableStringFieldUpdateOperationsInput | string | null
     cohosts?: CoHostUncheckedUpdateManyWithoutPropertiesNestedInput
     jobs?: JobPostingUncheckedUpdateManyWithoutPropertyNestedInput
     bookings?: BookingUncheckedUpdateManyWithoutPropertyNestedInput
@@ -26767,6 +26816,7 @@ export namespace Prisma {
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
     type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    airbnbLink?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type JobPostingUpdateWithoutAuthorInput = {
@@ -27259,6 +27309,7 @@ export namespace Prisma {
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
     type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    airbnbLink?: NullableStringFieldUpdateOperationsInput | string | null
     owner?: UserUpdateOneRequiredWithoutPropertiesNestedInput
     jobs?: JobPostingUpdateManyWithoutPropertyNestedInput
     bookings?: BookingUpdateManyWithoutPropertyNestedInput
@@ -27282,6 +27333,7 @@ export namespace Prisma {
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
     type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    airbnbLink?: NullableStringFieldUpdateOperationsInput | string | null
     jobs?: JobPostingUncheckedUpdateManyWithoutPropertyNestedInput
     bookings?: BookingUncheckedUpdateManyWithoutPropertyNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutPropertyNestedInput
@@ -27304,6 +27356,7 @@ export namespace Prisma {
     bathrooms?: IntFieldUpdateOperationsInput | number
     guests?: IntFieldUpdateOperationsInput | number
     type?: EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+    airbnbLink?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

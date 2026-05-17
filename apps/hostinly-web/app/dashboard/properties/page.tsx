@@ -92,14 +92,16 @@ export default function PropertiesPage() {
     <DashboardLayout>
       <div>
         <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-4xl font-bold text-foreground mb-2">
-              {isHost ? 'My Properties' : 'Available Properties'}
-            </h1>
-            <p className="text-muted-foreground">
-              {isHost ? 'Manage your rental properties' : 'Find properties to co-host'}
-            </p>
-          </div>
+          {displayProperties.length > 0 && (
+            <div>
+              <h1 className="text-4xl font-bold text-foreground mb-2">
+                {isHost ? 'My Properties' : 'Available Properties'}
+              </h1>
+              <p className="text-muted-foreground">
+                {isHost ? 'Manage your rental properties' : 'Find properties to co-host'}
+              </p>
+            </div>
+          )}
           {isHost && (
             <Button
               style={{
