@@ -121,17 +121,6 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.InterviewScalarFieldEnum = {
-  id: 'id',
-  hostId: 'hostId',
-  candidateId: 'candidateId',
-  status: 'status',
-  date: 'date',
-  notes: 'notes',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -170,8 +159,6 @@ exports.Prisma.UserScalarFieldEnum = {
   availability: 'availability',
   areasCovered: 'areasCovered',
   proofOfAddress: 'proofOfAddress',
-  resume: 'resume',
-  coverLetter: 'coverLetter',
   references: 'references',
   insurance: 'insurance',
   approvalReason: 'approvalReason',
@@ -180,13 +167,22 @@ exports.Prisma.UserScalarFieldEnum = {
   coverLetter: 'coverLetter'
 };
 
+exports.Prisma.InterviewScalarFieldEnum = {
+  id: 'id',
+  hostId: 'hostId',
+  candidateId: 'candidateId',
+  status: 'status',
+  date: 'date',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.EngagementScalarFieldEnum = {
   id: 'id',
   hostId: 'hostId',
   staffId: 'staffId',
   status: 'status',
-  startDate: 'startDate',
-  endDate: 'endDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -317,13 +313,6 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-exports.InterviewStatus = exports.$Enums.InterviewStatus = {
-  PENDING: 'PENDING',
-  SCHEDULED: 'SCHEDULED',
-  COMPLETED: 'COMPLETED',
-  CANCELLED: 'CANCELLED'
-};
-
 exports.UserType = exports.$Enums.UserType = {
   HOST: 'HOST',
   COHOST: 'COHOST',
@@ -344,6 +333,13 @@ exports.VerificationStatus = exports.$Enums.VerificationStatus = {
   PENDING: 'PENDING',
   VERIFIED: 'VERIFIED',
   REJECTED: 'REJECTED'
+};
+
+exports.InterviewStatus = exports.$Enums.InterviewStatus = {
+  PENDING: 'PENDING',
+  SCHEDULED: 'SCHEDULED',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
 };
 
 exports.EngagementStatus = exports.$Enums.EngagementStatus = {
@@ -402,8 +398,8 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
 };
 
 exports.Prisma.ModelName = {
-  Interview: 'Interview',
   User: 'User',
+  Interview: 'Interview',
   Engagement: 'Engagement',
   Property: 'Property',
   CoHost: 'CoHost',
