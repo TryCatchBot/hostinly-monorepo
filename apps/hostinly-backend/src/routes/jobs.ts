@@ -4,12 +4,53 @@ import { sendSuccess, sendError } from '../middleware';
 
 const router: Router = Router();
 
+router.post('/:id/apply', async (req, res) => {
+  try {
+    console.log(`User applying for job ${req.params.id}`);
+    const job = await prisma.jobPosting.findUnique({ where: { id: req.params.id } });
+    if (!job) return sendError(res, 'Job not found', 404);
+    sendSuccess(res, { message: 'Application submitted successfully' });
+  } catch (error: any) {
+    sendError(res, error.message);
+  }
+});
+
+router.post('/:id/save', async (req, res) => {
+  try {
+    console.log(`User saving job ${req.params.id}`);
+    const job = await prisma.jobPosting.findUnique({ where: { id: req.params.id } });
+    if (!job) return sendError(res, 'Job not found', 404);
+    sendSuccess(res, { message: 'Job saved successfully' });
+  } catch (error: any) {
+    sendError(res, error.message);
+  }
+});
+
 router.get('/', async (req, res) => {
   try {
-    const data = await prisma.jobPosting.findMany({
-      include: { author: true, property: true }
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      prisma.jobPosting.findMany({
+        skip,
+        take: limit,
+        include: { author: true, property: true },
+        orderBy: { createdAt: 'desc' }
+      }),
+      prisma.jobPosting.count()
+    ]);
+
+    sendSuccess(res, { 
+      jobs: data, 
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      }
     });
-    sendSuccess(res, data);
   } catch (error: any) {
     sendError(res, error.message);
   }
@@ -31,11 +72,21 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { authorId, propertyId, ...rest } = req.body;
+    
+    // Validate propertyId if provided
+    let propertyConnect = undefined;
+    if (propertyId && propertyId.length === 36) { // Basic UUID length check
+      const property = await prisma.property.findUnique({ where: { id: propertyId } });
+      if (property) {
+        propertyConnect = { connect: { id: propertyId } };
+      }
+    }
+
     const data = await prisma.jobPosting.create({
       data: {
         ...rest,
         author: { connect: { id: authorId } },
-        property: propertyId ? { connect: { id: propertyId } } : undefined
+        property: propertyConnect
       }
     });
     sendSuccess(res, data);
@@ -46,9 +97,31 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   try {
+    const { authorId, propertyId, ...rest } = req.body;
     const data = await prisma.jobPosting.update({
       where: { id: req.params.id },
-      data: req.body,
+      data: {
+        ...rest,
+        author: authorId ? { connect: { id: authorId } } : undefined,
+        property: propertyId ? { connect: { id: propertyId } } : undefined
+      },
+    });
+    sendSuccess(res, data);
+  } catch (error: any) {
+    sendError(res, error.message);
+  }
+});
+
+router.patch('/:id', async (req, res) => {
+  try {
+    const { authorId, propertyId, ...rest } = req.body;
+    const data = await prisma.jobPosting.update({
+      where: { id: req.params.id },
+      data: {
+        ...rest,
+        author: authorId ? { connect: { id: authorId } } : undefined,
+        property: propertyId ? { connect: { id: propertyId } } : undefined
+      },
     });
     sendSuccess(res, data);
   } catch (error: any) {

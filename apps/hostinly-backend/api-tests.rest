@@ -10,10 +10,53 @@
 @superAdminEmail = "joshua@yopmail.com"
 @superAdminPassword = "Password1*"
 
+###
 
+# Get engagements for a user
+GET {{baseUrl}}/engagements/user/{{userId}}
+Authorization: Bearer {{token}}
 
-# --- AUTH ---
+###
 
+# Hire someone (Create engagement)
+POST {{baseUrl}}/engagements
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "hostId": "{{userId}}",
+  "staffId": "{{cohostId}}",
+  "status": "ACTIVE",
+  "startDate": "2026-06-15T09:00:00Z"
+}
+
+###
+
+# Update engagement (Probation, End engagement)
+PATCH {{baseUrl}}/engagements/{{engagementId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "PROBATION"
+}
+
+###
+
+# Rate a staff member
+POST {{baseUrl}}/engagements/rate
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "rating": 5,
+  "comment": "Excellent work, very professional.",
+  "reviewerId": "{{userId}}",
+  "revieweeId": "{{cohostId}}"
+}
+
+###
+# --- Auth ---
 ### Signup
 POST {{baseUrl}}/auth/signup
 Content-Type: application/json

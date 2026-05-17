@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Star, Check } from 'lucide-react';
-import { CoHost } from '@/lib/mockData';
+import { type CoHost } from '@/lib/provideData';
 import { Button } from '@/components/ui/button';
 
 interface CoHostCardProps {
@@ -65,7 +65,7 @@ export default function CoHostCard({ cohost, onContact }: CoHostCardProps) {
         {/* Rate and Button */}
         {cohost.hourlyRate && (
           <p className="text-sm font-bold text-foreground mb-3">
-            ${cohost.hourlyRate}/hour
+            £{cohost.hourlyRate}/hour
           </p>
         )}
         <Button

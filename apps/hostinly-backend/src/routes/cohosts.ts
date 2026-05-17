@@ -61,4 +61,22 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+router.get('/hired-by/:hostId', async (req, res) => {
+  try {
+    const data = await prisma.coHost.findMany({
+      where: {
+        properties: {
+          some: {
+            ownerId: req.params.hostId
+          }
+        }
+      },
+      include: { user: true, properties: true }
+    });
+    sendSuccess(res, data);
+  } catch (error: any) {
+    sendError(res, error.message);
+  }
+});
+
 export default router;

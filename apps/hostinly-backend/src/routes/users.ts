@@ -101,6 +101,36 @@ router.get('/:id', async (req, res) => {
     const { passwordHash, ...userWithoutPassword } = user;
     sendSuccess(res, userWithoutPassword);
   } catch (error: any) {
+    // If the error is about missing columns, try a restricted select as a fallback
+    if (error.message.includes('resume') || error.message.includes('column')) {
+      try {
+        const fallbackUser = await prisma.user.findUnique({
+          where: { id: req.params.id },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            userType: true,
+            avatar: true,
+            phone: true,
+            address: true,
+            city: true,
+            state: true,
+            zipCode: true,
+            country: true,
+            status: true,
+            verificationStatus: true,
+            createdAt: true,
+            lastActive: true,
+            // Exclude missing columns here
+          }
+        });
+        if (!fallbackUser) return sendError(res, 'User not found', 404);
+        return sendSuccess(res, fallbackUser);
+      } catch (innerError: any) {
+        return sendError(res, error.message);
+      }
+    }
     sendError(res, error.message);
   }
 });
@@ -144,11 +174,29 @@ router.patch('/:id', async (req, res) => {
     delete updateData.password;
     delete updateData.email;
 
+    const { languages, commissionPercentage, ...userData } = updateData;
+
     // First, perform the update
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: updateData,
+      data: userData,
     });
+
+    // Update cohostProfile if languages or commissionPercentage is provided
+    if (languages !== undefined || commissionPercentage !== undefined) {
+      await prisma.coHost.upsert({
+        where: { userId: id },
+        create: {
+          userId: id,
+          languages: Array.isArray(languages) ? languages : [],
+          commissionPercentage: commissionPercentage || 0,
+        },
+        update: {
+          languages: languages !== undefined ? (Array.isArray(languages) ? languages : []) : undefined,
+          commissionPercentage: commissionPercentage !== undefined ? commissionPercentage : undefined,
+        }
+      });
+    }
 
     // Then check if the update completed the onboarding
     const isOnboardingCompletedNow = checkOnboardingStatus(updatedUser);

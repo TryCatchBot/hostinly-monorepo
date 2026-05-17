@@ -2,13 +2,13 @@
 export const dynamic = "force-dynamic";
 
 import DashboardLayout from '@/components/DashboardLayout';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Check, Upload, Edit2, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function ProfilePage() {
+function ProfilePageContent() {
   const { user, updateUser, fetchUser } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -62,6 +62,9 @@ export default function ProfilePage() {
   const [proofOfAddress, setProofOfAddress] = useState('');
   const [resume, setResume] = useState('');
   const [coverLetter, setCoverLetter] = useState('');
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [commissionPercentage, setCommissionPercentage] = useState('');
+  const [availableLanguages] = useState(['English', 'Spanish', 'French', 'German', 'Chinese', 'Japanese', 'Arabic', 'Portuguese', 'Russian', 'Italian']);
 
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -138,6 +141,10 @@ export default function ProfilePage() {
             setProofOfAddress(u.proofOfAddress || '');
             setResume(u.resume || '');
             setCoverLetter(u.coverLetter || '');
+            if (u.cohostProfile) {
+              setLanguages(u.cohostProfile.languages || []);
+              setCommissionPercentage(u.cohostProfile.commissionPercentage?.toString() || '');
+            }
           }
         }
       } catch (error) {
@@ -253,6 +260,8 @@ export default function ProfilePage() {
         updatedData.proofOfAddress = proofOfAddress;
         updatedData.resume = resume;
         updatedData.coverLetter = coverLetter;
+        updatedData.languages = languages;
+        updatedData.commissionPercentage = parseFloat(commissionPercentage) || 0;
       }
 
       try {
@@ -650,31 +659,26 @@ export default function ProfilePage() {
                   <label className="block text-sm font-medium text-foreground mb-2">Type of properties * (Select all that apply)</label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
                     {[
-                      { id: 'apartment', label: 'Apartment' },
-                      { id: 'house', label: 'House' },
-                      { id: 'villa', label: 'Villa' },
-                      { id: 'condo', label: 'Condo' },
-                      { id: 'studio', label: 'Studio' },
-                      { id: 'penthouse', label: 'Penthouse' },
+                      'Apartment', 'House', 'Villa', 'Studio', 'Penthouse', 'Cottage', 'Other'
                     ].map((type) => (
                       <button
-                        key={type.id}
+                        key={type}
                         type="button"
                         disabled={!isEditMode}
                         onClick={() => {
                           setPropertyTypes(prev => 
-                            prev.includes(type.id) 
-                              ? prev.filter(t => t !== type.id)
-                              : [...prev, type.id]
+                            prev.includes(type) 
+                              ? prev.filter(t => t !== type)
+                              : [...prev, type]
                           );
                         }}
                         className={`px-3 py-2 text-xs sm:text-sm font-medium rounded-lg border transition-all ${
-                          propertyTypes.includes(type.id)
+                          propertyTypes.includes(type)
                             ? 'bg-primary/10 border-primary text-primary'
                             : 'bg-background border-border text-muted-foreground hover:border-primary/50'
                         } disabled:opacity-60`}
                       >
-                        {type.label}
+                        {type}
                       </button>
                     ))}
                   </div>
@@ -786,6 +790,51 @@ export default function ProfilePage() {
                     placeholder="Cities / regions"
                     required
                   />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Languages Spoken</label>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {availableLanguages.map((lang) => (
+                      <button
+                        key={lang}
+                        type="button"
+                        disabled={!isEditMode}
+                        onClick={() => {
+                          setLanguages(prev => 
+                            prev.includes(lang) 
+                              ? prev.filter(l => l !== lang)
+                              : [...prev, lang]
+                          );
+                        }}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-all ${
+                          languages.includes(lang)
+                            ? 'bg-primary text-white border-primary'
+                            : 'bg-background border-border text-muted-foreground hover:border-primary/50'
+                        } disabled:opacity-60`}
+                      >
+                        {lang}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Monthly Commission Percentage (%)</label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={commissionPercentage}
+                      onChange={(e) => setCommissionPercentage(e.target.value)}
+                      disabled={!isEditMode}
+                      className="w-full pl-4 pr-10 py-2.5 border border-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60 disabled:bg-muted/30"
+                      placeholder="e.g. 15"
+                      min="0"
+                      max="100"
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                      <span className="text-muted-foreground font-bold">%</span>
+                    </div>
+                  </div>
+                  <p className="mt-1.5 text-[10px] text-muted-foreground italic font-medium">This is the percentage of monthly revenue you charge for your services.</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">Services offered *</label>
@@ -1058,5 +1107,19 @@ export default function ProfilePage() {
         </form>
       </div>
     </DashboardLayout>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader2 className="w-12 h-12 animate-spin text-primary" />
+        </div>
+      </DashboardLayout>
+    }>
+      <ProfilePageContent />
+    </Suspense>
   );
 }

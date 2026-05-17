@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import DashboardLayout from '@/components/DashboardLayout';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 import { 
   Calendar, 
   Clock, 
@@ -15,6 +16,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 
 interface Interview {
   id: string;
@@ -30,6 +32,7 @@ interface Interview {
 
 export default function InterviewsPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [interviews, setInterviews] = useState<Interview[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -72,6 +75,29 @@ export default function InterviewsPage() {
 
   const upcomingInterviews = interviews.filter(i => i.status === 'SCHEDULED' || i.status === 'PENDING');
   const pastInterviews = interviews.filter(i => i.status === 'COMPLETED' || i.status === 'CANCELLED');
+
+  const updateInterviewStatus = async (id: string, status: string) => {
+    try {
+      const token = localStorage.getItem('hostinly_token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ status })
+      });
+      const result = await response.json();
+      if (result.success) {
+        toast.success(`Interview ${status.toLowerCase()} successfully`);
+        setInterviews(prev => prev.map(i => i.id === id ? { ...i, status: status as any } : i));
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error: any) {
+      toast.error('Failed to update interview: ' + error.message);
+    }
+  };
 
   return (
     <DashboardLayout>
@@ -130,13 +156,37 @@ export default function InterviewsPage() {
                         </div>
                       </div>
 
-                      <div className="flex gap-2">
-                        <button className="flex-1 bg-primary text-white text-sm font-medium py-2 rounded-lg hover:opacity-90 transition-opacity">
-                          Join Meeting
-                        </button>
-                        <button className="px-3 border border-border rounded-lg hover:bg-muted transition-colors">
-                          <ExternalLink size={16} className="text-muted-foreground" />
-                        </button>
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        {interview.status === 'PENDING' && (
+                          <>
+                            <Button 
+                              size="sm" 
+                              className="bg-green-600 hover:bg-green-700 text-white font-bold"
+                              onClick={() => updateInterviewStatus(interview.id, 'SCHEDULED')}
+                            >
+                              Accept
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="destructive" 
+                              className="font-bold"
+                              onClick={() => updateInterviewStatus(interview.id, 'CANCELLED')}
+                            >
+                              Reject
+                            </Button>
+                          </>
+                        )}
+                        {interview.status === 'SCHEDULED' && (
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="font-bold border-red-200 text-red-600 hover:bg-red-50"
+                            onClick={() => updateInterviewStatus(interview.id, 'CANCELLED')}
+                          >
+                            Cancel
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="sm" className="font-bold" onClick={() => router.push(`/dashboard/interviews/${interview.id}`)}>View Details</Button>
                       </div>
                     </div>
                   ))}

@@ -121,7 +121,6 @@ exports.Prisma.UserScalarFieldEnum = {
   verificationStatus: 'verificationStatus',
   createdAt: 'createdAt',
   lastActive: 'lastActive',
-  isOnboardingCompleted: 'isOnboardingCompleted',
   dateOfBirth: 'dateOfBirth',
   numberOfProperties: 'numberOfProperties',
   hostingExperience: 'hostingExperience',
@@ -147,7 +146,21 @@ exports.Prisma.UserScalarFieldEnum = {
   coverLetter: 'coverLetter',
   references: 'references',
   insurance: 'insurance',
-  approvalReason: 'approvalReason'
+  approvalReason: 'approvalReason',
+  isOnboardingCompleted: 'isOnboardingCompleted',
+  resume: 'resume',
+  coverLetter: 'coverLetter'
+};
+
+exports.Prisma.EngagementScalarFieldEnum = {
+  id: 'id',
+  hostId: 'hostId',
+  staffId: 'staffId',
+  status: 'status',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.PropertyScalarFieldEnum = {
@@ -178,6 +191,7 @@ exports.Prisma.CoHostScalarFieldEnum = {
   totalReviews: 'totalReviews',
   location: 'location',
   hourlyRate: 'hourlyRate',
+  commissionPercentage: 'commissionPercentage',
   languages: 'languages',
   specialties: 'specialties',
   availabilityStatus: 'availabilityStatus'
@@ -193,7 +207,10 @@ exports.Prisma.JobPostingScalarFieldEnum = {
   propertyId: 'propertyId',
   location: 'location',
   type: 'type',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  duration: 'duration',
+  requirements: 'requirements',
+  skills: 'skills'
 };
 
 exports.Prisma.ReviewScalarFieldEnum = {
@@ -301,6 +318,12 @@ exports.InterviewStatus = exports.$Enums.InterviewStatus = {
   CANCELLED: 'CANCELLED'
 };
 
+exports.EngagementStatus = exports.$Enums.EngagementStatus = {
+  ACTIVE: 'ACTIVE',
+  PROBATION: 'PROBATION',
+  ENDED: 'ENDED'
+};
+
 exports.PropertyStatus = exports.$Enums.PropertyStatus = {
   AVAILABLE: 'AVAILABLE',
   MANAGED: 'MANAGED',
@@ -352,6 +375,7 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
 exports.Prisma.ModelName = {
   Interview: 'Interview',
   User: 'User',
+  Engagement: 'Engagement',
   Property: 'Property',
   CoHost: 'CoHost',
   JobPosting: 'JobPosting',

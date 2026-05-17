@@ -12,17 +12,18 @@ import {
   mockProperties,
   mockCoHosts,
   mockJobs,
-  mockAvailableListings,
   addProperty,
   addJob,
   type Property,
   type JobPosting,
   type CoHost,
-} from '@/lib/mockData';
+} from '@/lib/provideData';
 import { useAuth } from '@/context/AuthContext';
-import { Home, Users, Briefcase, TrendingUp, Plus, AlertCircle } from 'lucide-react';
+import { Home, Users, Briefcase, TrendingUp, Plus, AlertCircle, Activity, ArrowUpRight, Loader2, PoundSterling, Calendar, CheckCircle2, Clock, MapPin, MessageSquare } from 'lucide-react';
+import NextImage from 'next/image';
 import { Button } from '@/components/ui/button';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/api';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -30,14 +31,122 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [showAddPropertyModal, setShowAddPropertyModal] = useState(false);
   const [showPostJobModal, setShowPostJobModal] = useState(false);
+  const [stats, setStats] = useState<any>(null);
+  const [activities, setActivities] = useState<any[]>([]);
+  const [interviews, setInterviews] = useState<any[]>([]);
+  const [appliedJobs, setAppliedJobs] = useState<any[]>([]);
+  const [cohostExperts, setCohostExperts] = useState<CoHost[]>([]);
+  const [recentJobs, setRecentJobs] = useState<JobPosting[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [engagements, setEngagements] = useState<any[]>([]);
+  const [isDataLoading, setIsDataLoading] = useState(true);
 
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/login');
     } else if (user) {
       fetchUser();
+      fetchDashboardData();
     }
   }, [user, isLoading, router]);
+
+  const fetchDashboardData = async () => {
+    setIsDataLoading(true);
+    try {
+      const token = localStorage.getItem('hostinly_token');
+      const headers = { Authorization: `Bearer ${token}` };
+      
+      const [statsRes, activityRes, cohostsRes, jobsRes, propertiesRes, interviewsRes, engagementsRes] = await Promise.all([
+        fetch(`${API_URL}/admin/stats`, { headers }),
+        fetch(`${API_URL}/admin/recent-activity`, { headers }),
+        fetch(`${API_URL}/cohosts`, { headers }),
+        fetch(`${API_URL}/jobs?limit=10`, { headers }),
+        fetch(`${API_URL}/properties`, { headers }),
+        fetch(`${API_URL}/interviews`, { headers }),
+        fetch(`${API_URL}/engagements`, { headers })
+      ]);
+      
+      const statsData = await statsRes.json();
+      const activityData = await activityRes.json();
+      const cohostsData = await cohostsRes.json();
+      const jobsData = await jobsRes.json();
+      const propertiesData = await propertiesRes.json();
+      const interviewsData = await interviewsRes.json();
+      const engagementsData = await engagementsRes.json();
+      
+      if (statsData.success) setStats(statsData.data);
+      if (activityData.success) setActivities(activityData.data);
+      if (engagementsData.success) setEngagements(engagementsData.data);
+      if (interviewsData.success) {
+        const sortedInterviews = (interviewsData.data || [])
+          .filter((i: any) => i.status === 'SCHEDULED' || i.status === 'PENDING')
+          .sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        setInterviews(sortedInterviews.slice(0, 3));
+      }
+      
+      if (cohostsData.success) {
+        setCohostExperts(cohostsData.data.map((c: any) => ({
+          id: c.id,
+          name: c.user.name,
+          title: c.specialties[0] || 'Property Expert',
+          rating: c.rating,
+          reviews: c.totalReviews,
+          image: c.user.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
+          specialties: c.specialties,
+          hourlyRate: c.hourlyRate,
+          commissionPercentage: c.commissionPercentage
+        })));
+      }
+
+      if (jobsData.success) {
+        const allJobs = jobsData.data.jobs.map((j: any) => ({
+          id: j.id,
+          title: j.title,
+          description: j.description,
+          propertyLocation: j.location,
+          budget: j.budget,
+          duration: j.duration || j.type,
+          experience: 'Any experience welcome',
+          status: j.status.toLowerCase(),
+          applications: 0,
+          type: j.type,
+          createdAt: j.createdAt
+        }));
+        setRecentJobs(allJobs.slice(0, 5));
+        
+        // Mock applied jobs for cohosts (in real app, this would be a separate endpoint)
+        if (user && (user.userType === 'cohost' || user.userType === 'cleaner')) {
+          setAppliedJobs(allJobs.slice(0, 5).map((j: any, i: number) => ({
+            ...j,
+            applicationStatus: i === 0 ? 'Interview Scheduled' : i === 1 ? 'Under Review' : 'Applied'
+          })));
+        }
+      }
+      if (propertiesData.success) {
+        setProperties(propertiesData.data.map((p: any) => {
+          const trimmedImages = (p.images || []).map((img: string) => img.trim().replace(/^`|`$/g, ''));
+          return {
+            id: p.id,
+            title: p.title,
+            location: `${p.address}, ${p.city}`,
+            price: p.price,
+            bedrooms: p.bedrooms,
+            bathrooms: p.bathrooms,
+            image: trimmedImages[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop',
+            images: trimmedImages,
+            rating: 4.5,
+            reviews: 0,
+            status: p.status.toLowerCase(),
+            ownerId: p.ownerId,
+          };
+        }));
+      }
+    } catch (error) {
+      console.error('Failed to fetch dashboard data:', error);
+    } finally {
+      setIsDataLoading(false);
+    }
+  };
 
   if (isLoading || !user) {
     return (
@@ -51,11 +160,11 @@ export default function DashboardPage() {
   }
 
   const isHost = user.userType === 'host';
-  const hostProperties = mockProperties.filter((p) => p.status !== 'available');
-  const availableProperties = mockAvailableListings;
+  const hostProperties = properties.filter((p) => p.ownerId === user.id);
+  const availableProperties = properties.filter((p) => p.status === 'available');
 
   const handleAddProperty = (property: Property) => {
-    addProperty(property);
+    setProperties((prev) => [property, ...prev]);
     setShowAddPropertyModal(false);
   };
 
@@ -68,31 +177,27 @@ export default function DashboardPage() {
     router.push(`/dashboard/cohosts/${cohost.id}`);
   };
 
-  // Stats for dashboard
-  const stats = [
+  const dashboardStats = [
     {
-      label: 'Active Properties',
-      value: hostProperties.length,
+      label: 'Total Properties',
+      value: stats?.propertyCount || 0,
       icon: Home,
       color: 'text-blue-600',
+      trend: '+12%',
     },
     {
-      label: 'Total Revenue',
-      value: `$${(hostProperties.reduce((sum, p) => sum + p.price * 30, 0) / 1000).toFixed(1)}k`,
+      label: 'Revenue',
+      value: `£${(stats?.totalRevenue / 1000 || 0).toFixed(1)}k`,
       icon: TrendingUp,
       color: 'text-green-600',
+      trend: '+8%',
     },
     {
-      label: 'Co-Hosts',
-      value: 4,
-      icon: Users,
-      color: 'text-purple-600',
-    },
-    {
-      label: 'Available Listings',
-      value: availableProperties.length,
+      label: 'Active Jobs',
+      value: stats?.activeJobCount || 0,
       icon: Briefcase,
       color: 'text-orange-600',
+      trend: '+5',
     },
   ];
 
@@ -101,12 +206,14 @@ export default function DashboardPage() {
   return (
     <DashboardLayout>
       {/* Subtitle */}
-      <div className="mb-6 sm:mb-8">
-        <p className="text-sm sm:text-base text-muted-foreground">
-          {isHost
-            ? 'Manage your properties and find the perfect co-hosts'
-            : 'Explore properties and co-hosting opportunities'}
-        </p>
+      <div className="mb-6 sm:mb-8 flex justify-between items-center">
+        <div>
+          <p className="text-sm sm:text-base text-muted-foreground">
+            {isHost
+              ? 'Here is what is happening with your properties today.'
+              : 'Explore properties and co-hosting opportunities'}
+          </p>
+        </div>
       </div>
 
       {!isOnboarded && (
@@ -129,23 +236,89 @@ export default function DashboardPage() {
       )}
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {stats.map((stat, idx) => {
-          const Icon = stat.icon;
-          return (
-            <div key={idx} className="bg-background rounded-2xl shadow-soft border border-border p-5 sm:p-6 hover:shadow-medium transition-all hover:scale-[1.02]">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <p className="text-[10px] sm:text-xs font-bold text-muted-foreground mb-1 uppercase tracking-widest">{stat.label}</p>
-                  <p className="text-xl sm:text-2xl font-black text-foreground">{stat.value}</p>
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        {dashboardStats
+          .filter(stat => isHost || !['Total Properties', 'Revenue', 'Active Jobs'].includes(stat.label))
+          .map((stat, idx) => {
+            const Icon = stat.icon;
+            return (
+              <div key={idx} className="bg-background rounded-2xl shadow-soft border border-border p-5 sm:p-6 hover:shadow-medium transition-all hover:scale-[1.02]">
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <p className="text-[10px] sm:text-xs font-bold text-muted-foreground mb-1 uppercase tracking-widest">{stat.label}</p>
+                    <p className="text-xl sm:text-2xl font-black text-foreground">{stat.value}</p>
+                  </div>
+                  <div className={`${stat.color} bg-current/10 p-2.5 rounded-xl`}>
+                    <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </div>
                 </div>
-                <div className={`${stat.color} bg-current/10 p-2.5 rounded-xl`}>
-                  <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+                <div className="flex items-center text-xs font-bold text-green-600">
+                  <ArrowUpRight className="h-3 w-3 mr-1" />
+                  {stat.trend} <span className="text-muted-foreground font-medium ml-1">vs last month</span>
                 </div>
               </div>
+            );
+          })}
+      </div>
+
+      {/* Main Content Area */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        {/* Revenue Overview Section */}
+        <div className="lg:col-span-2">
+          <div className="bg-background rounded-2xl border border-border shadow-sm p-6 h-full">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-bold text-lg">Revenue Overview</h3>
+              <select className="text-xs font-bold bg-muted border-none rounded-lg px-2 py-1 outline-none">
+                <option>Last 7 Days</option>
+                <option>Last 30 Days</option>
+              </select>
             </div>
-          );
-        })}
+            <div className="h-64 flex items-end justify-between gap-2 px-2">
+              {[40, 70, 45, 90, 65, 85, 55].map((height, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
+                  <div 
+                    className="w-full bg-primary/20 rounded-t-lg transition-all group-hover:bg-primary/40 relative"
+                    style={{ height: `${height}%` }}
+                  >
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                      £{(height * 10).toLocaleString('en-GB')}
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-bold text-muted-foreground">Day {i+1}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Sidebar Column */}
+        <div className="space-y-8">
+          {/* Property Status Distribution (Host Only) */}
+          {isHost && (
+            <div className="bg-background rounded-2xl border border-border p-6 shadow-sm">
+              <h3 className="font-bold text-lg mb-4">Property Status</h3>
+              <div className="space-y-4">
+                {stats?.propertyStats?.map((s: any, i: number) => (
+                  <div key={i}>
+                    <div className="flex justify-between text-xs font-bold mb-1 uppercase tracking-wider">
+                      <span>{s.status.toLowerCase()}</span>
+                      <span>{s._count}</span>
+                    </div>
+                    <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full ${
+                          s.status === 'AVAILABLE' ? 'bg-green-500' :
+                          s.status === 'MANAGED' ? 'bg-blue-500' : 'bg-gray-400'
+                        }`}
+                        style={{ width: `${(s._count / stats.propertyCount) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Tabs Navigation */}
@@ -153,17 +326,7 @@ export default function DashboardPage() {
         <div className="flex overflow-x-auto no-scrollbar border-b border-border bg-muted/30">
           {isHost ? (
             <>
-              <button
-                onClick={() => setActiveTab('overview')}
-                className={`whitespace-nowrap px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
-                  activeTab === 'overview'
-                    ? 'border-primary text-primary bg-background'
-                    : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                }`}
-              >
-                <Home className="inline mr-2 h-4 w-4" />
-                My Properties
-              </button>
+
               <button
                 onClick={() => setActiveTab('cohost')}
                 className={`whitespace-nowrap px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
@@ -187,6 +350,18 @@ export default function DashboardPage() {
               >
                 <Briefcase className="inline mr-2 h-4 w-4" />
                 Job Postings
+              </button>
+              <button
+                onClick={() => setActiveTab('staff')}
+                className={`whitespace-nowrap px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
+                  activeTab === 'staff'
+                    ? 'border-primary text-primary bg-background'
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                }`}
+                disabled={!isOnboarded}
+              >
+                <Users className="inline mr-2 h-4 w-4" />
+                My Staff
               </button>
             </>
           ) : (
@@ -251,9 +426,61 @@ export default function DashboardPage() {
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-6">Featured Co-Hosts</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {mockCoHosts.map((cohost) => (
+                {cohostExperts.map((cohost) => (
                   <CoHostCard key={cohost.id} cohost={cohost} onContact={handleContact} />
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Host - My Staff Tab */}
+          {isHost && activeTab === 'staff' && (
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground">My Staff</h2>
+                <Button variant="outline" onClick={() => setActiveTab('cohost')}>Hire More</Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {engagements.map((engagement) => (
+                  <div key={engagement.id} className="bg-background rounded-2xl border border-border p-6 shadow-sm hover:shadow-md transition-all">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-14 h-14 rounded-full overflow-hidden bg-muted">
+                        {engagement.staff.user.avatar ? (
+                          <NextImage src={engagement.staff.user.avatar.replace(/`/g, '')} alt={engagement.staff.user.name} width={56} height={56} className="object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-primary text-white font-bold text-xl">
+                            {engagement.staff.user.name[0]}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-lg">{engagement.staff.user.name}</h3>
+                        <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">{engagement.staff.specialties[0] || 'Property Expert'}</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3 mb-6 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Status</span>
+                        <span className={`font-bold ${engagement.status === 'ACTIVE' ? 'text-green-600' : 'text-orange-600'}`}>{engagement.status}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Hired Date</span>
+                        <span className="font-bold">{new Date(engagement.startDate).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" className="flex-1 font-bold" onClick={() => router.push(`/dashboard/cohosts/${engagement.staff.id}`)}>View Profile</Button>
+                      <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary"><MessageSquare size={18} /></Button>
+                    </div>
+                  </div>
+                ))}
+                {engagements.length === 0 && (
+                  <div className="col-span-full text-center py-20 bg-muted/20 rounded-2xl border border-dashed border-border">
+                    <Users className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+                    <p className="text-muted-foreground font-medium">You haven&apos;t hired any staff yet.</p>
+                    <Button variant="link" className="mt-2 font-bold" onClick={() => setActiveTab('cohost')}>Find experts now</Button>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -298,6 +525,192 @@ export default function DashboardPage() {
                   <PropertyCard key={property.id} property={property} />
                 ))}
               </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Co-Host Experts Section (Hosts Only) */}
+      {isHost && (
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">Co-Host Experts</h2>
+            <Button variant="ghost" onClick={() => setActiveTab('cohost')}>View All</Button>
+          </div>
+          <div className="flex gap-6 overflow-x-auto pb-4 no-scrollbar">
+            {cohostExperts.map((cohost) => (
+              <div key={cohost.id} className="flex-shrink-0 w-72">
+                <CoHostCard cohost={cohost} onContact={() => handleContact(cohost)} />
+              </div>
+            ))}
+            {cohostExperts.length === 0 && (
+              <p className="text-muted-foreground italic">No co-host experts available right now.</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Cohost/Cleaner Specific Sections */}
+      {!isHost && (
+        <div className="space-y-8 mb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Upcoming Interviews */}
+            <div className="bg-background rounded-2xl border border-border p-6 shadow-sm">
+              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <Calendar className="text-primary h-5 w-5" />
+                Upcoming Interviews (Top 3)
+              </h2>
+              <div className="space-y-4">
+                {interviews.length > 0 ? interviews.map((interview, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-4 bg-muted/30 rounded-xl border border-border/50">
+                    <div>
+                      <p className="font-bold text-foreground">{interview.host?.name || 'Host'}</p>
+                      <p className="text-xs text-muted-foreground">{new Date(interview.date).toLocaleDateString()} • {new Date(interview.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                    </div>
+                    <div className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded-full">
+                      {interview.status}
+                    </div>
+                  </div>
+                )) : (
+                  <p className="text-sm text-muted-foreground italic text-center py-8">No upcoming interviews.</p>
+                )}
+              </div>
+            </div>
+
+            {/* Recent Application Status */}
+            <div className="bg-background rounded-2xl border border-border p-6 shadow-sm">
+              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <Activity className="text-primary h-5 w-5" />
+                Application Status (Top 3)
+              </h2>
+              <div className="space-y-4">
+                {appliedJobs.slice(0, 3).map((job, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-4 bg-muted/30 rounded-xl border border-border/50">
+                    <div className="min-w-0">
+                      <p className="font-bold text-foreground truncate">{job.title}</p>
+                      <p className="text-xs text-muted-foreground">{job.propertyLocation}</p>
+                    </div>
+                    <div className={`px-3 py-1 text-[10px] font-bold uppercase rounded-full ${
+                      job.applicationStatus === 'Interview Scheduled' ? 'bg-green-100 text-green-700' :
+                      job.applicationStatus === 'Under Review' ? 'bg-blue-100 text-blue-700' :
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {job.applicationStatus}
+                    </div>
+                  </div>
+                ))}
+                {appliedJobs.length === 0 && (
+                  <p className="text-sm text-muted-foreground italic text-center py-8">No recent applications.</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Jobs Applied For */}
+          <div className="bg-background rounded-2xl border border-border p-6 shadow-sm">
+            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <CheckCircle2 className="text-primary h-5 w-5" />
+              Jobs Applied For (Top 5)
+            </h2>
+            <div className="space-y-4">
+              {appliedJobs.slice(0, 5).map((job) => (
+                <div 
+                  key={`applied-${job.id}`} 
+                  className="flex items-center justify-between p-4 bg-muted/30 rounded-xl border border-border/50 hover:border-primary/30 transition-all cursor-pointer"
+                  onClick={() => router.push(`/dashboard/jobs/${job.id}`)}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Briefcase className="text-primary h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-foreground">{job.title}</p>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <MapPin size={12} />
+                        {job.propertyLocation}
+                        <span className="mx-1">•</span>
+                        <PoundSterling size={12} />
+                        {typeof job.budget === 'number' ? job.budget.toLocaleString('en-GB') : job.budget}
+                      </div>
+                    </div>
+                  </div>
+                  <div className={`px-3 py-1 text-[10px] font-bold uppercase rounded-full ${
+                    job.applicationStatus === 'Interview Scheduled' ? 'bg-green-100 text-green-700' :
+                    job.applicationStatus === 'Under Review' ? 'bg-blue-100 text-blue-700' :
+                    'bg-gray-100 text-gray-700'
+                  }`}>
+                    {job.applicationStatus}
+                  </div>
+                </div>
+              ))}
+              {appliedJobs.length === 0 && (
+                <p className="text-sm text-muted-foreground italic text-center py-8">You haven&apos;t applied for any jobs yet.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Recent Job Listings Section */}
+      {!isHost && (
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">Top 5 Recent Jobs Posted</h2>
+            <Button variant="ghost" onClick={() => setActiveTab('jobs')}>View All</Button>
+          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {recentJobs.slice(0, 5).map((job) => (
+            <JobCard key={job.id} job={job} />
+          ))}
+          {recentJobs.length === 0 && (
+              <p className="text-muted-foreground italic col-span-full">No recent job listings.</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Activity List */}
+      <div className="bg-background rounded-2xl border border-border p-6 shadow-sm mb-8">
+        <h3 className="font-bold text-lg mb-6">Recent Activity</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {activities.filter(a => {
+            if (a.type === 'USER_SIGNUP') return false; // Don't show signup
+            if (a.type === 'JOB_POSTED') return a.data.author?.id === user.id;
+            if (a.type === 'PROPERTY_ADDED') return a.data.ownerId === user.id;
+            if (a.type === 'JOB_APPLICATION') return a.data.applicantId === user.id || a.data.job?.authorId === user.id;
+            if (a.type === 'INTERVIEW_SCHEDULED') return a.data.candidateId === user.id || a.data.hostId === user.id;
+            return false;
+          }).length > 0 ? activities.filter(a => {
+            if (a.type === 'USER_SIGNUP') return false;
+            if (a.type === 'JOB_POSTED') return a.data.author?.id === user.id;
+            if (a.type === 'PROPERTY_ADDED') return a.data.ownerId === user.id;
+            if (a.type === 'JOB_APPLICATION') return a.data.applicantId === user.id || a.data.job?.authorId === user.id;
+            if (a.type === 'INTERVIEW_SCHEDULED') return a.data.candidateId === user.id || a.data.hostId === user.id;
+            return false;
+          }).map((activity, idx) => (
+            <div key={idx} className="flex items-start gap-4 p-4 rounded-xl hover:bg-muted/30 transition-colors border border-transparent hover:border-border">
+              <div className={`p-2.5 rounded-xl ${
+                activity.type === 'JOB_POSTED' ? 'bg-orange-100 text-orange-600' :
+                activity.type === 'JOB_APPLICATION' ? 'bg-green-100 text-green-600' :
+                activity.type === 'INTERVIEW_SCHEDULED' ? 'bg-purple-100 text-purple-600' :
+                'bg-blue-100 text-blue-600'
+              }`}>
+                <Activity size={18} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground leading-snug">
+                  {activity.type === 'JOB_POSTED' && <span>New job created: <span className="font-bold truncate inline-block max-w-[150px] align-bottom">{activity.data.title}</span></span>}
+                  {activity.type === 'PROPERTY_ADDED' && <span>New property added: <span className="font-bold truncate inline-block max-w-[150px] align-bottom">{activity.data.title}</span></span>}
+                  {activity.type === 'JOB_APPLICATION' && <span>{activity.data.applicantId === user.id ? 'You applied for a job:' : 'New job application received for:'} <span className="font-bold truncate inline-block max-w-[150px] align-bottom">{activity.data.job.title}</span></span>}
+                  {activity.type === 'INTERVIEW_SCHEDULED' && <span>Interview scheduled for: <span className="font-bold truncate inline-block max-w-[150px] align-bottom">{activity.data.job?.title || 'a property'}</span></span>}
+                </p>
+                <p className="text-[10px] font-bold text-muted-foreground mt-1.5 uppercase tracking-wider">{new Date(activity.date).toLocaleDateString()} • {new Date(activity.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+              </div>
+            </div>
+          )) : (
+            <div className="col-span-full text-center py-12">
+              <Activity className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+              <p className="text-muted-foreground font-medium">No recent activity to show</p>
             </div>
           )}
         </div>

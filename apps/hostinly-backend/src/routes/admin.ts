@@ -80,12 +80,31 @@ router.get('/recent-bookings', async (req, res) => {
 
 router.get('/recent-activity', async (req, res) => {
   try {
-    const recentUsers = await prisma.user.findMany({
-      take: 5,
-      orderBy: { createdAt: 'desc' },
-      select: { id: true, name: true, email: true, userType: true, createdAt: true }
-    });
-    sendSuccess(res, recentUsers);
+    const [recentUsers, recentJobs, recentProperties] = await Promise.all([
+      prisma.user.findMany({
+        take: 3,
+        orderBy: { createdAt: 'desc' },
+        select: { id: true, name: true, email: true, userType: true, createdAt: true }
+      }),
+      prisma.jobPosting.findMany({
+        take: 3,
+        orderBy: { createdAt: 'desc' },
+        include: { author: { select: { name: true } } }
+      }),
+      prisma.property.findMany({
+        take: 3,
+        orderBy: { createdAt: 'desc' },
+        include: { owner: { select: { name: true } } }
+      })
+    ]);
+
+    const activity = [
+      ...recentUsers.map(u => ({ type: 'USER_SIGNUP', data: u, date: u.createdAt })),
+      ...recentJobs.map(j => ({ type: 'JOB_POSTED', data: j, date: j.createdAt })),
+      ...recentProperties.map(p => ({ type: 'PROPERTY_ADDED', data: p, date: p.createdAt }))
+    ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 8);
+
+    sendSuccess(res, activity);
   } catch (error: any) {
     sendError(res, error.message);
   }
