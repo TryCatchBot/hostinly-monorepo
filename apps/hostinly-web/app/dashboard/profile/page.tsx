@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Check, Upload, Edit2, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { uploadToCloudinary } from '@/lib/upload';
 
 function ProfilePageContent() {
   const { user, updateUser, fetchUser } = useAuth();
@@ -189,16 +190,9 @@ function ProfilePageContent() {
   }, [user?.id]);
 
   const uploadFile = async (file: File) => {
-    const formData = new FormData();
-    formData.append('file', file);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/uploads/upload`, {
-        method: 'POST',
-        body: formData,
-      });
-      const result = await response.json();
-      if (!result.success) throw new Error(result.error);
-      return result.data.url;
+      const url = await uploadToCloudinary(file);
+      return url;
     } catch (error: any) {
       toast.error('Upload failed: ' + error.message);
       return null;
