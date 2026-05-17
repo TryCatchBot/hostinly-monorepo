@@ -87,13 +87,13 @@ export default function DashboardPage() {
       if (cohostsData.success) {
         setCohostExperts(cohostsData.data.map((c: any) => ({
           id: c.id,
-          name: c.user.name,
-          title: c.specialties[0] || 'Property Expert',
+          name: c.name || c.user?.name,
+          title: c.specialties?.[0] || c.user?.servicesOffered?.split(',')?.[0] || 'Property Expert',
           rating: c.rating,
-          reviews: c.totalReviews,
-          image: c.user.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
-          specialties: c.specialties,
-          hourlyRate: c.hourlyRate,
+          reviews: c.totalReviews || 0,
+          image: (c.user?.avatar || c.avatar || '').replace(/`/g, ''),
+          specialties: c.specialties || (c.user?.servicesOffered ? c.user.servicesOffered.split(',') : []),
+          hourlyRate: c.hourlyRate || c.commissionRate,
           commissionPercentage: c.commissionPercentage
         })));
       }
@@ -424,11 +424,17 @@ export default function DashboardPage() {
           {/* Host - Find Co-Hosts Tab */}
           {isHost && activeTab === 'cohost' && (
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-6">Featured Co-Hosts</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-6">Find Co-Hosts</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {cohostExperts.map((cohost) => (
                   <CoHostCard key={cohost.id} cohost={cohost} onContact={handleContact} />
                 ))}
+                {cohostExperts.length === 0 && (
+                  <div className="col-span-full text-center py-20 bg-muted/20 rounded-2xl border border-dashed border-border">
+                    <Users className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+                    <p className="text-muted-foreground font-medium">No co-hosts found.</p>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -508,10 +514,16 @@ export default function DashboardPage() {
                   </Button>
                 )}
               </div>
-              <div className="grid grid-cols-1 gap-4">
-                {mockJobs.map((job) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {recentJobs.map((job) => (
                   <JobCard key={job.id} job={job} />
                 ))}
+                {recentJobs.length === 0 && (
+                  <div className="col-span-full text-center py-20 bg-muted/20 rounded-2xl border border-dashed border-border">
+                    <Briefcase className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+                    <p className="text-muted-foreground font-medium">No job postings found.</p>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -529,26 +541,6 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
-
-      {/* Co-Host Experts Section (Hosts Only) */}
-      {isHost && (
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold">Co-Host Experts</h2>
-            <Button variant="ghost" onClick={() => setActiveTab('cohost')}>View All</Button>
-          </div>
-          <div className="flex gap-6 overflow-x-auto pb-4 no-scrollbar">
-            {cohostExperts.map((cohost) => (
-              <div key={cohost.id} className="flex-shrink-0 w-72">
-                <CoHostCard cohost={cohost} onContact={() => handleContact(cohost)} />
-              </div>
-            ))}
-            {cohostExperts.length === 0 && (
-              <p className="text-muted-foreground italic">No co-host experts available right now.</p>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Cohost/Cleaner Specific Sections */}
       {!isHost && (
@@ -647,24 +639,6 @@ export default function DashboardPage() {
                 <p className="text-sm text-muted-foreground italic text-center py-8">You haven&apos;t applied for any jobs yet.</p>
               )}
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Recent Job Listings Section */}
-      {!isHost && (
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold">Top 5 Recent Jobs Posted</h2>
-            <Button variant="ghost" onClick={() => setActiveTab('jobs')}>View All</Button>
-          </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {recentJobs.slice(0, 5).map((job) => (
-            <JobCard key={job.id} job={job} />
-          ))}
-          {recentJobs.length === 0 && (
-              <p className="text-muted-foreground italic col-span-full">No recent job listings.</p>
-            )}
           </div>
         </div>
       )}

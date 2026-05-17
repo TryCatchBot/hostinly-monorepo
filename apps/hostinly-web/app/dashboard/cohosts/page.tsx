@@ -54,15 +54,15 @@ export default function CoHostsPage() {
       if (result.success) {
         setCohosts(result.data.map((c: any) => ({
           id: c.id,
-          name: c.user.name,
-          title: c.specialties[0] || 'Property Expert',
+          name: c.name || c.user?.name,
+          title: c.specialties?.[0] || c.user?.servicesOffered?.split(',')?.[0] || 'Property Expert',
           rating: c.rating,
-          reviews: c.totalReviews,
-          image: c.user.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
-          specialties: c.specialties,
-          hourlyRate: c.hourlyRate,
+          reviews: c.totalReviews || 0,
+          image: (c.user?.avatar || c.avatar || '').replace(/`/g, ''),
+          specialties: c.specialties || (c.user?.servicesOffered ? c.user.servicesOffered.split(',') : []),
+          hourlyRate: c.hourlyRate || c.commissionRate,
           commissionPercentage: c.commissionPercentage,
-          languages: c.languages
+          languages: c.languages || (c.user?.languages ? c.user.languages : ['English'])
         })));
       }
     } catch (err) {
@@ -146,7 +146,7 @@ export default function CoHostsPage() {
       <div>
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-2">
-            Featured Co-Hosts
+            Find Co-Hosts
           </h1>
           <p className="text-muted-foreground">
             Find and hire experienced co-hosts to manage your properties
