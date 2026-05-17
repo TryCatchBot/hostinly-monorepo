@@ -43,6 +43,7 @@ import {
   Calendar,
   Home,
   DollarSign,
+  XCircle,
 } from "lucide-react";
 
 const columns = [
@@ -310,6 +311,9 @@ export default function UsersPage() {
     const fetchUsers = async () => {
       try {
         const response = await fetch(`${API_URL}/users`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         if (data.success) {
           setUsers(data.data);
@@ -328,11 +332,33 @@ export default function UsersPage() {
   }, []);
 
   if (loading) {
-    return <div>Loading users...</div>;
+    return (
+      <div className="flex h-[400px] w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="text-sm text-muted-foreground font-medium">Loading users...</p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div className="flex h-[400px] w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center">
+            <XCircle className="h-6 w-6 text-destructive" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="font-semibold text-lg">Failed to load users</h3>
+            <p className="text-sm text-muted-foreground max-w-[300px]">{error}</p>
+          </div>
+          <Button onClick={() => window.location.reload()} variant="outline">
+            Try again
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (

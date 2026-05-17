@@ -1,4 +1,4 @@
-import { PrismaClient } from '@org/hostinly-backend-client';
+import { PrismaClient } from '../generated/client/index.js';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import path from 'path';

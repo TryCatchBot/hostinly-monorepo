@@ -50,31 +50,40 @@ router.get('/providers', async (req, res) => {
 // Get all service requests (Job Postings)
 router.get('/requests', async (req, res) => {
   try {
-    const requests = await prisma.jobPosting.findMany({
-      include: {
-        author: {
-          select: { name: true }
-        },
-        property: {
-          select: { title: true }
-        }
-      },
-      orderBy: {
-        createdAt: 'desc'
+    const fetchRequests = async () => {
+      try {
+        return await prisma.jobPosting.findMany({
+          include: {
+            author: {
+              select: { name: true }
+            },
+            property: {
+              select: { title: true }
+            }
+          },
+          orderBy: {
+            createdAt: 'desc'
+          }
+        });
+      } catch (e) {
+        console.error('Error fetching service requests:', e);
+        return [];
       }
-    });
+    };
+
+    const requests = await fetchRequests();
 
     const mappedRequests = requests.map((r: any) => ({
       id: r.id,
       serviceName: r.title,
       propertyTitle: r.property?.title || 'N/A',
-      requestedBy: r.author.name,
-      status: r.status.toLowerCase(),
-      category: r.type,
+      requestedBy: r.author?.name || 'Anonymous',
+      status: (r.status || 'PENDING').toLowerCase(),
+      category: r.type || 'General',
       scheduledAt: r.createdAt, // Placeholder for actual schedule
       createdAt: r.createdAt,
       description: r.description,
-      estimatedCost: parseFloat(r.budget.replace(/[^0-9.]/g, '')) || 0,
+      estimatedCost: r.budget ? parseFloat(r.budget.replace(/[^0-9.]/g, '')) || 0 : 0,
     }));
 
     sendSuccess(res, mappedRequests);

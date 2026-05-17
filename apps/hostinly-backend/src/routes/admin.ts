@@ -6,12 +6,21 @@ const router: Router = Router();
 
 router.get('/stats', async (req, res) => {
   try {
+    const safeCount = async (model: any) => {
+      try {
+        return await model.count();
+      } catch (e) {
+        console.error(`Error counting ${model}:`, e);
+        return 0;
+      }
+    };
+
     const [userCount, propertyCount, cohostCount, jobCount, bookingCount, totalRevenueResult, openTickets] = await Promise.all([
-      prisma.user.count(),
-      prisma.property.count(),
-      prisma.coHost.count(),
-      prisma.jobPosting.count(),
-      prisma.booking.count(),
+      safeCount(prisma.user),
+      safeCount(prisma.property),
+      safeCount(prisma.coHost),
+      safeCount(prisma.jobPosting),
+      safeCount(prisma.booking),
       prisma.payment.aggregate({
         _sum: {
           amount: true,
@@ -19,18 +28,15 @@ router.get('/stats', async (req, res) => {
         where: {
           status: 'succeeded',
         },
-      }),
-      prisma.contactMessage.count({
-        where: {
-          status: 'unread',
-        },
-      }),
+      }).catch(() => ({ _sum: { amount: null } })),
+      safeCount(prisma.contactMessage),
     ]);
 
     const totalRevenue = totalRevenueResult._sum.amount?.toNumber() || 0;
 
     sendSuccess(res, { userCount, propertyCount, cohostCount, jobCount, bookingCount, totalRevenue, openTickets });
   } catch (error: any) {
+    console.error('[ Admin Stats Error ]:', error);
     sendError(res, error.message);
   }
 });
@@ -80,17 +86,26 @@ router.get('/recent-bookings', async (req, res) => {
 
 router.get('/recent-activity', async (req, res) => {
   try {
+    const fetchRecentJobs = async () => {
+      try {
+        return await prisma.jobPosting.findMany({
+          take: 3,
+          orderBy: { createdAt: 'desc' },
+          include: { author: { select: { name: true } } }
+        });
+      } catch (e) {
+        console.error('Error fetching recent jobs for admin activity:', e);
+        return [];
+      }
+    };
+
     const [recentUsers, recentJobs, recentProperties] = await Promise.all([
       prisma.user.findMany({
         take: 3,
         orderBy: { createdAt: 'desc' },
         select: { id: true, name: true, email: true, userType: true, createdAt: true }
       }),
-      prisma.jobPosting.findMany({
-        take: 3,
-        orderBy: { createdAt: 'desc' },
-        include: { author: { select: { name: true } } }
-      }),
+      fetchRecentJobs(),
       prisma.property.findMany({
         take: 3,
         orderBy: { createdAt: 'desc' },

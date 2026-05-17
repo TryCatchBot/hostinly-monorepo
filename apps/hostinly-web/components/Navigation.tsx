@@ -21,6 +21,7 @@ export default function Navigation() {
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const isDashboard = pathname?.startsWith('/dashboard') ?? false;
+  const isHome = pathname === '/';
   const router = useRouter();
 
   const handleDashboardClick = (e?: MouseEvent) => {
@@ -84,9 +85,11 @@ export default function Navigation() {
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <>
-                <span className="text-sm font-medium text-muted-foreground">
-                  {user.name}
-                </span>
+                {!isHome && (
+                  <span className="text-sm font-medium text-muted-foreground">
+                    {user.name}
+                  </span>
+                )}
                 <Link
                   href="/dashboard"
                   className="rounded-md px-4 py-2 text-sm font-medium transition-colors text-black hover:bg-[hsl(45,100%,90%)] hover:text-[hsl(45,100%,35%)]"
@@ -165,9 +168,11 @@ export default function Navigation() {
             ))}
             {user ? (
               <>
-                <div className="py-2 text-sm font-medium text-muted-foreground border-t border-border pt-4">
-                  Signed in as {user.name}
-                </div>
+                {!isHome && (
+                  <div className="py-2 text-sm font-medium text-muted-foreground border-t border-border pt-4">
+                    Signed in as {user.name}
+                  </div>
+                )}
                 <Link
                   href="/dashboard"
                   onClick={() => setMobileOpen(false)}

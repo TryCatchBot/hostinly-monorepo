@@ -32,6 +32,7 @@ import {
   Users,
   UserPlus,
   UserX,
+  XCircle,
 } from "lucide-react";
 
 const columns = [
@@ -182,6 +183,9 @@ export default function CoHostsPage() {
     const fetchCoHosts = async () => {
       try {
         const response = await fetch(`${API_URL}/cohosts`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         if (data.success) {
           setCoHosts(data.data);
@@ -199,8 +203,35 @@ export default function CoHostsPage() {
     fetchCoHosts();
   }, []);
 
-  if (loading) return <div>Loading co-hosts...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) {
+    return (
+      <div className="flex h-[400px] w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="text-sm text-muted-foreground font-medium">Loading co-hosts...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-[400px] w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center">
+            <XCircle className="h-6 w-6 text-destructive" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="font-semibold text-lg">Failed to load co-hosts</h3>
+            <p className="text-sm text-muted-foreground max-w-[300px]">{error}</p>
+          </div>
+          <Button onClick={() => window.location.reload()} variant="outline">
+            Try again
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const totalCoHosts = coHosts.length;
   const activeCoHosts = coHosts.filter((c) => c.status === "active").length;

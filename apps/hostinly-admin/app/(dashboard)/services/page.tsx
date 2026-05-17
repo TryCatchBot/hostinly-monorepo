@@ -15,10 +15,10 @@ import {
   CheckCircle2,
   Clock,
   XCircle,
-  DollarSign,
   Users,
   Calendar,
   MoreHorizontal,
+  DollarSign,
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -89,6 +89,10 @@ export default function ServicesPage() {
           fetch(`${API_URL}/services/requests`),
         ])
 
+        if (!providersRes.ok || !requestsRes.ok) {
+          throw new Error("Failed to fetch service data");
+        }
+
         const providersData = await providersRes.json()
         const requestsData = await requestsRes.json()
 
@@ -98,8 +102,8 @@ export default function ServicesPage() {
         if (requestsData.success) setRequests(requestsData.data)
         else toast.error("Failed to fetch service requests")
       } catch (err: any) {
-        setError(err.message)
-        toast.error(err.message || "An unexpected error occurred")
+        setError(err.message);
+        toast.error(err.message || "An unexpected error occurred");
       } finally {
         setLoading(false);
       }
@@ -136,10 +140,37 @@ export default function ServicesPage() {
       ? providers.reduce((sum, p) => sum + p.rating, 0) / providers.length
       : 0
 
-  const categories = [...new Set(providers.map((p) => p.category))]
+  const categories = Array.from(new Set(providers.map((p) => p.category)))
 
-  if (loading) return <div>Loading services...</div>
-  if (error) return <div>Error: {error}</div>
+  if (loading) {
+    return (
+      <div className="flex h-[400px] w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="text-sm text-muted-foreground font-medium">Loading services...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-[400px] w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center">
+            <XCircle className="h-6 w-6 text-destructive" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="font-semibold text-lg">Failed to load services</h3>
+            <p className="text-sm text-muted-foreground max-w-[300px]">{error}</p>
+          </div>
+          <Button onClick={() => window.location.reload()} variant="outline">
+            Try again
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

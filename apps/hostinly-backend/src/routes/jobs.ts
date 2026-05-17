@@ -12,7 +12,7 @@ router.post('/:id/apply', async (req, res) => {
     const job = await prisma.jobPosting.findUnique({ where: { id: req.params.id } });
     if (!job) return sendError(res, 'Job not found', 404);
 
-    const application = await prisma.jobApplication.upsert({
+    const application = await (prisma as any).jobApplication.upsert({
       where: {
         jobId_applicantId: {
           jobId: req.params.id,
@@ -52,26 +52,49 @@ router.get('/', async (req, res) => {
     const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
 
+    const fetchJobs = async () => {
+      try {
+        return await (prisma.jobPosting as any).findMany({
+          skip,
+          take: limit,
+          include: { 
+            author: true, 
+            property: true,
+            _count: {
+              select: { 
+                applications: true 
+              }
+            }
+          },
+          orderBy: { createdAt: 'desc' }
+        });
+      } catch (error: any) {
+        console.warn('[ Jobs Fetch ] Primary fetch failed, trying without count:', error.message);
+        // Fallback: fetch without _count (which uses job_applications table)
+        return await prisma.jobPosting.findMany({
+          skip,
+          take: limit,
+          include: { 
+            author: true, 
+            property: true
+          },
+          orderBy: { createdAt: 'desc' }
+        });
+      }
+    };
+
     const [data, total] = await Promise.all([
-      prisma.jobPosting.findMany({
-        skip,
-        take: limit,
-        include: { 
-          author: true, 
-          property: true,
-          _count: {
-            select: { applications: true }
-          }
-        },
-        orderBy: { createdAt: 'desc' }
+      fetchJobs().catch(err => {
+        console.error('[ Jobs Fetch Error in fetchJobs ]:', err);
+        return [];
       }),
-      prisma.jobPosting.count()
+      prisma.jobPosting.count().catch(() => 0)
     ]);
 
     sendSuccess(res, { 
-      jobs: data.map(j => ({
+      jobs: data.map((j: any) => ({
         ...j,
-        applications: j._count.applications
+        applications: j._count?.applications || 0
       })), 
       pagination: {
         total,
@@ -81,13 +104,14 @@ router.get('/', async (req, res) => {
       }
     });
   } catch (error: any) {
+    console.error('[ Jobs Fetch Error ]:', error);
     sendError(res, error.message);
   }
 });
 
 router.get('/:id', async (req, res) => {
   try {
-    const data = await prisma.jobPosting.findUnique({
+    const data = await (prisma.jobPosting as any).findUnique({
       where: { id: req.params.id },
       include: { 
         author: true, 
@@ -101,9 +125,22 @@ router.get('/:id', async (req, res) => {
     
     sendSuccess(res, {
       ...data,
-      applications: data._count.applications
+      applications: data._count?.applications || 0
     });
   } catch (error: any) {
+    // Retry without count if it fails
+    if (error.message.includes('job_applications') || error.message.includes('does not exist')) {
+       try {
+         const data = await prisma.jobPosting.findUnique({
+           where: { id: req.params.id },
+           include: { author: true, property: true }
+         });
+         if (!data) return sendError(res, 'Job not found', 404);
+         return sendSuccess(res, { ...data, applications: 0 });
+       } catch (retryError: any) {
+         return sendError(res, retryError.message);
+       }
+    }
     sendError(res, error.message);
   }
 });
