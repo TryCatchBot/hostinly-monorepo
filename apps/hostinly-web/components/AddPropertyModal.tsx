@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { X, Upload, Trash2, Star, Loader2 } from 'lucide-react';
 import type { Property } from '@/lib/provideData';
 import { useAuth } from '@/context/AuthContext';
-import { uploadToCloudinary } from '@/lib/upload';
 
 interface AddPropertyModalProps {
   isOpen: boolean;
@@ -149,9 +148,16 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
 
     try {
       const uploadPromises = files.map(async (file) => {
-        const url = await uploadToCloudinary(file);
-        if (!url) throw new Error('Failed to get URL from Cloudinary');
-        return url;
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await fetch(`${API_URL}/uploads/upload`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        });
+        const result = await res.json();
+        if (!result.success) throw new Error(result.error);
+        return result.data.url;
       });
 
       const urls = await Promise.all(uploadPromises);
