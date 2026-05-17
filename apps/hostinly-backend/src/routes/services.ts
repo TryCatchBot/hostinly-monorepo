@@ -26,7 +26,7 @@ router.get('/providers', async (req, res) => {
       },
     });
 
-    const mappedProviders = providers.map(p => ({
+    const mappedProviders = providers.map((p: any) => ({
       id: p.id,
       name: p.name,
       email: p.email,
@@ -64,7 +64,7 @@ router.get('/requests', async (req, res) => {
       }
     });
 
-    const mappedRequests = requests.map(r => ({
+    const mappedRequests = requests.map((r: any) => ({
       id: r.id,
       serviceName: r.title,
       propertyTitle: r.property?.title || 'N/A',

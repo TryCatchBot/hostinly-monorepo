@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
       },
     });
 
-    const propertiesWithDetails = properties.map((property) => {
+    const propertiesWithDetails = properties.map((property: any) => {
       const totalRating = property.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0);
       const averageRating = property.reviews.length > 0 ? totalRating / property.reviews.length : null;
 

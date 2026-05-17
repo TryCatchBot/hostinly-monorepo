@@ -5244,6 +5244,8 @@ export namespace Prisma {
     hostId: string | null
     staffId: string | null
     status: $Enums.EngagementStatus | null
+    startDate: Date | null
+    endDate: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5253,6 +5255,8 @@ export namespace Prisma {
     hostId: string | null
     staffId: string | null
     status: $Enums.EngagementStatus | null
+    startDate: Date | null
+    endDate: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5262,6 +5266,8 @@ export namespace Prisma {
     hostId: number
     staffId: number
     status: number
+    startDate: number
+    endDate: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -5273,6 +5279,8 @@ export namespace Prisma {
     hostId?: true
     staffId?: true
     status?: true
+    startDate?: true
+    endDate?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5282,6 +5290,8 @@ export namespace Prisma {
     hostId?: true
     staffId?: true
     status?: true
+    startDate?: true
+    endDate?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5291,6 +5301,8 @@ export namespace Prisma {
     hostId?: true
     staffId?: true
     status?: true
+    startDate?: true
+    endDate?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -5373,6 +5385,8 @@ export namespace Prisma {
     hostId: string
     staffId: string
     status: $Enums.EngagementStatus
+    startDate: Date
+    endDate: Date | null
     createdAt: Date
     updatedAt: Date
     _count: EngagementCountAggregateOutputType | null
@@ -5399,6 +5413,8 @@ export namespace Prisma {
     hostId?: boolean
     staffId?: boolean
     status?: boolean
+    startDate?: boolean
+    endDate?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     host?: boolean | UserDefaultArgs<ExtArgs>
@@ -5410,6 +5426,8 @@ export namespace Prisma {
     hostId?: boolean
     staffId?: boolean
     status?: boolean
+    startDate?: boolean
+    endDate?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     host?: boolean | UserDefaultArgs<ExtArgs>
@@ -5421,6 +5439,8 @@ export namespace Prisma {
     hostId?: boolean
     staffId?: boolean
     status?: boolean
+    startDate?: boolean
+    endDate?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     host?: boolean | UserDefaultArgs<ExtArgs>
@@ -5432,11 +5452,13 @@ export namespace Prisma {
     hostId?: boolean
     staffId?: boolean
     status?: boolean
+    startDate?: boolean
+    endDate?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type EngagementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "hostId" | "staffId" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["engagement"]>
+  export type EngagementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "hostId" | "staffId" | "status" | "startDate" | "endDate" | "createdAt" | "updatedAt", ExtArgs["result"]["engagement"]>
   export type EngagementInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     host?: boolean | UserDefaultArgs<ExtArgs>
     staff?: boolean | UserDefaultArgs<ExtArgs>
@@ -5461,6 +5483,8 @@ export namespace Prisma {
       hostId: string
       staffId: string
       status: $Enums.EngagementStatus
+      startDate: Date
+      endDate: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["engagement"]>
@@ -5892,6 +5916,8 @@ export namespace Prisma {
     readonly hostId: FieldRef<"Engagement", 'String'>
     readonly staffId: FieldRef<"Engagement", 'String'>
     readonly status: FieldRef<"Engagement", 'EngagementStatus'>
+    readonly startDate: FieldRef<"Engagement", 'DateTime'>
+    readonly endDate: FieldRef<"Engagement", 'DateTime'>
     readonly createdAt: FieldRef<"Engagement", 'DateTime'>
     readonly updatedAt: FieldRef<"Engagement", 'DateTime'>
   }
@@ -16798,6 +16824,8 @@ export namespace Prisma {
     hostId: 'hostId',
     staffId: 'staffId',
     status: 'status',
+    startDate: 'startDate',
+    endDate: 'endDate',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -17593,6 +17621,8 @@ export namespace Prisma {
     hostId?: UuidFilter<"Engagement"> | string
     staffId?: UuidFilter<"Engagement"> | string
     status?: EnumEngagementStatusFilter<"Engagement"> | $Enums.EngagementStatus
+    startDate?: DateTimeFilter<"Engagement"> | Date | string
+    endDate?: DateTimeNullableFilter<"Engagement"> | Date | string | null
     createdAt?: DateTimeFilter<"Engagement"> | Date | string
     updatedAt?: DateTimeFilter<"Engagement"> | Date | string
     host?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -17604,6 +17634,8 @@ export namespace Prisma {
     hostId?: SortOrder
     staffId?: SortOrder
     status?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     host?: UserOrderByWithRelationInput
@@ -17618,6 +17650,8 @@ export namespace Prisma {
     hostId?: UuidFilter<"Engagement"> | string
     staffId?: UuidFilter<"Engagement"> | string
     status?: EnumEngagementStatusFilter<"Engagement"> | $Enums.EngagementStatus
+    startDate?: DateTimeFilter<"Engagement"> | Date | string
+    endDate?: DateTimeNullableFilter<"Engagement"> | Date | string | null
     createdAt?: DateTimeFilter<"Engagement"> | Date | string
     updatedAt?: DateTimeFilter<"Engagement"> | Date | string
     host?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -17629,6 +17663,8 @@ export namespace Prisma {
     hostId?: SortOrder
     staffId?: SortOrder
     status?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: EngagementCountOrderByAggregateInput
@@ -17644,6 +17680,8 @@ export namespace Prisma {
     hostId?: UuidWithAggregatesFilter<"Engagement"> | string
     staffId?: UuidWithAggregatesFilter<"Engagement"> | string
     status?: EnumEngagementStatusWithAggregatesFilter<"Engagement"> | $Enums.EngagementStatus
+    startDate?: DateTimeWithAggregatesFilter<"Engagement"> | Date | string
+    endDate?: DateTimeNullableWithAggregatesFilter<"Engagement"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Engagement"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Engagement"> | Date | string
   }
@@ -18821,6 +18859,8 @@ export namespace Prisma {
   export type EngagementCreateInput = {
     id?: string
     status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     host: UserCreateNestedOneWithoutEngagementsAsHostInput
@@ -18832,6 +18872,8 @@ export namespace Prisma {
     hostId: string
     staffId: string
     status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18839,6 +18881,8 @@ export namespace Prisma {
   export type EngagementUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     host?: UserUpdateOneRequiredWithoutEngagementsAsHostNestedInput
@@ -18850,6 +18894,8 @@ export namespace Prisma {
     hostId?: StringFieldUpdateOperationsInput | string
     staffId?: StringFieldUpdateOperationsInput | string
     status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18859,6 +18905,8 @@ export namespace Prisma {
     hostId: string
     staffId: string
     status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18866,6 +18914,8 @@ export namespace Prisma {
   export type EngagementUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18875,6 +18925,8 @@ export namespace Prisma {
     hostId?: StringFieldUpdateOperationsInput | string
     staffId?: StringFieldUpdateOperationsInput | string
     status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -20248,6 +20300,8 @@ export namespace Prisma {
     hostId?: SortOrder
     staffId?: SortOrder
     status?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -20257,6 +20311,8 @@ export namespace Prisma {
     hostId?: SortOrder
     staffId?: SortOrder
     status?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -20266,6 +20322,8 @@ export namespace Prisma {
     hostId?: SortOrder
     staffId?: SortOrder
     status?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -22930,6 +22988,8 @@ export namespace Prisma {
   export type EngagementCreateWithoutHostInput = {
     id?: string
     status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     staff: UserCreateNestedOneWithoutEngagementsAsStaffInput
@@ -22939,6 +22999,8 @@ export namespace Prisma {
     id?: string
     staffId: string
     status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -22956,6 +23018,8 @@ export namespace Prisma {
   export type EngagementCreateWithoutStaffInput = {
     id?: string
     status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     host: UserCreateNestedOneWithoutEngagementsAsHostInput
@@ -22965,6 +23029,8 @@ export namespace Prisma {
     id?: string
     hostId: string
     status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -23270,6 +23336,8 @@ export namespace Prisma {
     hostId?: UuidFilter<"Engagement"> | string
     staffId?: UuidFilter<"Engagement"> | string
     status?: EnumEngagementStatusFilter<"Engagement"> | $Enums.EngagementStatus
+    startDate?: DateTimeFilter<"Engagement"> | Date | string
+    endDate?: DateTimeNullableFilter<"Engagement"> | Date | string | null
     createdAt?: DateTimeFilter<"Engagement"> | Date | string
     updatedAt?: DateTimeFilter<"Engagement"> | Date | string
   }
@@ -26623,6 +26691,8 @@ export namespace Prisma {
     id?: string
     staffId: string
     status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -26631,6 +26701,8 @@ export namespace Prisma {
     id?: string
     hostId: string
     status?: $Enums.EngagementStatus
+    startDate?: Date | string
+    endDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -26925,6 +26997,8 @@ export namespace Prisma {
   export type EngagementUpdateWithoutHostInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     staff?: UserUpdateOneRequiredWithoutEngagementsAsStaffNestedInput
@@ -26934,6 +27008,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     staffId?: StringFieldUpdateOperationsInput | string
     status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -26942,6 +27018,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     staffId?: StringFieldUpdateOperationsInput | string
     status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -26949,6 +27027,8 @@ export namespace Prisma {
   export type EngagementUpdateWithoutStaffInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     host?: UserUpdateOneRequiredWithoutEngagementsAsHostNestedInput
@@ -26958,6 +27038,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     hostId?: StringFieldUpdateOperationsInput | string
     status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -26966,6 +27048,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     hostId?: StringFieldUpdateOperationsInput | string
     status?: EnumEngagementStatusFieldUpdateOperationsInput | $Enums.EngagementStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

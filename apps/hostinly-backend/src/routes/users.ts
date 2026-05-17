@@ -60,7 +60,7 @@ router.get('/', async (req, res) => {
     });
 
     const usersWithAggregates = await Promise.all(
-      users.map(async (user) => {
+      users.map(async (user: any) => {
         const totalRevenueResult = await prisma.payment.aggregate({
           _sum: {
             amount: true,

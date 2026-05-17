@@ -26,7 +26,7 @@ router.get('/', async (req, res) => {
       }
     });
 
-    const mappedData = data.map(cohost => ({
+    const mappedData = data.map((cohost: any) => ({
       id: cohost.id,
       userId: cohost.userId,
       name: cohost.user.name,

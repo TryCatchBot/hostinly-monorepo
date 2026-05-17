@@ -109,7 +109,7 @@ router.post('/rate', async (req, res) => {
     const cohost = await prisma.coHost.findUnique({ where: { userId: revieweeId } });
     if (cohost) {
       const allReviews = await prisma.review.findMany({ where: { revieweeId } });
-      const avgRating = allReviews.reduce((acc, curr) => acc + curr.rating, 0) / allReviews.length;
+      const avgRating = allReviews.reduce((acc: any, curr: any) => acc + curr.rating, 0) / allReviews.length;
       
       await prisma.coHost.update({
         where: { id: cohost.id },
