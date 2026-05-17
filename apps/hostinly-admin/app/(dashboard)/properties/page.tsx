@@ -47,6 +47,12 @@ import {
 } from "lucide-react";
 import { ExternalLink } from "lucide-react";
 
+
+
+console.log(API_URL)
+
+
+
 const columns = [
   {
     key: "title",
