@@ -36,7 +36,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     },
     { icon: MessageSquare, label: 'Interviews', href: '/dashboard/interviews' },
     { icon: Briefcase, label: 'Jobs', href: '/dashboard/jobs' },
-    { icon: CreditCard, label: 'Billing', href: '/dashboard/billing' },
+    // { icon: CreditCard, label: 'Billing', href: '/dashboard/billing' },
   ].filter(item => !item.hidden);
 
   const isActive = (href: string) => pathname === href || (href !== '/dashboard' && pathname?.startsWith(href));

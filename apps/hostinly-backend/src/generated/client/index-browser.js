@@ -240,6 +240,15 @@ exports.Prisma.JobPostingScalarFieldEnum = {
   skills: 'skills'
 };
 
+exports.Prisma.JobApplicationScalarFieldEnum = {
+  id: 'id',
+  jobId: 'jobId',
+  applicantId: 'applicantId',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ReviewScalarFieldEnum = {
   id: 'id',
   rating: 'rating',
@@ -407,6 +416,7 @@ exports.Prisma.ModelName = {
   Property: 'Property',
   CoHost: 'CoHost',
   JobPosting: 'JobPosting',
+  JobApplication: 'JobApplication',
   Review: 'Review',
   Booking: 'Booking',
   ContactMessage: 'ContactMessage',

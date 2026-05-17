@@ -47,6 +47,10 @@ export default function DashboardPage() {
           fetch(`${API_URL}/admin/chart-data`),
         ]);
 
+        if (!statsRes.ok || !bookingsRes.ok || !usersRes.ok || !chartRes.ok) {
+          throw new Error("One or more dashboard requests failed");
+        }
+
         const statsData = await statsRes.json();
         const bookingsData = await bookingsRes.json();
         const usersData = await usersRes.json();

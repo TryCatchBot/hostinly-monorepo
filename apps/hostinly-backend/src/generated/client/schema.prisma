@@ -5,8 +5,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum UserType {
@@ -141,14 +142,15 @@ model User {
   properties            Property[]
   cohostProfile         CoHost?
   jobs                  JobPosting[]
-  reviewsWritten        Review[]     @relation("Reviewer")
-  reviewsReceived       Review[]     @relation("Reviewee")
+  applications          JobApplication[]
+  reviewsWritten        Review[]         @relation("Reviewer")
+  reviewsReceived       Review[]         @relation("Reviewee")
   bookings              Booking[]
   payments              Payment[]
-  interviewsAsHost      Interview[]  @relation("HostInterviews")
-  interviewsAsCandidate Interview[]  @relation("CandidateInterviews")
-  engagementsAsHost     Engagement[] @relation("HostEngagements")
-  engagementsAsStaff    Engagement[] @relation("StaffEngagements")
+  interviewsAsHost      Interview[]      @relation("HostInterviews")
+  interviewsAsCandidate Interview[]      @relation("CandidateInterviews")
+  engagementsAsHost     Engagement[]     @relation("HostEngagements")
+  engagementsAsStaff    Engagement[]     @relation("StaffEngagements")
 
   @@map("users")
 }
@@ -248,10 +250,26 @@ model JobPosting {
   requirements String?
   skills       String[]
 
-  author   User      @relation(fields: [authorId], references: [id])
-  property Property? @relation(fields: [propertyId], references: [id])
+  author       User             @relation(fields: [authorId], references: [id])
+  property     Property?        @relation(fields: [propertyId], references: [id])
+  applications JobApplication[]
 
   @@map("job_postings")
+}
+
+model JobApplication {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  jobId       String   @map("job_id") @db.Uuid
+  applicantId String   @map("applicant_id") @db.Uuid
+  status      String   @default("PENDING")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  job       JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  applicant User       @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, applicantId])
+  @@map("job_applications")
 }
 
 model Review {

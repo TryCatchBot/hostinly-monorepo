@@ -11,6 +11,30 @@
           "command": "prisma studio --schema apps/hostinly-backend/prisma/schema.prisma"
         }
       },
+      "prisma-migrate": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "prisma migrate dev --schema apps/hostinly-backend/prisma/schema.prisma"
+        }
+      },
+      "prisma-generate": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "prisma generate --schema apps/hostinly-backend/prisma/schema.prisma"
+        }
+      },
+      "prisma-reset": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "prisma migrate reset --force --schema apps/hostinly-backend/prisma/schema.prisma"
+        }
+      },
+      "prisma-seed": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "npx ts-node apps/hostinly-backend/src/db/seed.ts"
+        }
+      },
       "build": {
         "executor": "@nx/esbuild:esbuild",
         "outputs": [
