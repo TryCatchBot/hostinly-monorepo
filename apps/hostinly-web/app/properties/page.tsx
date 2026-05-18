@@ -12,22 +12,75 @@ import {
   PoundSterling,
   Search,
   ArrowLeft,
+  Loader2,
 } from "lucide-react";
-import { properties, type Property } from "@/lib/properties";
+import { type Property } from "@/lib/properties";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 
 const ITEMS_PER_PAGE = 6;
 
 export default function PropertiesPage() {
+  const [allProperties, setAllProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [bedroomsFilter, setBedroomsFilter] = useState<string>("");
   const [locationFilter, setLocationFilter] = useState<string>("");
   const [loadedCount, setLoadedCount] = useState(ITEMS_PER_PAGE);
   const [loadMoreRef, setLoadMoreRef] = useState<HTMLDivElement | null>(null);
 
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/properties`);
+        const result = await response.json();
+        
+        if (result.success) {
+          const mappedProperties: Property[] = result.data.map((p: any) => {
+            const cleanedImages = (p.images || []).map((img: string) => img.trim().replace(/^`|`$/g, ""));
+            return {
+              id: p.id,
+              title: p.title,
+              location: `${p.location.address}, ${p.location.city}`,
+              city: p.location.city,
+              state: p.location.country, // Using country as state for now as backend doesn't provide state
+              bedrooms: p.bedrooms,
+              bathrooms: p.bathrooms,
+              maxGuests: p.guests,
+              expectedRevenue: `$${p.pricing.nightlyRate}/night`,
+              status: p.status,
+              image: cleanedImages[0] || "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop",
+              images: cleanedImages,
+              description: p.description,
+              amenities: p.amenities || [],
+              houseRules: [],
+              coHost: {
+                name: p.ownerName,
+                email: "",
+                phone: "",
+                bio: `Owner: ${p.ownerName}`,
+              }
+            };
+          });
+          setAllProperties(mappedProperties);
+        } else {
+          setError(result.message || "Failed to fetch properties");
+        }
+      } catch (err) {
+        setError("An error occurred while fetching properties");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, []);
+
   const filteredProperties = useMemo(() => {
-    return properties.filter((p) => {
+    return allProperties.filter((p) => {
       const matchesSearch =
         !searchQuery ||
         p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -39,7 +92,7 @@ export default function PropertiesPage() {
         !locationFilter || p.state === locationFilter;
       return matchesSearch && matchesBedrooms && matchesLocation;
     });
-  }, [searchQuery, bedroomsFilter, locationFilter]);
+  }, [allProperties, searchQuery, bedroomsFilter, locationFilter]);
 
   const displayedProperties = useMemo(
     () => filteredProperties.slice(0, loadedCount),
@@ -66,8 +119,8 @@ export default function PropertiesPage() {
   }, [loadMoreRef, hasMore, loadMore]);
 
   const locations = useMemo(
-    () => Array.from(new Set(properties.map((p) => p.state))).sort(),
-    []
+    () => Array.from(new Set(allProperties.map((p) => p.state))).sort(),
+    [allProperties]
   );
 
   return (
@@ -148,7 +201,23 @@ export default function PropertiesPage() {
             properties
           </p>
 
-          {displayedProperties.length === 0 ? (
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <Loader2 className="h-10 w-10 animate-spin text-[hsl(195,60%,25%)] mb-4" />
+              <p className="text-[hsl(195,20%,45%)]">Loading properties...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-16 text-red-500">
+              <p className="text-lg">{error}</p>
+              <Button
+                variant="outline"
+                className="mt-4"
+                onClick={() => window.location.reload()}
+              >
+                Retry
+              </Button>
+            </div>
+          ) : displayedProperties.length === 0 ? (
             <div className="text-center py-16 text-[hsl(195,20%,45%)]">
               <p className="text-lg">No properties match your filters.</p>
               <Button

@@ -49,7 +49,7 @@ const features = [
 
 export default function ServicesSection() {
   return (
-    <section id="services" className="py-20 bg-[linear-gradient(180deg,hsl(0_0%_100%),hsl(180_15%_98%))]">
+    <section id="services" className="py-20 w-full bg-[linear-gradient(180deg,hsl(0_0%_100%),hsl(180_15%_98%))]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-[hsl(195,60%,25%)]">

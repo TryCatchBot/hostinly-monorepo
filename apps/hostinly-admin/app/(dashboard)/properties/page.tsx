@@ -119,7 +119,7 @@ const columns = [
     sortable: false,
     cell: (property: Property) => (
       <span className="font-medium">
-        {formatCurrency(property.price)}
+        {property.pricing?.currency} {property.pricing?.nightlyRate}
       </span>
     ),
   },
@@ -174,10 +174,12 @@ function PropertyActions({ property }: { property: Property }) {
             <Eye className="mr-2 h-4 w-4" />
             View Details
           </DropdownMenuItem>
+          {/* 
           <DropdownMenuItem className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
             <Edit className="mr-2 h-4 w-4" />
             Edit Property
           </DropdownMenuItem>
+          */}
           {property.status === "PENDING" && (
             <>
               <DropdownMenuSeparator className="my-1" />
@@ -192,10 +194,12 @@ function PropertyActions({ property }: { property: Property }) {
             </>
           )}
           <DropdownMenuSeparator className="my-1" />
+          {/* 
           <DropdownMenuItem className="rounded-md px-2 py-2 text-sm text-destructive focus:bg-destructive/10 focus:text-destructive transition-colors cursor-pointer font-medium">
             <Trash2 className="mr-2 h-4 w-4" />
             Delete Property
           </DropdownMenuItem>
+          */}
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -280,7 +284,7 @@ function PropertyActions({ property }: { property: Property }) {
             <div>
               <p className="text-sm text-muted-foreground">Price per night</p>
               <p className="text-2xl font-bold">
-                {formatCurrency(property.price)}
+                {property.pricing?.currency} {property.pricing?.nightlyRate}
               </p>
             </div>
 
@@ -312,10 +316,12 @@ function PropertyActions({ property }: { property: Property }) {
 
             {/* Actions */}
             <div className="flex gap-2 pt-4">
+              {/* 
               <Button className="flex-1">
                 <Edit className="mr-2 h-4 w-4" />
                 Edit Property
               </Button>
+              */}
               {property.status === "PENDING" && (
                 <Button variant="outline" className="flex-1 text-emerald-500">
                   <CheckCircle className="mr-2 h-4 w-4" />
@@ -378,7 +384,7 @@ function PropertyCard({ property }: { property: Property }) {
             </div>
             <div className="flex items-center justify-between pt-2 border-t">
               <span className="font-semibold">
-                {formatCurrency(property.price)}
+                {property.pricing?.currency} {property.pricing?.nightlyRate}
                 <span className="text-sm font-normal text-muted-foreground">
                   {" "}
                   / night
@@ -441,7 +447,7 @@ function PropertyCard({ property }: { property: Property }) {
             <div>
               <p className="text-sm text-muted-foreground">Price per night</p>
               <p className="text-2xl font-bold">
-                {formatCurrency(property.price)}
+                {property.pricing?.currency} {property.pricing?.nightlyRate}
               </p>
             </div>
             <div>
@@ -451,10 +457,12 @@ function PropertyCard({ property }: { property: Property }) {
               </p>
             </div>
             <div className="flex gap-2 pt-4">
+              {/* 
               <Button className="flex-1">
                 <Edit className="mr-2 h-4 w-4" />
                 Edit Property
               </Button>
+              */}
             </div>
           </div>
         </SheetContent>
@@ -489,6 +497,7 @@ const filters = [
 ];
 
 export default function PropertiesPage() {
+  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -543,8 +552,6 @@ export default function PropertiesPage() {
       </div>
     );
   }
-
-  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
 
   return (
     <div className="space-y-6">

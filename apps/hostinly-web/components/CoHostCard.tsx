@@ -23,7 +23,7 @@ export default function CoHostCard({ cohost, onContact }: CoHostCardProps) {
 
   return (
     <Link
-      href={`/dashboard/cohosts/${cohost.id}`}
+      href={`/co-host/${cohost.id}`}
       className="bg-background rounded-lg shadow-medium border border-border overflow-hidden hover:shadow-strong transition-shadow block group h-full flex flex-col"
     >
       {/* Header with Image or Initials */}

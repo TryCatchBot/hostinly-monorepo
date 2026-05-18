@@ -6,7 +6,9 @@ import HeroSection from "@/components/HeroSection";
 import ServicesSection from "@/components/ServicesSection";
 import PropertyListingSection from "@/components/PropertyListingSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
+import FaqSection from "@/components/FaqSection";
 import CoHostsSection from "@/components/CoHostsSection";
+import JobsSection from "@/components/JobsSection";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -25,14 +27,16 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden w-full max-w-[100vw]">
+    <div className="min-h-screen overflow-x-hidden w-full">
       <Navigation />
       <HeroSection />
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-full overflow-hidden">
+      <div className="w-full overflow-hidden">
         <ServicesSection />
         <PropertyListingSection />
         <CoHostsSection />
+        <JobsSection />
         <HowItWorksSection />
+        <FaqSection />
       </div>
       <Footer />
     </div>

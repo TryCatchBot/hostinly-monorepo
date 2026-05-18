@@ -7,7 +7,7 @@ export interface CoHost {
 }
 
 export interface Property {
-  id: number;
+  id: string | number;
   title: string;
   location: string;
   city: string;
@@ -23,6 +23,7 @@ export interface Property {
   amenities: string[];
   houseRules: string[];
   checkInInstructions?: string;
+  ownerId?: string;
   coHost: CoHost;
 }
 

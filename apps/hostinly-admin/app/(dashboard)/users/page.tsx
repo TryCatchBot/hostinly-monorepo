@@ -126,10 +126,12 @@ function UserActions({ user }: { user: User }) {
             <Eye className="mr-2 h-4 w-4" />
             View Details
           </DropdownMenuItem>
+          {/* 
           <DropdownMenuItem className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
             <Edit className="mr-2 h-4 w-4" />
             Edit User
           </DropdownMenuItem>
+          */}
           {user.verificationStatus !== "VERIFIED" && (
             <DropdownMenuItem className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
               <CheckCircle className="mr-2 h-4 w-4" />
@@ -138,20 +140,25 @@ function UserActions({ user }: { user: User }) {
           )}
           <DropdownMenuSeparator className="my-1" />
           {user.status === "ACTIVE" ? (
+            /* 
             <DropdownMenuItem className="rounded-md px-2 py-2 text-sm text-orange-500 focus:bg-orange-50 focus:text-orange-600 transition-colors cursor-pointer font-medium">
               <Ban className="mr-2 h-4 w-4" />
               Suspend User
             </DropdownMenuItem>
+            */
+            null
           ) : user.status === "SUSPENDED" ? (
             <DropdownMenuItem className="rounded-md px-2 py-2 text-sm text-emerald-500 focus:bg-emerald-50 focus:text-emerald-600 transition-colors cursor-pointer font-medium">
               <CheckCircle className="mr-2 h-4 w-4" />
               Restore User
             </DropdownMenuItem>
           ) : null}
+          {/* 
           <DropdownMenuItem className="rounded-md px-2 py-2 text-sm text-destructive focus:bg-destructive/10 focus:text-destructive transition-colors cursor-pointer font-medium">
             <Trash2 className="mr-2 h-4 w-4" />
             Delete User
           </DropdownMenuItem>
+          */}
         </DropdownMenuContent>
       </DropdownMenu>
 

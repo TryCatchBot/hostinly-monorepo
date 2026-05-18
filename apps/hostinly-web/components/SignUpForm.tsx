@@ -22,7 +22,7 @@ export function SignUpForm() {
     email_address: '',
     password: '',
     confirmPassword: '',
-    userType: (roleParam === 'cohost' || roleParam === 'cleaner' ? roleParam : 'host') as 'host' | 'cohost' | 'cleaner',
+    userType: (roleParam === 'cohost' ? roleParam : 'host') as 'host' | 'cohost',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -165,24 +165,6 @@ export function SignUpForm() {
                   </div>
                   <div className="text-xs sm:text-sm text-muted-foreground">
                     Apply to manage properties and earn.
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setAccount((p) => ({ ...p, userType: 'cleaner' }))
-                  }
-                  className={`rounded-xl border p-4 text-left transition-all ${
-                    account.userType === 'cleaner'
-                      ? 'border-primary bg-primary/5 ring-1 ring-primary'
-                      : 'border-border hover:bg-muted/40'
-                  }`}
-                >
-                  <div className="font-semibold text-foreground mb-1">
-                    Cleaner
-                  </div>
-                  <div className="text-xs sm:text-sm text-muted-foreground">
-                    Offer cleaning services to property owners.
                   </div>
                 </button>
               </div>
