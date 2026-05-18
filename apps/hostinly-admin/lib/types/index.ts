@@ -52,6 +52,10 @@ export interface Property {
   address: string;
   city: string;
   country: string;
+  pricing: {
+    nightlyRate: number;
+    currency: string;
+  };
   price: number;
   currency: string;
   images: string[];

@@ -35,7 +35,7 @@ const hostSteps = [
 
 export default function HowItWorksSection() {
   return (
-    <section id="how-it-works" className="py-20 bg-[#F8FBFD]">
+    <section id="how-it-works" className="py-20 w-full bg-[#F8FBFD]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-[#1A6653]">

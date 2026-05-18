@@ -41,8 +41,8 @@ const mainNavItems: NavItem[] = [
   { title: "Properties", href: "/properties", icon: Home, permissionKey: "properties" },
   { title: "Co-hosts", href: "/co-hosts", icon: UserCheck, permissionKey: "coHosts" },
   // { title: "Bookings", href: "/bookings", icon: Calendar, permissionKey: "bookings" },
-  { title: "Payments", href: "/payments", icon: CreditCard, permissionKey: "payments" },
-  { title: "Services", href: "/services", icon: Wrench, permissionKey: "services" },
+  // { title: "Payments", href: "/payments", icon: CreditCard, permissionKey: "payments" },
+  // { title: "Services", href: "/services", icon: Wrench, permissionKey: "services" },
 ];
 
 const secondaryNavItems: NavItem[] = [

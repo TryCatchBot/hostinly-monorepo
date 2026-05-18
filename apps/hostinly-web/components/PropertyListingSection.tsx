@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Bed, Bath, PoundSterling, Loader2 } from "lucide-react";
 import Image from "next/image";
-import { properties as fallbackProperties } from "@/lib/properties";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
@@ -15,10 +14,12 @@ export default function PropertyListingSection() {
   const { user } = useAuth();
   const [properties, setProperties] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProperties = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/properties`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -36,11 +37,11 @@ export default function PropertyListingSection() {
             status: (p.status || 'available').toLowerCase()
           })));
         } else {
-          setProperties(fallbackProperties.slice(0, 3));
+          setError(result.message || "Failed to fetch properties");
         }
       } catch (err) {
         console.error('Failed to fetch properties:', err);
-        setProperties(fallbackProperties.slice(0, 3));
+        setError("An error occurred while fetching properties");
       } finally {
         setIsLoading(false);
       }
@@ -49,7 +50,7 @@ export default function PropertyListingSection() {
   }, []);
 
   return (
-    <section id="properties" className="py-20 bg-[hsl(0,0%,100%)]">
+    <section id="properties" className="py-20 w-full bg-[hsl(0,0%,100%)]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-[hsl(195,60%,25%)]">
@@ -65,74 +66,85 @@ export default function PropertyListingSection() {
           <div className="flex justify-center py-20">
             <Loader2 className="w-12 h-12 text-primary animate-spin" />
           </div>
+        ) : error ? (
+          <div className="text-center py-20 text-red-500">
+            <p>{error}</p>
+          </div>
+        ) : properties.length === 0 ? (
+          <div className="text-center py-20 text-[hsl(195,20%,45%)]">
+            <p>No properties available at the moment.</p>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12">
-            {properties.map((property) => (
-              <Card
-                key={property.id}
-                className="overflow-hidden bg-white border border-gray-100 shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-[1.02] cursor-pointer rounded-2xl"
-                onClick={() => router.push(`/properties/${property.id}`)}
-              >
-                  <div className="relative h-48 sm:h-56 overflow-hidden">
-                    <Image
-                      src={property.image}
-                      alt={property.title}
-                      fill
-                      className="object-cover transition-transform duration-500 hover:scale-110"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    />
-                    <div className="absolute top-3 right-3 bg-primary/90 backdrop-blur-sm text-white px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">
-                      {property.status}
-                    </div>
-                  </div>
-                  <CardContent className="p-5 sm:p-6">
-                    <h3 className="text-lg font-bold mb-2 text-[hsl(195,60%,25%)] line-clamp-1">
-                      {property.title}
-                    </h3>
-
-                    <div className="flex items-center text-muted-foreground mb-4">
-                      <MapPin className="h-4 w-4 mr-1.5 text-primary" />
-                      <span className="text-sm truncate">{property.location}</span>
-                    </div>
-
-                    <div className="flex items-center gap-4 mb-6 text-sm text-muted-foreground bg-muted/10 p-2.5 rounded-xl">
-                      <div className="flex items-center">
-                        <Bed className="h-4 w-4 mr-1.5 text-primary" />
-                        <span className="font-medium text-primary">{property.bedrooms} beds</span>
-                      </div>
-                      <div className="flex items-center border-l border-border pl-4">
-                        <Bath className="h-4 w-4 mr-1.5 text-primary" />
-                        <span className="font-medium text-primary">{property.bathrooms} baths</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between gap-4 pt-2 border-t border-border/50">
-                      <div className="flex flex-col">
-                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Exp. Revenue</span>
-                        <div className="flex items-center font-bold text-lg text-primary">
-                          <PoundSterling className="h-4 w-4 shrink-0" />
-                          <span>{property.expectedRevenue.replace('$', '£')}</span>
+          <div className="relative mb-12">
+            <div className={`flex ${properties.length > 3 ? "animate-scroll" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"}`}>
+              {(properties.length > 3 ? [...properties, ...properties] : properties).map((property, idx) => (
+                <div key={`${property.id}-${idx}`} className={properties.length > 3 ? "w-[350px] flex-shrink-0 px-4" : ""}>
+                  <Card
+                    className="overflow-hidden bg-white border border-gray-100 shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-[1.02] cursor-pointer rounded-2xl h-full"
+                    onClick={() => router.push(`/properties/${property.id}`)}
+                  >
+                      <div className="relative h-48 sm:h-56 overflow-hidden">
+                        <Image
+                          src={property.image}
+                          alt={property.title}
+                          fill
+                          className="object-cover transition-transform duration-500 hover:scale-110"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        />
+                        <div className="absolute top-3 right-3 bg-primary/90 backdrop-blur-sm text-white px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">
+                          {property.status}
                         </div>
                       </div>
-                      <button
-                        type="button"
-                        className="bg-gradient-primary text-white hover:opacity-90 shadow-md hover:shadow-lg transition-all border-0 inline-flex items-center justify-center rounded-xl text-sm font-bold h-10 px-5"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          if (user) {
-                            router.push(`/properties/${property.id}`);
-                          } else {
-                            router.push(`/auth/signup?role=cohost`);
-                          }
-                        }}
-                      >
-                        Apply Now
-                      </button>
-                    </div>
-                  </CardContent>
-              </Card>
-            ))}
+                      <CardContent className="p-5 sm:p-6">
+                        <h3 className="text-lg font-bold mb-2 text-[hsl(195,60%,25%)] line-clamp-1">
+                          {property.title}
+                        </h3>
+
+                        <div className="flex items-center text-muted-foreground mb-4">
+                          <MapPin className="h-4 w-4 mr-1.5 text-primary" />
+                          <span className="text-sm truncate">{property.location}</span>
+                        </div>
+
+                        <div className="flex items-center gap-4 mb-6 text-sm text-muted-foreground bg-muted/10 p-2.5 rounded-xl">
+                          <div className="flex items-center">
+                            <Bed className="h-4 w-4 mr-1.5 text-primary" />
+                            <span className="font-medium text-primary">{property.bedrooms} beds</span>
+                          </div>
+                          <div className="flex items-center border-l border-border pl-4">
+                            <Bath className="h-4 w-4 mr-1.5 text-primary" />
+                            <span className="font-medium text-primary">{property.bathrooms} baths</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between gap-4 pt-2 border-t border-border/50">
+                          <div className="flex flex-col">
+                            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Exp. Revenue</span>
+                            <div className="flex items-center font-bold text-lg text-primary">
+                              <PoundSterling className="h-4 w-4 shrink-0" />
+                              <span>{property.expectedRevenue.replace('$', '£')}</span>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            className="bg-gradient-primary text-white hover:opacity-90 shadow-md hover:shadow-lg transition-all border-0 inline-flex items-center justify-center rounded-xl text-sm font-bold h-10 px-5"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              if (user) {
+                                router.push(`/properties/${property.id}`);
+                              } else {
+                                router.push(`/auth/signup?role=cohost`);
+                              }
+                            }}
+                          >
+                            Apply Now
+                          </button>
+                        </div>
+                      </CardContent>
+                  </Card>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
