@@ -6,45 +6,49 @@ const router: Router = Router();
 
 router.get('/', async (req, res) => {
   try {
-    const data = await prisma.coHost.findMany({
-      include: { 
-        user: {
-          select: {
-            name: true,
-            email: true,
-            phone: true,
-            avatar: true,
-            status: true,
-            createdAt: true,
-            lastActive: true,
-          }
-        },
-        _count: {
-          select: {
-            properties: true,
+    // Fetch all users with userType COHOST
+    const users = await prisma.user.findMany({
+      where: {
+        userType: 'COHOST'
+      },
+      include: {
+        cohostProfile: {
+          include: {
+            _count: {
+              select: {
+                properties: true,
+              }
+            }
           }
         }
       }
     });
 
-    const mappedData = data.map((cohost: any) => ({
-      id: cohost.id,
-      userId: cohost.userId,
-      name: cohost.user.name,
-      avatar: cohost.user.avatar,
-      email: cohost.user.email,
-      phone: cohost.user.phone,
-      status: cohost.user.status.toLowerCase(), // Map UserStatus to CoHostStatus
-      rating: cohost.rating,
-      totalReviews: cohost.totalReviews,
-      specialties: cohost.specialties,
-      responseTime: 0, // Placeholder
-      completedBookings: 0, // Placeholder
-      activeProperties: cohost._count.properties,
-      commissionRate: cohost.hourlyRate || 0,
-      joinedAt: cohost.user.createdAt,
-      lastActive: cohost.user.lastActive,
-    }));
+    const mappedData = users.map((user: any) => {
+      const cohostProfile = user.cohostProfile || {};
+      const propertiesCount = cohostProfile._count?.properties || 0;
+
+      return {
+        id: cohostProfile.id || user.id, // Fallback to user ID if no profile yet
+        userId: user.id,
+        name: user.name,
+        avatar: user.avatar,
+        email: user.email,
+        phone: user.phone,
+        status: user.status.toLowerCase(),
+        rating: cohostProfile.rating || 5.0,
+        totalReviews: cohostProfile.totalReviews || 0,
+        specialties: cohostProfile.specialties || (user.servicesOffered ? JSON.parse(user.servicesOffered) : []),
+        responseTime: 0,
+        completedBookings: 0,
+        activeProperties: propertiesCount,
+        commissionRate: cohostProfile.hourlyRate || user.yearsOfExperience || 0,
+        joinedAt: user.createdAt,
+        lastActive: user.lastActive,
+        bio: cohostProfile.bio || "",
+        location: cohostProfile.location || user.city || ""
+      };
+    });
 
     sendSuccess(res, mappedData);
   } catch (error: any) {
@@ -54,10 +58,31 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const data = await prisma.coHost.findUnique({
+    // Try finding by CoHost ID first
+    let data = await prisma.coHost.findUnique({
       where: { id: req.params.id },
       include: { user: true, properties: true }
     });
+
+    // If not found, try finding by User ID where userType is COHOST
+    if (!data) {
+      const user = await prisma.user.findFirst({
+        where: { 
+          id: req.params.id,
+          userType: 'COHOST'
+        },
+        include: { cohostProfile: true, properties: true }
+      });
+
+      if (user) {
+        data = {
+          ...user.cohostProfile,
+          user,
+          properties: user.properties
+        } as any;
+      }
+    }
+
     if (!data) return sendError(res, 'Co-host not found', 404);
     sendSuccess(res, data);
   } catch (error: any) {
