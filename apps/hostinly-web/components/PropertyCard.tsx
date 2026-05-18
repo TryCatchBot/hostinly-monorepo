@@ -123,15 +123,15 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
         {/* Details Grid */}
         <div className="grid grid-cols-3 gap-2 mb-3 text-sm">
-          <div className="flex items-center gap-1 text-foreground">
-            <Bed size={16} />
+          <div className="flex items-center gap-1 text-black font-bold">
+            <Bed size={16} className="text-black" />
             <span>{property.bedrooms} bed{property.bedrooms !== 1 ? 's' : ''}</span>
           </div>
-          <div className="flex items-center gap-1 text-foreground">
-            <Bath size={16} />
+          <div className="flex items-center gap-1 text-black font-bold">
+            <Bath size={16} className="text-primary" />
             <span>{property.bathrooms} bath</span>
           </div>
-          <div className="text-right font-bold text-secondary">
+          <div className="text-right font-black text-secondary">
             £{property.price}/mo
           </div>
         </div>

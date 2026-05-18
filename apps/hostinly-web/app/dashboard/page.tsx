@@ -260,19 +260,19 @@ export default function DashboardPage() {
       )}
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-8">
         {dashboardStats
           .filter(stat => isHost || !['Total Properties', 'Revenue', 'Active Jobs'].includes(stat.label))
           .map((stat, idx) => {
             const Icon = stat.icon;
             return (
-              <div key={idx} className="bg-background rounded-2xl shadow-soft border border-border p-4 sm:p-6 hover:shadow-medium transition-all hover:scale-[1.02]">
+              <div key={idx} className="bg-background rounded-2xl shadow-soft border border-border p-4 sm:p-5 lg:p-6 hover:shadow-medium transition-all hover:translate-y-[-2px] group">
                 <div className="flex items-start justify-between mb-3 sm:mb-4">
-                  <div>
-                    <p className="text-[10px] font-bold text-muted-foreground mb-1 uppercase tracking-widest">{stat.label}</p>
-                    <p className="text-xl sm:text-2xl font-black text-foreground">{stat.value}</p>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-black text-muted-foreground mb-1 uppercase tracking-widest opacity-70 truncate">{stat.label}</p>
+                    <p className="text-xl sm:text-2xl font-black text-foreground truncate">{stat.value}</p>
                   </div>
-                  <div className={`${stat.color} bg-current/10 p-2 sm:p-2.5 rounded-xl`}>
+                  <div className={`${stat.color} bg-current/10 p-2 sm:p-3 rounded-xl group-hover:scale-110 transition-transform`}>
                     <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
                 </div>
@@ -286,30 +286,30 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-8">
         {/* Revenue Overview Section */}
         <div className="lg:col-span-2">
-          <div className="bg-background rounded-2xl border border-border shadow-sm p-4 sm:p-6 h-full">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold text-base sm:text-lg">Revenue Overview</h3>
-              <select className="text-[10px] sm:text-xs font-bold bg-muted border-none rounded-lg px-2 py-1 outline-none">
+          <div className="bg-background rounded-2xl border border-border shadow-sm p-4 sm:p-6 lg:p-8 h-full">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+              <h3 className="font-black text-lg sm:text-xl text-foreground">Revenue Overview</h3>
+              <select className="text-[10px] sm:text-xs font-black bg-muted border-none rounded-lg px-3 py-2 outline-none cursor-pointer hover:bg-muted/80 transition-colors uppercase tracking-widest">
                 <option>Last 7 Days</option>
                 <option>Last 30 Days</option>
               </select>
             </div>
-            <div className="overflow-x-auto no-scrollbar pb-2">
-              <div className="h-48 sm:h-64 flex items-end justify-between gap-1 sm:gap-2 px-1 min-w-[300px]">
+            <div className="overflow-x-auto no-scrollbar pb-2 -mx-2 px-2">
+              <div className="h-48 sm:h-64 flex items-end justify-between gap-1.5 sm:gap-3 px-1 min-w-[280px]">
                 {[40, 70, 45, 90, 65, 85, 55].map((height, i) => (
-                  <div key={i} className="flex-1 flex flex-col items-center gap-1 sm:gap-2 group">
+                  <div key={i} className="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
                     <div 
-                      className="w-full bg-primary/20 rounded-t-md sm:rounded-t-lg transition-all group-hover:bg-primary/40 relative"
+                      className="w-full bg-primary/20 rounded-t-md sm:rounded-t-xl transition-all group-hover:bg-primary/50 relative"
                       style={{ height: `${height}%` }}
                     >
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-foreground text-background text-[9px] sm:text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-foreground text-background text-[9px] sm:text-[10px] font-black py-1.5 px-2.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-y-[-4px] whitespace-nowrap z-10 shadow-lg">
                         £{(height * 10).toLocaleString('en-GB')}
                       </div>
                     </div>
-                    <span className="text-[9px] sm:text-[10px] font-bold text-muted-foreground">Day {i+1}</span>
+                    <span className="text-[9px] sm:text-[10px] font-black text-muted-foreground uppercase tracking-tighter opacity-60">Day {i+1}</span>
                   </div>
                 ))}
               </div>
@@ -318,25 +318,25 @@ export default function DashboardPage() {
         </div>
 
         {/* Sidebar Column */}
-        <div className="space-y-8">
+        <div className="space-y-6 lg:space-y-8">
           {/* Property Status Distribution (Host Only) */}
           {isHost && (
-            <div className="bg-background rounded-2xl border border-border p-6 shadow-sm">
-              <h3 className="font-bold text-lg mb-4">Property Status</h3>
-              <div className="space-y-4">
+            <div className="bg-background rounded-2xl border border-border p-5 lg:p-6 shadow-sm">
+              <h3 className="font-black text-lg mb-6 text-foreground uppercase tracking-tight">Property Status</h3>
+              <div className="space-y-5">
                 {stats?.propertyStats?.map((s: any, i: number) => (
                   <div key={i}>
-                    <div className="flex justify-between text-xs font-bold mb-1 uppercase tracking-wider">
+                    <div className="flex justify-between text-[10px] font-black mb-2 uppercase tracking-widest text-muted-foreground">
                       <span>{s.status.toLowerCase()}</span>
-                      <span>{s._count}</span>
+                      <span className="text-foreground">{s._count}</span>
                     </div>
-                    <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                    <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
                       <div 
-                        className={`h-full rounded-full ${
-                          s.status === 'AVAILABLE' ? 'bg-green-500' :
-                          s.status === 'MANAGED' ? 'bg-blue-500' : 'bg-gray-400'
+                        className={`h-full rounded-full transition-all duration-1000 ${
+                          s.status === 'AVAILABLE' ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.3)]' :
+                          s.status === 'MANAGED' ? 'bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.3)]' : 'bg-gray-400'
                         }`}
-                        style={{ width: `${(s._count / stats.propertyCount) * 100}%` }}
+                        style={{ width: `${(s._count / (stats.propertyCount || 1)) * 100}%` }}
                       />
                     </div>
                   </div>
@@ -348,58 +348,58 @@ export default function DashboardPage() {
       </div>
 
       {/* Tabs Navigation */}
-      <div className="bg-background rounded-xl shadow-sm border border-border mb-8 overflow-hidden">
-        <div className="flex overflow-x-auto no-scrollbar border-b border-border bg-muted/30">
+      <div className="bg-background rounded-2xl shadow-sm border border-border mb-8 overflow-hidden">
+        <div className="flex overflow-x-auto no-scrollbar border-b border-border bg-muted/20">
           {isHost ? (
             <>
               {properties.length > 0 && (
                 <button
                   onClick={() => setActiveTab('overview')}
-                  className={`whitespace-nowrap px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
+                  className={`whitespace-nowrap px-6 py-5 font-black text-[10px] uppercase tracking-[0.2em] transition-all border-b-2 ${
                     activeTab === 'overview'
-                      ? 'border-primary text-primary bg-background'
+                      ? 'border-primary text-primary bg-background shadow-[inset_0_-2px_0_rgba(var(--primary),1)]'
                       : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
                   }`}
                   disabled={!isOnboarded}
                 >
-                  <Home className="inline mr-2 h-4 w-4" />
-                  My Properties
+                  <Home className="inline mr-2 h-3.5 w-3.5" />
+                  Properties
                 </button>
               )}
               <button
                 onClick={() => setActiveTab('cohost')}
-                className={`whitespace-nowrap px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
+                className={`whitespace-nowrap px-6 py-5 font-black text-[10px] uppercase tracking-[0.2em] transition-all border-b-2 ${
                   activeTab === 'cohost'
-                    ? 'border-primary text-primary bg-background'
+                    ? 'border-primary text-primary bg-background shadow-[inset_0_-2px_0_rgba(var(--primary),1)]'
                     : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
                 disabled={!isOnboarded}
               >
-                <Users className="inline mr-2 h-4 w-4" />
+                <Users className="inline mr-2 h-3.5 w-3.5" />
                 Find Co-Hosts
               </button>
               <button
                 onClick={() => setActiveTab('jobs')}
-                className={`whitespace-nowrap px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
+                className={`whitespace-nowrap px-6 py-5 font-black text-[10px] uppercase tracking-[0.2em] transition-all border-b-2 ${
                   activeTab === 'jobs'
-                    ? 'border-primary text-primary bg-background'
+                    ? 'border-primary text-primary bg-background shadow-[inset_0_-2px_0_rgba(var(--primary),1)]'
                     : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
                 disabled={!isOnboarded}
               >
-                <Briefcase className="inline mr-2 h-4 w-4" />
-                Job Postings
+                <Briefcase className="inline mr-2 h-3.5 w-3.5" />
+                Jobs
               </button>
               <button
                 onClick={() => setActiveTab('staff')}
-                className={`whitespace-nowrap px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
+                className={`whitespace-nowrap px-6 py-5 font-black text-[10px] uppercase tracking-[0.2em] transition-all border-b-2 ${
                   activeTab === 'staff'
-                    ? 'border-primary text-primary bg-background'
+                    ? 'border-primary text-primary bg-background shadow-[inset_0_-2px_0_rgba(var(--primary),1)]'
                     : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
                 disabled={!isOnboarded}
               >
-                <Users className="inline mr-2 h-4 w-4" />
+                <Users className="inline mr-2 h-3.5 w-3.5" />
                 My Staff
               </button>
             </>
@@ -408,25 +408,25 @@ export default function DashboardPage() {
               {properties.length > 0 && (
                 <button
                   onClick={() => setActiveTab('browse')}
-                  className={`whitespace-nowrap px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
+                  className={`whitespace-nowrap px-6 py-5 font-black text-[10px] uppercase tracking-[0.2em] transition-all border-b-2 ${
                     activeTab === 'browse'
-                      ? 'border-primary text-primary bg-background'
+                      ? 'border-primary text-primary bg-background shadow-[inset_0_-2px_0_rgba(var(--primary),1)]'
                       : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
                   }`}
                 >
-                  <Home className="inline mr-2 h-4 w-4" />
-                  Available Properties
+                  <Home className="inline mr-2 h-3.5 w-3.5" />
+                  Browse Properties
                 </button>
               )}
               <button
                 onClick={() => setActiveTab('jobs')}
-                className={`whitespace-nowrap px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
+                className={`whitespace-nowrap px-6 py-5 font-black text-[10px] uppercase tracking-[0.2em] transition-all border-b-2 ${
                   activeTab === 'jobs'
-                    ? 'border-primary text-primary bg-background'
+                    ? 'border-primary text-primary bg-background shadow-[inset_0_-2px_0_rgba(var(--primary),1)]'
                     : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
               >
-                <Briefcase className="inline mr-2 h-4 w-4" />
+                <Briefcase className="inline mr-2 h-3.5 w-3.5" />
                 Available Jobs
               </button>
             </>
@@ -434,15 +434,15 @@ export default function DashboardPage() {
         </div>
 
         {/* Tab Content */}
-        <div className="p-4 sm:p-6">
+        <div className="p-4 sm:p-6 lg:p-8">
           {/* Host - My Properties Tab */}
           {isHost && activeTab === 'overview' && (
             <div>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <h2 className="text-xl sm:text-2xl font-bold text-foreground">My Properties</h2>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <h2 className="text-xl sm:text-2xl font-black text-foreground uppercase tracking-tight">My Properties</h2>
                 <Button
                   variant="default"
-                  className="w-full sm:w-auto py-2.5 px-6 rounded-xl text-sm font-bold shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full sm:w-auto py-6 px-8 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] border-none"
                   style={isOnboarded ? {
                     background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
                     color: '#ffffff',
@@ -454,7 +454,7 @@ export default function DashboardPage() {
                   Add Property
                 </Button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
                 {hostProperties.map((property) => (
                   <PropertyCard key={property.id} property={property} />
                 ))}
@@ -465,15 +465,15 @@ export default function DashboardPage() {
           {/* Host - Find Co-Hosts Tab */}
           {isHost && activeTab === 'cohost' && (
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-6">Find Co-Hosts</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <h2 className="text-xl sm:text-2xl font-black text-foreground mb-8 uppercase tracking-tight">Find Co-Hosts</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
                 {cohostExperts.map((cohost) => (
                   <CoHostCard key={cohost.id} cohost={cohost} onContact={handleContact} />
                 ))}
                 {cohostExperts.length === 0 && (
-                  <div className="col-span-full text-center py-20 bg-muted/20 rounded-2xl border border-dashed border-border">
+                  <div className="col-span-full text-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed border-border/50">
                     <Users className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-                    <p className="text-muted-foreground font-medium">No co-hosts found.</p>
+                    <p className="text-muted-foreground font-black text-sm uppercase tracking-widest">No co-hosts found.</p>
                   </div>
                 )}
               </div>
@@ -483,49 +483,55 @@ export default function DashboardPage() {
           {/* Host - My Staff Tab */}
           {isHost && activeTab === 'staff' && (
             <div>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl sm:text-2xl font-bold text-foreground">My Staff</h2>
-                <Button variant="outline" onClick={() => setActiveTab('cohost')}>Hire More</Button>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <h2 className="text-xl sm:text-2xl font-black text-foreground uppercase tracking-tight">My Staff</h2>
+                <Button 
+                  variant="outline" 
+                  className="w-full sm:w-auto py-6 px-8 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-muted transition-all" 
+                  onClick={() => setActiveTab('cohost')}
+                >
+                  Hire More
+                </Button>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
                 {engagements.map((engagement) => (
-                  <div key={engagement.id} className="bg-background rounded-2xl border border-border p-6 shadow-sm hover:shadow-md transition-all">
+                  <div key={engagement.id} className="bg-background rounded-2xl border border-border p-6 shadow-sm hover:shadow-strong transition-all group">
                     <div className="flex items-center gap-4 mb-6">
-                      <div className="w-14 h-14 rounded-full overflow-hidden bg-muted">
+                      <div className="w-16 h-16 rounded-full overflow-hidden bg-muted ring-4 ring-muted transition-all group-hover:ring-primary/10">
                         {engagement.staff.user.avatar ? (
-                          <NextImage src={engagement.staff.user.avatar.replace(/`/g, '')} alt={engagement.staff.user.name} width={56} height={56} className="object-cover" />
+                          <NextImage src={engagement.staff.user.avatar.replace(/`/g, '')} alt={engagement.staff.user.name} width={64} height={64} className="object-cover" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-primary text-white font-bold text-xl">
+                          <div className="w-full h-full flex items-center justify-center bg-primary text-white font-black text-2xl">
                             {engagement.staff.user.name[0]}
                           </div>
                         )}
                       </div>
                       <div>
-                        <h3 className="font-bold text-lg">{engagement.staff.user.name}</h3>
-                        <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">{engagement.staff.specialties[0] || 'Property Expert'}</p>
+                        <h3 className="font-black text-lg text-foreground">{engagement.staff.user.name}</h3>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black opacity-70">{engagement.staff.specialties[0] || 'Property Expert'}</p>
                       </div>
                     </div>
-                    <div className="space-y-3 mb-6 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Status</span>
-                        <span className={`font-bold ${engagement.status === 'ACTIVE' ? 'text-green-600' : 'text-orange-600'}`}>{engagement.status}</span>
+                    <div className="space-y-4 mb-6 text-sm">
+                      <div className="flex justify-between items-center pb-3 border-b border-border/50">
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Status</span>
+                        <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full ${engagement.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>{engagement.status}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Hired Date</span>
-                        <span className="font-bold">{new Date(engagement.startDate).toLocaleDateString()}</span>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Hired Date</span>
+                        <span className="font-bold text-foreground">{new Date(engagement.startDate).toLocaleDateString()}</span>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" className="flex-1 font-bold" onClick={() => router.push(`/dashboard/cohosts/${engagement.staff.id}`)}>View Profile</Button>
-                      <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary"><MessageSquare size={18} /></Button>
+                    <div className="flex gap-3">
+                      <Button variant="outline" className="flex-1 py-5 rounded-xl text-[10px] font-black uppercase tracking-widest" onClick={() => router.push(`/dashboard/cohosts/${engagement.staff.id}`)}>View Profile</Button>
+                      <Button variant="ghost" className="w-12 h-12 p-0 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"><MessageSquare size={20} /></Button>
                     </div>
                   </div>
                 ))}
                 {engagements.length === 0 && (
-                  <div className="col-span-full text-center py-20 bg-muted/20 rounded-2xl border border-dashed border-border">
+                  <div className="col-span-full text-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed border-border/50">
                     <Users className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-                    <p className="text-muted-foreground font-medium">You haven&apos;t hired any staff yet.</p>
-                    <Button variant="link" className="mt-2 font-bold" onClick={() => setActiveTab('cohost')}>Find experts now</Button>
+                    <p className="text-muted-foreground font-black text-sm uppercase tracking-widest mb-4">You haven&apos;t hired any staff yet.</p>
+                    <Button variant="link" className="font-black text-[10px] uppercase tracking-widest text-primary" onClick={() => setActiveTab('cohost')}>Find experts now</Button>
                   </div>
                 )}
               </div>
@@ -535,14 +541,14 @@ export default function DashboardPage() {
           {/* Job Postings Tab */}
           {activeTab === 'jobs' && (
             <div>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <h2 className="text-xl sm:text-2xl font-bold text-foreground">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <h2 className="text-xl sm:text-2xl font-black text-foreground uppercase tracking-tight">
                   {isHost ? 'Job Postings' : 'Available Jobs'}
                 </h2>
                 {isHost && (
                   <Button
                     variant="default"
-                    className="w-full sm:w-auto py-2.5 px-6 rounded-xl text-sm font-bold shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    className="w-full sm:w-auto py-6 px-8 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] border-none"
                     style={isOnboarded ? {
                       background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
                       color: '#ffffff',
@@ -555,14 +561,14 @@ export default function DashboardPage() {
                   </Button>
                 )}
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
                 {recentJobs.map((job) => (
                   <JobCard key={job.id} job={job} />
                 ))}
                 {recentJobs.length === 0 && (
-                  <div className="col-span-full text-center py-20 bg-muted/20 rounded-2xl border border-dashed border-border">
+                  <div className="col-span-full text-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed border-border/50">
                     <Briefcase className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-                    <p className="text-muted-foreground font-medium">No job postings found.</p>
+                    <p className="text-muted-foreground font-black text-sm uppercase tracking-widest">No job postings found.</p>
                   </div>
                 )}
               </div>
@@ -572,8 +578,8 @@ export default function DashboardPage() {
           {/* CoHost - Browse Properties Tab */}
           {!isHost && activeTab === 'browse' && (
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-6">Available Properties</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <h2 className="text-xl sm:text-2xl font-black text-foreground mb-8 uppercase tracking-tight">Available Properties</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
                 {availableProperties.map((property) => (
                   <PropertyCard key={property.id} property={property} />
                 ))}

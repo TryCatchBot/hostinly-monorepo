@@ -131,19 +131,19 @@ export default function JobCard({ job, viewMode = 'grid' }: JobCardProps) {
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-muted/30 rounded-xl">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 p-3 sm:p-4 bg-muted/30 rounded-xl">
         <div className="space-y-1">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Budget</p>
-          <div className="flex items-center gap-1 font-bold text-lg text-foreground">
-            <PoundSterling size={18} className="text-primary" />
-            <span>{typeof job.budget === 'number' ? `${job.budget.toLocaleString('en-GB')}` : (job.budget as string).replace('$', '')}</span>
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-black opacity-70">Budget</p>
+          <div className="flex items-center gap-1 font-black text-base sm:text-lg text-foreground truncate">
+            <PoundSterling size={16} className="text-primary shrink-0" />
+            <span className="truncate">{typeof job.budget === 'number' ? `${job.budget.toLocaleString('en-GB')}` : (job.budget as string).replace('$', '')}</span>
           </div>
         </div>
         <div className="space-y-1">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Duration</p>
-          <div className="flex items-center gap-1 font-bold text-foreground">
-            <Clock size={18} className="text-primary" />
-            <span className="text-sm">{job.duration || job.type}</span>
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-black opacity-70">Duration</p>
+          <div className="flex items-center gap-1 font-black text-foreground">
+            <Clock size={16} className="text-primary shrink-0" />
+            <span className="text-xs sm:text-sm truncate">{job.duration || job.type}</span>
           </div>
         </div>
       </div>

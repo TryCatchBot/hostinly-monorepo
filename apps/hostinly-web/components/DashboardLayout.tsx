@@ -114,53 +114,53 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   );
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
+    <div className="flex min-h-[100dvh] bg-background">
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300"
+          className="fixed inset-0 bg-black/60 z-40 lg:hidden transition-opacity duration-300 backdrop-blur-sm"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
       {/* Mobile Sidebar */}
       <div
-        className={`fixed top-0 left-0 bottom-0 w-64 z-50 transform lg:hidden transition-transform duration-300 ease-in-out flex flex-col ${
+        className={`fixed top-0 left-0 bottom-0 w-72 z-50 transform lg:hidden transition-transform duration-300 ease-in-out flex flex-col shadow-2xl ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         style={{ backgroundColor: 'hsl(220, 13%, 15%)' }}
       >
         <button 
           onClick={() => setIsSidebarOpen(false)}
-          className="absolute top-4 right-4 p-2 text-muted-foreground hover:text-white lg:hidden"
+          className="absolute top-5 right-5 p-2 text-muted-foreground hover:text-white lg:hidden bg-white/5 rounded-full transition-colors"
         >
-          <X size={24} />
+          <X size={20} />
         </button>
         <SidebarContent />
       </div>
 
       {/* Desktop Sidebar */}
       <div
-        className="hidden lg:flex w-64 border-r border-border overflow-y-auto flex-col shrink-0"
+        className="hidden lg:flex w-64 border-r border-border overflow-y-auto flex-col shrink-0 sticky top-0 h-screen"
         style={{ backgroundColor: 'hsl(220, 13%, 15%)' }}
       >
         <SidebarContent />
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+      <div className="flex-1 flex flex-col min-w-0 relative">
         {/* Top Header */}
-        <header className="h-16 border-b border-border bg-background flex items-center justify-between px-4 sm:px-8 shrink-0 z-30">
-          <div className="flex items-center gap-4">
+        <header className="h-16 border-b border-border bg-background/80 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0 sticky top-0 z-30">
+          <div className="flex items-center gap-3 sm:gap-4 overflow-hidden">
             <button 
               onClick={() => setIsSidebarOpen(true)}
-              className="p-2 -ml-2 text-muted-foreground hover:text-foreground lg:hidden"
+              className="p-2 -ml-2 text-muted-foreground hover:text-foreground lg:hidden rounded-lg hover:bg-muted transition-colors"
             >
-              <Menu size={24} />
+              <Menu size={22} />
             </button>
-            <h1 className="text-lg sm:text-xl font-semibold text-foreground truncate max-w-[200px] sm:max-w-none">
-              {pathname === '/dashboard' ? `Welcome, ${user?.name.split(' ')[0]}!` : 
-               pathname?.includes('profile') ? 'Profile Settings' :
+            <h1 className="text-base sm:text-lg lg:text-xl font-bold text-foreground truncate">
+              {pathname === '/dashboard' ? `Hi, ${user?.name.split(' ')[0]}!` : 
+               pathname?.includes('profile') ? 'Profile' :
                pathname?.includes('properties') ? 'Properties' :
                pathname?.includes('jobs') ? 'Jobs' :
                pathname?.includes('interviews') ? 'Interviews' :
@@ -170,13 +170,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
 
           {user && (
-            <Link href="/dashboard/profile" className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity">
+            <Link href="/dashboard/profile" className="flex items-center gap-2 sm:gap-3 hover:bg-muted/50 p-1 pr-2 rounded-full transition-colors group">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-medium text-foreground">{user.name}</p>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">{user.userType}</p>
+                <p className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">{user.name}</p>
+                <p className="text-[9px] text-muted-foreground uppercase tracking-widest font-black opacity-70">{user.userType}</p>
               </div>
               <div
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white font-bold text-sm sm:text-base shadow-sm"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-white font-black text-sm sm:text-base shadow-sm ring-2 ring-background group-hover:ring-primary/20 transition-all"
                 style={{ background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))' }}
               >
                 {user.name.charAt(0).toUpperCase()}
@@ -186,8 +186,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-8">
-          {children}
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </div>
