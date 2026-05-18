@@ -23,7 +23,7 @@ export default function CoHostsSection() {
         }
         const result = await response.json();
         if (result.success && Array.isArray(result.data)) {
-          setCohosts(result.data.slice(0, 3).map((c: any) => ({
+          setCohosts(result.data.map((c: any) => ({
             id: c.id,
             name: c.name || 'Anonymous',
             title: (c.specialties && c.specialties[0]) || 'Property Expert',
@@ -33,11 +33,11 @@ export default function CoHostsSection() {
             specialties: c.specialties || []
           })));
         } else {
-          setCohosts(mockCoHosts.slice(0, 3));
+          setCohosts(mockCoHosts);
         }
       } catch (err) {
         console.error('Failed to fetch cohosts:', err);
-        setCohosts(mockCoHosts.slice(0, 3));
+        setCohosts(mockCoHosts);
       } finally {
         setIsLoading(false);
       }
