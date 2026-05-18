@@ -218,13 +218,13 @@ function PropertyCard({ property }: { property: Property }) {
           <MapPin className="h-4 w-4 mr-1 shrink-0" />
           <span className="text-sm">{property.location}</span>
         </div>
-        <div className="flex items-center gap-4 mb-4 text-sm text-black font-bold">
+        <div className="flex items-center gap-4 mb-4 text-sm text-muted-foreground">
           <div className="flex items-center">
-            <Bed className="h-4 w-4 mr-1 text-primary" />
+            <Bed className="h-4 w-4 mr-1" />
             {property.bedrooms} beds
           </div>
-          <div className="flex items-center border-l border-border pl-4">
-            <Bath className="h-4 w-4 mr-1 text-primary" />
+          <div className="flex items-center">
+            <Bath className="h-4 w-4 mr-1" />
             {property.bathrooms} baths
           </div>
         </div>

@@ -95,14 +95,14 @@ export default function PropertyListingSection() {
                       <span className="text-sm truncate">{property.location}</span>
                     </div>
 
-                    <div className="flex items-center gap-4 mb-6 text-sm text-black bg-muted/50 p-2.5 rounded-xl border border-border/50">
+                    <div className="flex items-center gap-4 mb-6 text-sm text-muted-foreground bg-muted/10 p-2.5 rounded-xl">
                       <div className="flex items-center">
                         <Bed className="h-4 w-4 mr-1.5 text-primary" />
-                        <span className="font-bold">{property.bedrooms} beds</span>
+                        <span className="font-medium text-primary">{property.bedrooms} beds</span>
                       </div>
-                      <div className="flex items-center border-l border-border/50 pl-4">
+                      <div className="flex items-center border-l border-border pl-4">
                         <Bath className="h-4 w-4 mr-1.5 text-primary" />
-                        <span className="font-bold">{property.bathrooms} baths</span>
+                        <span className="font-medium text-primary">{property.bathrooms} baths</span>
                       </div>
                     </div>
 

@@ -122,17 +122,24 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         </div>
 
         {/* Details Grid */}
-        <div className="grid grid-cols-3 gap-2 mb-3 text-sm">
-          <div className="flex items-center gap-1 text-black font-bold">
-            <Bed size={16} className="text-black" />
-            <span>{property.bedrooms} bed{property.bedrooms !== 1 ? 's' : ''}</span>
+        <div className="grid grid-cols-3 gap-2 mb-5">
+          <div className="bg-black rounded-2xl p-3 flex flex-col items-center justify-center shadow-xl transform transition-all group-hover:scale-105 group-hover:shadow-primary/20">
+            <Bed size={22} className="mb-1 text-primary" />
+            <span className="text-[11px] font-black uppercase tracking-[0.1em] text-primary">
+              {property.bedrooms} {property.bedrooms === 1 ? 'Bed' : 'Beds'}
+            </span>
           </div>
-          <div className="flex items-center gap-1 text-black font-bold">
-            <Bath size={16} className="text-primary" />
-            <span>{property.bathrooms} bath</span>
+          <div className="bg-black rounded-2xl p-3 flex flex-col items-center justify-center shadow-xl transform transition-all group-hover:scale-105 group-hover:shadow-primary/20">
+            <Bath size={22} className="mb-1 text-primary" />
+            <span className="text-[11px] font-black uppercase tracking-[0.1em] text-primary">
+              {property.bathrooms} {property.bathrooms === 1 ? 'Bath' : 'Baths'}
+            </span>
           </div>
-          <div className="text-right font-black text-secondary">
-            £{property.price}/mo
+          <div className="flex flex-col items-center justify-center bg-muted/30 rounded-2xl p-3 border border-border/50">
+            <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Monthly</span>
+            <span className="text-base sm:text-lg font-black text-primary leading-none">
+              £{property.price}
+            </span>
           </div>
         </div>
 
