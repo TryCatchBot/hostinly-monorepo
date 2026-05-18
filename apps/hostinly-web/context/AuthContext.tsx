@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 export interface User {
   id: string;
@@ -73,7 +73,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
     try {
       const response = await fetch(`${API_URL}/auth/login`, {
@@ -104,9 +104,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const signup = async (email: string, password: string, name: string, userType: 'host' | 'cohost' | 'cleaner', additionalData: any = {}) => {
+  const signup = useCallback(async (email: string, password: string, name: string, userType: 'host' | 'cohost' | 'cleaner', additionalData: any = {}) => {
     setIsLoading(true);
     try {
       const payload = {
@@ -137,9 +137,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const updateUser = async (data: Partial<User>) => {
+  const updateUser = useCallback(async (data: Partial<User>) => {
     if (!user) throw new Error('Not authenticated');
     
     setIsLoading(true);
@@ -172,9 +172,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user]);
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     if (!user?.id) return;
     
     try {
@@ -192,19 +192,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           ...result.data,
           userType: result.data.userType.toLowerCase() as 'host' | 'cohost' | 'cleaner',
         };
-        setUser(updatedUser);
-        localStorage.setItem('hostinly_user', JSON.stringify(updatedUser));
+        
+        // Only update if data changed to avoid unnecessary re-renders
+        const currentUserStr = JSON.stringify(user);
+        const updatedUserStr = JSON.stringify(updatedUser);
+        if (currentUserStr !== updatedUserStr) {
+          setUser(updatedUser);
+          localStorage.setItem('hostinly_user', updatedUserStr);
+        }
+      } else if (response.status === 401) {
+        // Token expired or invalid
+        logout();
       }
     } catch (error) {
       console.error('Failed to fetch user:', error);
     }
-  };
+  }, [user]);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem('hostinly_user');
     localStorage.removeItem('hostinly_token');
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, isLoading, login, signup, updateUser, fetchUser, logout }}>

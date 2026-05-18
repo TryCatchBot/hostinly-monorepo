@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
 import PropertyCard from '@/components/PropertyCard';
@@ -29,6 +29,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const { user, isLoading, fetchUser } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
+  const lastFetchedUserId = useRef<string | null>(null);
   const [showAddPropertyModal, setShowAddPropertyModal] = useState(false);
   const [showPostJobModal, setShowPostJobModal] = useState(false);
   const [stats, setStats] = useState<any>(null);
@@ -44,11 +45,12 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/login');
-    } else if (user) {
+    } else if (user && lastFetchedUserId.current !== user.id) {
+      lastFetchedUserId.current = user.id;
       fetchUser();
       fetchDashboardData();
     }
-  }, [user, isLoading, router]);
+  }, [user, isLoading, router, fetchUser]);
 
   const fetchDashboardData = async () => {
     setIsDataLoading(true);
@@ -258,23 +260,23 @@ export default function DashboardPage() {
       )}
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         {dashboardStats
           .filter(stat => isHost || !['Total Properties', 'Revenue', 'Active Jobs'].includes(stat.label))
           .map((stat, idx) => {
             const Icon = stat.icon;
             return (
-              <div key={idx} className="bg-background rounded-2xl shadow-soft border border-border p-5 sm:p-6 hover:shadow-medium transition-all hover:scale-[1.02]">
-                <div className="flex items-start justify-between mb-4">
+              <div key={idx} className="bg-background rounded-2xl shadow-soft border border-border p-4 sm:p-6 hover:shadow-medium transition-all hover:scale-[1.02]">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
                   <div>
-                    <p className="text-[10px] sm:text-xs font-bold text-muted-foreground mb-1 uppercase tracking-widest">{stat.label}</p>
+                    <p className="text-[10px] font-bold text-muted-foreground mb-1 uppercase tracking-widest">{stat.label}</p>
                     <p className="text-xl sm:text-2xl font-black text-foreground">{stat.value}</p>
                   </div>
-                  <div className={`${stat.color} bg-current/10 p-2.5 rounded-xl`}>
+                  <div className={`${stat.color} bg-current/10 p-2 sm:p-2.5 rounded-xl`}>
                     <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
                 </div>
-                <div className="flex items-center text-xs font-bold text-green-600">
+                <div className="flex items-center text-[10px] sm:text-xs font-bold text-green-600">
                   <ArrowUpRight className="h-3 w-3 mr-1" />
                   {stat.trend} <span className="text-muted-foreground font-medium ml-1">vs last month</span>
                 </div>
@@ -287,28 +289,30 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         {/* Revenue Overview Section */}
         <div className="lg:col-span-2">
-          <div className="bg-background rounded-2xl border border-border shadow-sm p-6 h-full">
+          <div className="bg-background rounded-2xl border border-border shadow-sm p-4 sm:p-6 h-full">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold text-lg">Revenue Overview</h3>
-              <select className="text-xs font-bold bg-muted border-none rounded-lg px-2 py-1 outline-none">
+              <h3 className="font-bold text-base sm:text-lg">Revenue Overview</h3>
+              <select className="text-[10px] sm:text-xs font-bold bg-muted border-none rounded-lg px-2 py-1 outline-none">
                 <option>Last 7 Days</option>
                 <option>Last 30 Days</option>
               </select>
             </div>
-            <div className="h-64 flex items-end justify-between gap-2 px-2">
-              {[40, 70, 45, 90, 65, 85, 55].map((height, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
-                  <div 
-                    className="w-full bg-primary/20 rounded-t-lg transition-all group-hover:bg-primary/40 relative"
-                    style={{ height: `${height}%` }}
-                  >
-                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                      £{(height * 10).toLocaleString('en-GB')}
+            <div className="overflow-x-auto no-scrollbar pb-2">
+              <div className="h-48 sm:h-64 flex items-end justify-between gap-1 sm:gap-2 px-1 min-w-[300px]">
+                {[40, 70, 45, 90, 65, 85, 55].map((height, i) => (
+                  <div key={i} className="flex-1 flex flex-col items-center gap-1 sm:gap-2 group">
+                    <div 
+                      className="w-full bg-primary/20 rounded-t-md sm:rounded-t-lg transition-all group-hover:bg-primary/40 relative"
+                      style={{ height: `${height}%` }}
+                    >
+                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-foreground text-background text-[9px] sm:text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                        £{(height * 10).toLocaleString('en-GB')}
+                      </div>
                     </div>
+                    <span className="text-[9px] sm:text-[10px] font-bold text-muted-foreground">Day {i+1}</span>
                   </div>
-                  <span className="text-[10px] font-bold text-muted-foreground">Day {i+1}</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>

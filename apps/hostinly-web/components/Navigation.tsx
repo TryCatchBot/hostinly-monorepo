@@ -213,15 +213,15 @@ export default function Navigation() {
                   Sign In
                 </Link>
                 <Link
-                  href="/dashboard"
-                  onClick={(e) => handleDashboardClick(e)}
+                  href="/auth/signup"
+                  onClick={() => setMobileOpen(false)}
                   className="btn-breathe w-full justify-center rounded-lg border-0 text-sm font-medium py-3 inline-flex items-center transition-colors"
                   style={{
                     background: "linear-gradient(135deg, hsl(180, 50%, 35%), hsl(195, 60%, 40%))",
                     color: "#ffffff",
                   }}
                 >
-                  Dashboard
+                  Sign Up
                 </Link>
               </>
             )}
