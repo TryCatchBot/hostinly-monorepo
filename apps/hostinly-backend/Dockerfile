@@ -12,15 +12,8 @@ ENV CI=true
 # Brute force: Copy EVERYTHING to ensure no missing config files or dependencies
 COPY . .
 
-# Debug: List all files in working directory
-RUN ls -la
-
-# Install dependencies: check if pnpm-lock.yaml exists, if not use no-frozen-lockfile
-RUN if [ -f "pnpm-lock.yaml" ]; then \
-      echo "Found pnpm-lock.yaml, using --frozen-lockfile" && pnpm install --frozen-lockfile; \
-    else \
-      echo "No pnpm-lock.yaml found, using --no-frozen-lockfile" && pnpm install --no-frozen-lockfile; \
-    fi
+# Install dependencies with frozen lockfile
+RUN pnpm install --frozen-lockfile
 
 # Generate Prisma Client for the correct platform (linux-musl)
 RUN pnpm exec prisma generate --schema=apps/hostinly-backend/prisma/schema.prisma
