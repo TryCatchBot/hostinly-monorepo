@@ -281,7 +281,7 @@ const filters = [
     label: "Role",
     options: [
       { value: "HOST", label: "Host" },
-      { value: "COHOST", label: "Co-host" },
+      { value: "COHOST", label: "Co-Host" },
       { value: "CLEANER", label: "Cleaner" },
       { value: "SUPER_ADMIN", label: "Super Admin" },
       { value: "ADMIN", label: "Admin" },

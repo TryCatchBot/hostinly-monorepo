@@ -176,10 +176,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 <p className="text-[9px] text-muted-foreground uppercase tracking-widest font-black opacity-70">{user.userType}</p>
               </div>
               <div
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-white font-black text-sm sm:text-base shadow-sm ring-2 ring-background group-hover:ring-primary/20 transition-all"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-white font-black text-sm sm:text-base shadow-sm ring-2 ring-background group-hover:ring-primary/20 transition-all overflow-hidden"
                 style={{ background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))' }}
               >
-                {user.name.charAt(0).toUpperCase()}
+                {user.avatar ? (
+                  <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                ) : (
+                  user.name.charAt(0).toUpperCase()
+                )}
               </div>
             </Link>
           )}

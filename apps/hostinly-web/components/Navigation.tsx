@@ -86,9 +86,16 @@ export default function Navigation() {
             {user ? (
               <>
                 {!isHome && (
-                  <span className="text-sm font-medium text-muted-foreground">
-                    {user.name}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    {user.avatar && (
+                      <div className="w-8 h-8 rounded-full overflow-hidden border border-border">
+                        <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <span className="text-sm font-medium text-muted-foreground">
+                      {user.name}
+                    </span>
+                  </div>
                 )}
                 <Link
                   href="/dashboard"

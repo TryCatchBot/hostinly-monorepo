@@ -135,7 +135,7 @@ export default function DashboardPage() {
       {/* Secondary Stats */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="Active Co-hosts"
+          title="Active Co-Hosts"
           value={formatNumber(stats.cohostCount)}
           icon={<UserCheck className="h-4 w-4" />}
         />

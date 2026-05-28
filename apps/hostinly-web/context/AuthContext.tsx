@@ -6,6 +6,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  avatar?: string;
   userType: 'host' | 'cohost' | 'cleaner'; // host = property owner, cohost = co-host provider, cleaner = cleaning provider
   isOnboardingCompleted?: boolean;
   phone?: string;

@@ -38,7 +38,7 @@ import {
 const columns = [
   {
     key: "name",
-    header: "Co-host",
+    header: "Co-Host",
     sortable: true,
     cell: (coHost: CoHost) => (
       <div>
@@ -141,7 +141,7 @@ const columns = [
           </DropdownMenuItem>
           <DropdownMenuItem className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
             <Edit className="mr-2 h-4 w-4" />
-            Edit Co-host
+            Edit Co-Host
           </DropdownMenuItem>
           {coHost.status === "pending" && (
             <>
@@ -248,26 +248,26 @@ export default function CoHostsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Co-hosts</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Co-Hosts</h1>
           <p className="text-muted-foreground">
             Manage platform co-hosts and their performance
           </p>
         </div>
         <Button>
           <UserPlus className="mr-2 h-4 w-4" />
-          Add Co-host
+          Add Co-Host
         </Button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="Total Co-hosts"
+          title="Total Co-Hosts"
           value={totalCoHosts}
           icon={<Users className="h-4 w-4" />}
           change={5}
         />
         <StatCard
-          title="Active Co-hosts"
+          title="Active Co-Hosts"
           value={activeCoHosts}
           icon={<UserCheck className="h-4 w-4" />}
           change={2}
