@@ -2,6 +2,7 @@
   "name": "@org/hostinly-monorepo",
   "version": "0.0.0",
   "license": "MIT",
+  "description": "Hostinly Platform - Property Management & Co-Host Matching",
   "scripts": {
     "dev": "nx run-many --target=dev --all",
     "build": "nx run-many --target=build --all",
