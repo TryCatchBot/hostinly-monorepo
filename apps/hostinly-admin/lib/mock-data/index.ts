@@ -313,7 +313,7 @@ export const properties: Property[] = [
   },
 ];
 
-// Co-hosts
+// Co-Hosts
 export const coHosts: CoHost[] = [
   {
     id: "cohost-1",
@@ -504,7 +504,7 @@ export const transactions: Transaction[] = [
     bookingId: "book-1",
     userId: "user-3",
     userName: "Michael Brown",
-    description: "Co-host commission (15%)",
+    description: "Co-Host commission (15%)",
     createdAt: "2026-04-02",
     processedAt: "2026-04-02",
   },

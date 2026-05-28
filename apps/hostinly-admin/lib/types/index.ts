@@ -69,7 +69,7 @@ export interface Property {
   updatedAt: string;
 }
 
-// Co-hosts
+// Co-Hosts
 export type CoHostStatus = "active" | "pending" | "suspended" | "banned";
 
 export interface CoHost {

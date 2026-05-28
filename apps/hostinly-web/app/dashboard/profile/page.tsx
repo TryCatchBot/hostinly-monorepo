@@ -355,7 +355,7 @@ function ProfilePageContent() {
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-3xl font-black text-foreground">My Profile</h1>
             <button
-              onClick={() => setIsEditMode(true)}
+              onClick={() => router.push('/dashboard/profile/edit')}
               className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white rounded-xl font-bold hover:opacity-90 transition-all shadow-lg"
             >
               <Edit2 size={18} /> Edit Profile
@@ -365,8 +365,12 @@ function ProfilePageContent() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-1">
               <div className="bg-background rounded-2xl border border-border p-8 shadow-soft text-center mb-8">
-                <div className="w-24 h-24 bg-gradient-primary rounded-full mx-auto mb-4 flex items-center justify-center text-white text-3xl font-black">
-                  {firstName[0]}{lastName[0]}
+                <div className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center overflow-hidden border-4 border-background shadow-md bg-gradient-primary">
+                  {user.avatar ? (
+                    <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-white text-3xl font-black">{firstName[0]}{lastName[0]}</span>
+                  )}
                 </div>
                 <h2 className="text-xl font-black text-foreground mb-1">{firstName} {lastName}</h2>
                 <p className="text-sm font-bold text-primary uppercase tracking-widest mb-4">{user.userType}</p>
