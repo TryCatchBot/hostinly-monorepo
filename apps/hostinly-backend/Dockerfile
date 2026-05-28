@@ -12,8 +12,11 @@ ENV CI=true
 # Brute force: Copy EVERYTHING to ensure no missing config files or dependencies
 COPY . .
 
-# Install dependencies with frozen lockfile
-RUN pnpm install --frozen-lockfile
+# Debug: List all files to confirm repo root context
+RUN ls -la
+
+# Install dependencies with frozen lockfile and verbose output
+RUN pnpm install --frozen-lockfile --verbose
 
 # Generate Prisma Client for the correct platform (linux-musl)
 RUN pnpm exec prisma generate --schema=apps/hostinly-backend/prisma/schema.prisma
