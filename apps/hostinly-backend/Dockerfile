@@ -12,6 +12,9 @@ ENV CI=true
 # Brute force: Copy EVERYTHING to ensure no missing config files or dependencies
 COPY . .
 
+# Debug: List all files in working directory
+RUN ls -la
+
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
