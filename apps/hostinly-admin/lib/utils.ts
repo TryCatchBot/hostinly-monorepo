@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-export const API_URL = process.env.NEXT_PUBLIC_ADMIN_API_URL || "https://hostinly-monorepo-dev.up.railway.app/api";
+export const API_URL = process.env.NEXT_PUBLIC_ADMIN_API_URL || "https://hostinly-backend.onrender.com/api";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

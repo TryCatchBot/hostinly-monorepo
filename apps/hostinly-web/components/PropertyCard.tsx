@@ -11,7 +11,7 @@ interface PropertyCardProps {
   onSelect?: (property: Property) => void;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://hostinly-backend.onrender.com/api';
 
 export default function PropertyCard({ property }: PropertyCardProps) {
   const { user } = useAuth();

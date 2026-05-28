@@ -11,7 +11,7 @@ import { useAuth } from '@/context/AuthContext';
 import PropertyImageCarousel from '@/components/PropertyImageCarousel';
 import { toast } from 'sonner';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://hostinly-backend.onrender.com/api';
 
 export default function PropertyDetailPage() {
   const params = useParams<{ id: string }>();

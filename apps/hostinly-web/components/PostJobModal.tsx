@@ -12,7 +12,7 @@ interface PostJobModalProps {
   onPost: (job: JobPosting) => void;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://hostinly-backend.onrender.com/api';
 
 interface JobForm {
   title: string;
