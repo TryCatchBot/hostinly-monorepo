@@ -23,7 +23,7 @@ import { Home, Users, Briefcase, TrendingUp, Plus, AlertCircle, Activity, ArrowU
 import NextImage from 'next/image';
 import { Button } from '@/components/ui/button';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3333/api"
 
 export default function DashboardPage() {
   const router = useRouter();

@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3333/api"
 
 export default function PropertiesPage() {
   const { user, isLoading: authLoading } = useAuth();

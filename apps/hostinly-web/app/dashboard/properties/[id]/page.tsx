@@ -11,7 +11,7 @@ import { useAuth } from '@/context/AuthContext';
 import PropertyImageCarousel from '@/components/PropertyImageCarousel';
 import { toast } from 'sonner';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3333/api"
 
 export default function PropertyDetailPage() {
   const params = useParams<{ id: string }>();

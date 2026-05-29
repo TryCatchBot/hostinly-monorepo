@@ -12,7 +12,7 @@ interface PostJobModalProps {
   onPost: (job: JobPosting) => void;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3333/api"
 
 interface JobForm {
   title: string;
