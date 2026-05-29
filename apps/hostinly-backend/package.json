@@ -5,6 +5,36 @@
   "nx": {
     "projectType": "application",
     "targets": {
+      "prisma-studio": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "prisma studio --schema apps/hostinly-backend/prisma/schema.prisma"
+        }
+      },
+      "prisma-migrate": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "prisma migrate dev --schema apps/hostinly-backend/prisma/schema.prisma"
+        }
+      },
+      "prisma-generate": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "prisma generate --schema apps/hostinly-backend/prisma/schema.prisma"
+        }
+      },
+      "prisma-reset": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "prisma migrate reset --force --schema apps/hostinly-backend/prisma/schema.prisma"
+        }
+      },
+      "prisma-seed": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "npx ts-node apps/hostinly-backend/src/db/seed.ts"
+        }
+      },
       "build": {
         "executor": "@nx/esbuild:esbuild",
         "outputs": [
@@ -27,8 +57,12 @@
             "sourcemap": true,
             "outExtension": {
               ".js": ".js"
-            }
-          }
+            },
+            "external": [
+              "@prisma/client"
+            ]
+          },
+          "thirdParty": true
         },
         "configurations": {
           "development": {},
@@ -123,8 +157,18 @@
     ]
   },
   "dependencies": {
+    "@org/hostinly-backend-products": "workspace:*",
+    "@org/models": "workspace:*",
+    "@prisma/client": "^6.19.3",
+    "@supabase/supabase-js": "^2.105.3",
+    "@types/bcryptjs": "^3.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
     "express": "^4.21.2",
-    "@org/api-products": "workspace:*",
-    "@org/models": "workspace:*"
+    "jsonwebtoken": "^9.0.3"
+  },
+  "devDependencies": {
+    "prisma": "6"
   }
 }

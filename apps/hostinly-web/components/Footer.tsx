@@ -9,15 +9,15 @@ export default function Footer() {
           <div className="md:col-span-1">
             <div className="flex items-center space-x-2 mb-4">
               <Image
-                src="/hostinly-logo.png"
-                alt="Hostinly"
+                src="/images/hostinly-logo.png"
+                alt="Hostinly Logo"
                 width={40}
                 height={40}
                 className="h-10 w-auto"
               />
               <span className="text-xl font-bold">Hostinly</span>
             </div>
-            <p className="text-white mb-4">
+            <p className="text-white/80 mb-6 text-sm leading-relaxed">
               Connecting Airbnb hosts with trusted co-hosts for seamless property
               management.
             </p>
@@ -103,9 +103,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Contact
-                </a>
+              
               </li>
               <li>
                 <a href="#" className="hover:text-white transition-colors">
@@ -119,6 +117,12 @@ export default function Footer() {
               </li>
             </ul>
           </div>
+        </div>
+
+        <div>
+           <a href="mailto:hello@hostinly.co" className="hover:text-white transition-colors">
+                  hello@hostinly.co
+                </a>
         </div>
 
         <div className="border-t border-white/20 mt-8 pt-8 text-center text-white">

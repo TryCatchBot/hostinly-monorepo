@@ -1,126 +1,56 @@
 import express from 'express';
-import { ProductsService } from '@org/api-products';
-import {
-  ApiResponse,
-  Product,
-  ProductFilter,
-  PaginatedResponse,
-} from '@org/models';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const host = process.env.HOST ?? 'localhost';
-const port = process.env.PORT ? Number(process.env.PORT) : 3333;
+console.log("Backend - process.env.DATABASE_URL:", process.env.DATABASE_URL);
+console.log("Backend - process.env.DIRECT_URL:", process.env.DIRECT_URL);
+
+import { corsMiddleware } from './middleware';
+import { API_PREFIX, DEFAULT_PORT, DEFAULT_HOST } from './constants';
+
+// Routes
+import authRoutes from './routes/auth';
+import userRoutes from './routes/users';
+import propertyRoutes from './routes/properties';
+import cohostRoutes from './routes/cohosts';
+import jobRoutes from './routes/jobs';
+import adminRoutes from './routes/admin';
+import uploadRoutes from './routes/uploads';
+import interviewRoutes from './routes/interviews';
+import serviceRoutes from './routes/services';
+import engagementRoutes from './routes/engagements';
+
+const host = process.env.HOST ?? DEFAULT_HOST;
+const port = process.env.PORT ? Number(process.env.PORT) : DEFAULT_PORT;
 
 const app = express();
-const productsService = new ProductsService();
 
-// Middleware
 app.use(express.json());
-
-// CORS configuration for React app
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept',
-  );
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-  } else {
-    next();
-  }
-});
+app.use(corsMiddleware);
 
 app.get('/', (req, res) => {
-  res.send({ message: 'Hello API' });
+  res.send({ message: 'Hostinly API is running' });
 });
 
-// Products endpoints
-app.get('/api/products', (req, res) => {
-  try {
-    const filter: ProductFilter = {};
+app.use(`${API_PREFIX}/auth`, authRoutes);
+app.use(`${API_PREFIX}/users`, userRoutes);
+app.use(`${API_PREFIX}/properties`, propertyRoutes);
+app.use(`${API_PREFIX}/cohosts`, cohostRoutes);
+app.use(`${API_PREFIX}/jobs`, jobRoutes);
+app.use(`${API_PREFIX}/admin`, adminRoutes);
+app.use(`${API_PREFIX}/uploads`, uploadRoutes);
+app.use(`${API_PREFIX}/interviews`, interviewRoutes);
+app.use(`${API_PREFIX}/services`, serviceRoutes);
+app.use(`${API_PREFIX}/engagements`, engagementRoutes);
 
-    if (req.query.category) {
-      filter.category = req.query.category as string;
-    }
-    if (req.query.minPrice) {
-      filter.minPrice = Number(req.query.minPrice);
-    }
-    if (req.query.maxPrice) {
-      filter.maxPrice = Number(req.query.maxPrice);
-    }
-    if (req.query.inStock !== undefined) {
-      filter.inStock = req.query.inStock === 'true';
-    }
-    if (req.query.searchTerm) {
-      filter.searchTerm = req.query.searchTerm as string;
-    }
-
-    const page = req.query.page ? Number(req.query.page) : 1;
-    const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 10;
-
-    const result = productsService.getProducts(filter, page, pageSize);
-
-    const response: ApiResponse<PaginatedResponse<Product>> = {
-      data: result,
-      success: true,
-    };
-
-    res.json(response);
-  } catch (error) {
-    const response: ApiResponse<any> = {
-      data: null,
-      success: false,
-      error: 'An error occurred while fetching products',
-    };
-    res.status(500).json(response);
-  }
-});
-
-app.get('/api/products/categories', (req, res) => {
-  try {
-    const categories = productsService.getCategories();
-    const response: ApiResponse<string[]> = {
-      data: categories,
-      success: true,
-    };
-    res.json(response);
-  } catch (error) {
-    const response: ApiResponse<any> = {
-      data: null,
-      success: false,
-      error: 'An error occurred while fetching categories',
-    };
-    res.status(500).json(response);
-  }
-});
-
-app.get('/api/products/:id', (req, res) => {
-  try {
-    const product = productsService.getProductById(req.params.id);
-
-    if (!product) {
-      const response: ApiResponse<any> = {
-        data: null,
-        success: false,
-        error: 'Product not found',
-      };
-      return res.status(404).json(response);
-    }
-
-    const response: ApiResponse<Product> = {
-      data: product,
-      success: true,
-    };
-    return res.json(response);
-  } catch (error) {
-    const response: ApiResponse<any> = {
-      data: null,
-      success: false,
-      error: 'An error occurred while fetching the product',
-    };
-    return res.status(500).json(response);
-  }
+// Global Error Handler
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('[ Error ]', err);
+  res.status(err.status || 500).json({
+    success: false,
+    error: err.message || 'Internal Server Error',
+    data: null
+  });
 });
 
 app.listen(port, host, () => {

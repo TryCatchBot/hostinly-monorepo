@@ -1,25 +1,18 @@
 'use client';
 
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import ServicesSection from "@/components/ServicesSection";
 import PropertyListingSection from "@/components/PropertyListingSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
+import FaqSection from "@/components/FaqSection";
+import CoHostsSection from "@/components/CoHostsSection";
+import JobsSection from "@/components/JobsSection";
 import Footer from "@/components/Footer";
 
 export default function Home() {
-  const { user, isLoading } = useAuth();
-  const router = useRouter();
-
-  // Redirect logged-in users to dashboard
-  useEffect(() => {
-    if (!isLoading && user) {
-      router.push('/dashboard');
-    }
-  }, [user, isLoading, router]);
+  const { isLoading } = useAuth();
 
   // Show loading state while checking auth
   if (isLoading) {
@@ -33,18 +26,18 @@ export default function Home() {
     );
   }
 
-  // Only show page if user is not logged in
-  if (user) {
-    return null;
-  }
-
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden w-full">
       <Navigation />
       <HeroSection />
-      <ServicesSection />
-      <PropertyListingSection />
-      <HowItWorksSection />
+      <div className="w-full overflow-hidden">
+        <ServicesSection />
+        <PropertyListingSection />
+        <CoHostsSection />
+        <JobsSection />
+        <HowItWorksSection />
+        <FaqSection />
+      </div>
       <Footer />
     </div>
   );

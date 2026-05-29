@@ -1,0 +1,44 @@
+services:
+  hostinly-backend:
+    build:
+      context: .
+      dockerfile: apps/hostinly-backend/Dockerfile
+    ports:
+      - "3333:3333"
+    env_file:
+      - .env
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3333
+    networks:
+      - hostinly-network
+
+  hostinly-web:
+    build:
+      context: .
+      dockerfile: apps/hostinly-web/Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:3333/api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - hostinly-backend
+    networks:
+      - hostinly-network
+
+  hostinly-admin:
+    build:
+      context: .
+      dockerfile: apps/hostinly-admin/Dockerfile
+      args:
+        - NEXT_PUBLIC_ADMIN_API_URL=http://localhost:3333/api
+    ports:
+      - "3001:3001"
+    depends_on:
+      - hostinly-backend
+    networks:
+      - hostinly-network
+
+networks:
+  hostinly-network:
+    driver: bridge

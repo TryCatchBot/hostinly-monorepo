@@ -39,10 +39,10 @@ const mainNavItems: NavItem[] = [
   { title: "Dashboard", href: "/", icon: LayoutDashboard, permissionKey: "users" },
   { title: "Users", href: "/users", icon: Users, permissionKey: "users" },
   { title: "Properties", href: "/properties", icon: Home, permissionKey: "properties" },
-  { title: "Co-hosts", href: "/co-hosts", icon: UserCheck, permissionKey: "coHosts" },
-  { title: "Bookings", href: "/bookings", icon: Calendar, permissionKey: "bookings" },
-  { title: "Payments", href: "/payments", icon: CreditCard, permissionKey: "payments" },
-  { title: "Services", href: "/services", icon: Wrench, permissionKey: "services" },
+  { title: "Co-Hosts", href: "/co-hosts", icon: UserCheck, permissionKey: "coHosts" },
+  // { title: "Bookings", href: "/bookings", icon: Calendar, permissionKey: "bookings" },
+  // { title: "Payments", href: "/payments", icon: CreditCard, permissionKey: "payments" },
+  // { title: "Services", href: "/services", icon: Wrench, permissionKey: "services" },
 ];
 
 const secondaryNavItems: NavItem[] = [
@@ -78,7 +78,7 @@ export function Sidebar({ collapsed, onCollapsedChange }: SidebarProps) {
 
   const renderNavItems = (items: NavItem[]) => {
     return items.filter((item) => canViewItem(item.permissionKey)).map((item) => {
-      const isActive = pathname === item.href;
+      const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
       const Icon = item.icon;
 
       if (collapsed) {
@@ -87,11 +87,11 @@ export function Sidebar({ collapsed, onCollapsedChange }: SidebarProps) {
             <TooltipTrigger asChild>
               <Link href={item.href}>
                 <Button
-                  variant={isActive ? "secondary" : "ghost"}
+                  variant="ghost"
                   size="icon"
                   className={cn(
-                    "w-10 h-10",
-                    isActive && "bg-sidebar-accent text-sidebar-accent-foreground"
+                    "w-10 h-10 transition-all duration-200 hover:bg-primary/10 hover:text-primary",
+                    isActive ? "bg-primary/20 text-primary shadow-sm" : "text-muted-foreground"
                   )}
                 >
                   <Icon className="h-5 w-5" />
@@ -109,13 +109,15 @@ export function Sidebar({ collapsed, onCollapsedChange }: SidebarProps) {
       return (
         <Link key={item.href} href={item.href}>
           <Button
-            variant={isActive ? "secondary" : "ghost"}
+            variant="ghost"
             className={cn(
-              "w-full justify-start gap-3",
-              isActive && "bg-sidebar-accent text-sidebar-accent-foreground"
+              "w-full justify-start gap-3 px-3 py-6 transition-all duration-200 font-medium hover:bg-primary/10 hover:text-primary group",
+              isActive 
+                ? "bg-primary/20 text-primary shadow-sm border-r-4 border-primary rounded-r-none" 
+                : "text-muted-foreground"
             )}
           >
-            <Icon className="h-5 w-5" />
+            <Icon className={cn("h-5 w-5 transition-colors", isActive ? "text-primary" : "group-hover:text-primary")} />
             {item.title}
           </Button>
         </Link>
@@ -149,6 +151,7 @@ export function Sidebar({ collapsed, onCollapsedChange }: SidebarProps) {
             <nav className="flex flex-col gap-1">
               {renderNavItems(mainNavItems)}
               
+              {/*
               {!collapsed && (
                 <div className="mt-4 mb-2">
                   <span className="px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
@@ -168,6 +171,7 @@ export function Sidebar({ collapsed, onCollapsedChange }: SidebarProps) {
               )}
               {collapsed && <Separator className="my-3" />}
               {renderNavItems(adminNavItems)}
+              */}
             </nav>
           </ScrollArea>
 

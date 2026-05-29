@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Star, Check } from 'lucide-react';
-import { CoHost } from '@/lib/mockData';
+import { type CoHost } from '@/lib/provideData';
 import { Button } from '@/components/ui/button';
 
 interface CoHostCardProps {
@@ -10,23 +10,40 @@ interface CoHostCardProps {
 }
 
 export default function CoHostCard({ cohost, onContact }: CoHostCardProps) {
+  const initials = cohost.name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+
+  const hasImage = cohost.image && 
+    cohost.image !== '' && 
+    !cohost.image.includes('images.unsplash.com/photo-1472099645785-5658abf4ff4e');
+
   return (
     <Link
-      href={`/dashboard/cohosts/${cohost.id}`}
-      className="bg-background rounded-lg shadow-medium border border-border overflow-hidden hover:shadow-strong transition-shadow block group"
+      href={`/co-host/${cohost.id}`}
+      className="bg-background rounded-lg shadow-medium border border-border overflow-hidden hover:shadow-strong transition-shadow block group h-full flex flex-col"
     >
-      {/* Header with Image */}
-      <div className="relative h-48 bg-gradient-primary overflow-hidden">
-        <Image
-          src={cohost.image}
-          alt={cohost.name}
-          fill
-          className="object-cover"
-        />
+      {/* Header with Image or Initials */}
+      <div className="relative h-48 bg-muted flex items-center justify-center overflow-hidden">
+        {hasImage ? (
+          <Image
+            src={cohost.image}
+            alt={cohost.name}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5 text-primary">
+            <span className="text-4xl font-bold tracking-wider">{initials}</span>
+          </div>
+        )}
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="p-4 flex flex-col flex-1">
         <h3 className="font-bold text-lg text-foreground mb-1">
           {cohost.name}
         </h3>
@@ -65,7 +82,7 @@ export default function CoHostCard({ cohost, onContact }: CoHostCardProps) {
         {/* Rate and Button */}
         {cohost.hourlyRate && (
           <p className="text-sm font-bold text-foreground mb-3">
-            ${cohost.hourlyRate}/hour
+            £{cohost.hourlyRate}/hour
           </p>
         )}
         <Button

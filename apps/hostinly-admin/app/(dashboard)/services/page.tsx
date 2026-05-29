@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Wrench,
   Search,
@@ -15,15 +15,24 @@ import {
   CheckCircle2,
   Clock,
   XCircle,
-  DollarSign,
   Users,
   Calendar,
+  MoreHorizontal,
+  DollarSign,
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Table,
   TableBody,
@@ -56,19 +65,53 @@ import {
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { StatCard } from "@/components/dashboard/stat-card"
-import { mockServiceProviders, mockServiceRequests } from "@/lib/mock-data"
-import { formatCurrency, formatDate, getStatusColor } from "@/lib/utils"
+import { formatCurrency, formatDate, getStatusColor, BASE_URL } from "@/lib/utils"
+import { toast } from "sonner"
 import type { ServiceProvider, ServiceRequest } from "@/lib/types"
 
 export default function ServicesPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
+  const [providers, setProviders] = useState<ServiceProvider[]>([])
+  const [requests, setRequests] = useState<ServiceRequest[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [selectedProvider, setSelectedProvider] = useState<ServiceProvider | null>(null)
   const [selectedRequest, setSelectedRequest] = useState<ServiceRequest | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
-  const filteredProviders = mockServiceProviders.filter((provider) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [providersRes, requestsRes] = await Promise.all([
+          fetch(`${BASE_URL}/services/providers`),
+          fetch(`${BASE_URL}/services/requests`),
+        ])
+
+        if (!providersRes.ok || !requestsRes.ok) {
+          throw new Error("Failed to fetch service data");
+        }
+
+        const providersData = await providersRes.json()
+        const requestsData = await requestsRes.json()
+
+        if (providersData.success) setProviders(providersData.data)
+        else toast.error("Failed to fetch service providers")
+
+        if (requestsData.success) setRequests(requestsData.data)
+        else toast.error("Failed to fetch service requests")
+      } catch (err: any) {
+        setError(err.message);
+        toast.error(err.message || "An unexpected error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const filteredProviders = providers.filter((provider) => {
     const matchesSearch =
       provider.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       provider.email.toLowerCase().includes(searchQuery.toLowerCase())
@@ -77,7 +120,7 @@ export default function ServicesPage() {
     return matchesSearch && matchesCategory && matchesStatus
   })
 
-  const filteredRequests = mockServiceRequests.filter((request) => {
+  const filteredRequests = requests.filter((request) => {
     const matchesSearch =
       request.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (request.propertyName ?? request.propertyTitle)
@@ -89,343 +132,381 @@ export default function ServicesPage() {
     return matchesSearch && matchesCategory && matchesStatus
   })
 
-  const totalProviders = mockServiceProviders.length
-  const activeProviders = mockServiceProviders.filter((p) => p.status === "active").length
-  const pendingRequests = mockServiceRequests.filter((r) => r.status === "pending").length
+  const totalProviders = providers.length
+  const activeProviders = providers.filter((p) => p.status === "active").length
+  const pendingRequests = requests.filter((r) => r.status === "pending").length
   const avgRating =
-    mockServiceProviders.reduce((sum, p) => sum + p.rating, 0) / mockServiceProviders.length
+    providers.length > 0
+      ? providers.reduce((sum, p) => sum + p.rating, 0) / providers.length
+      : 0
 
-  const categories = [...new Set(mockServiceProviders.map((p) => p.category))]
+  const categories = Array.from(new Set(providers.map((p) => p.category)))
+
+  if (loading) {
+    return (
+      <div className="flex h-[400px] w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="text-sm text-muted-foreground font-medium">Loading services...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-[400px] w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center">
+            <XCircle className="h-6 w-6 text-destructive" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="font-semibold text-lg">Failed to load services</h3>
+            <p className="text-sm text-muted-foreground max-w-[300px]">{error}</p>
+          </div>
+          <Button onClick={() => window.location.reload()} variant="outline">
+            Try again
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">Services</h1>
-        <p className="text-muted-foreground">
-          Manage service providers and service requests
-        </p>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Services</h1>
+          <p className="text-muted-foreground">
+            Manage service providers and requests
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline">
+            <Plus className="mr-2 h-4 w-4" />
+            Add Provider
+          </Button>
+          <Button>
+            <Plus className="mr-2 h-4 w-4" />
+            Create Request
+          </Button>
+        </div>
       </div>
 
-      {/* Stats */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Providers"
-          value={totalProviders.toString()}
+          value={totalProviders}
           icon={<Users className="h-4 w-4" />}
-          change={8}
         />
         <StatCard
           title="Active Providers"
-          value={activeProviders.toString()}
+          value={activeProviders}
           icon={<CheckCircle2 className="h-4 w-4" />}
-          change={5}
         />
         <StatCard
           title="Pending Requests"
-          value={pendingRequests.toString()}
+          value={pendingRequests}
           icon={<Clock className="h-4 w-4" />}
-          change={-12}
         />
         <StatCard
-          title="Avg. Rating"
+          title="Avg Rating"
           value={avgRating.toFixed(1)}
           icon={<Star className="h-4 w-4" />}
-          change={0.2}
         />
       </div>
 
-      {/* Main Content */}
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <CardTitle>Service Management</CardTitle>
-              <CardDescription>View and manage providers and requests</CardDescription>
-            </div>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Provider
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="providers" className="space-y-4">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <TabsList>
-                <TabsTrigger value="providers">Providers</TabsTrigger>
-                <TabsTrigger value="requests">Requests</TabsTrigger>
-              </TabsList>
-              <div className="flex flex-col gap-2 sm:flex-row">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 w-full sm:w-64"
-                  />
-                </div>
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="w-full sm:w-36">
-                    <SelectValue placeholder="Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat} className="capitalize">
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-full sm:w-32">
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+      <Tabs defaultValue="providers" className="w-full">
+        <TabsList>
+          <TabsTrigger value="providers">Service Providers</TabsTrigger>
+          <TabsTrigger value="requests">Service Requests</TabsTrigger>
+        </TabsList>
 
-            <TabsContent value="providers" className="space-y-4">
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
+        <div className="flex flex-col md:flex-row gap-4 mt-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search..."
+              className="pl-9"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger className="w-full md:w-[180px]">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-full md:w-[180px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="suspended">Suspended</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <TabsContent value="providers" className="mt-6">
+          <Card>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Provider</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Rating</TableHead>
+                    <TableHead>Completed Jobs</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredProviders.length === 0 ? (
                     <TableRow>
-                      <TableHead>Provider</TableHead>
-                      <TableHead className="hidden md:table-cell">Category</TableHead>
-                      <TableHead className="hidden lg:table-cell">Location</TableHead>
-                      <TableHead>Rating</TableHead>
-                      <TableHead className="hidden sm:table-cell">Jobs</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="w-24">Actions</TableHead>
+                      <TableCell colSpan={6} className="h-24 text-center">
+                        No providers found.
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredProviders.map((provider) => (
+                  ) : (
+                    filteredProviders.map((provider) => (
                       <TableRow key={provider.id}>
                         <TableCell>
                           <div className="flex items-center gap-3">
                             <Avatar className="h-9 w-9">
                               <AvatarImage src={provider.avatar} alt={provider.name} />
                               <AvatarFallback>
-                                {provider.name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")}
+                                {provider.name.charAt(0)}
                               </AvatarFallback>
                             </Avatar>
                             <div>
-                              <div className="font-medium">{provider.name}</div>
-                              <div className="text-xs text-muted-foreground">
+                              <p className="font-medium">{provider.name}</p>
+                              <p className="text-xs text-muted-foreground">
                                 {provider.email}
-                              </div>
+                              </p>
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell className="hidden md:table-cell">
-                          <Badge variant="outline" className="capitalize">
-                            {provider.category}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell">
-                          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                            <MapPin className="h-3 w-3" />
-                            {provider.location}
-                          </div>
-                        </TableCell>
+                        <TableCell>{provider.category}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1">
                             <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-                            <span className="font-medium">{provider.rating}</span>
-                            <span className="text-xs text-muted-foreground">
-                              ({provider.totalReviews})
-                            </span>
+                            <span>{provider.rating.toFixed(1)}</span>
                           </div>
                         </TableCell>
-                        <TableCell className="hidden sm:table-cell">
-                          {provider.completedJobs}
-                        </TableCell>
+                        <TableCell>{provider.completedJobs}</TableCell>
                         <TableCell>
-                          <Badge variant={getStatusColor(provider.status) as "default" | "secondary" | "destructive" | "outline"}>
-                            {provider.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => setSelectedProvider(provider)}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon">
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="requests" className="space-y-4">
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Request ID</TableHead>
-                      <TableHead className="hidden md:table-cell">Property</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead className="hidden lg:table-cell">Provider</TableHead>
-                      <TableHead className="hidden sm:table-cell">Scheduled</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="w-12">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredRequests.map((request) => (
-                      <TableRow key={request.id}>
-                        <TableCell className="font-medium text-xs">{request.id}</TableCell>
-                        <TableCell className="hidden md:table-cell">
-                          <span className="truncate max-w-[150px] block">
-                            {request.propertyName ?? request.propertyTitle}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="capitalize">
-                            {request.category}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell">
-                          {request.providerName || (
-                            <span className="text-muted-foreground italic">Unassigned</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
-                          {formatDate(request.scheduledDate ?? request.scheduledAt)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={getStatusColor(request.status) as "default" | "secondary" | "destructive" | "outline"}>
-                            {request.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setSelectedRequest(request)}
+                          <Badge
+                            variant="outline"
+                            className={getStatusColor(provider.status)}
                           >
-                            <Eye className="h-4 w-4" />
-                          </Button>
+                            {provider.status.toUpperCase()}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-xl border-border/50 bg-background animate-in fade-in zoom-in duration-200">
+                              <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Actions</DropdownMenuLabel>
+                              <DropdownMenuSeparator className="my-1" />
+                              <DropdownMenuItem onClick={() => setSelectedProvider(provider)} className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Details
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit Provider
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator className="my-1" />
+                              <DropdownMenuItem className="rounded-md px-2 py-2 text-sm text-destructive focus:bg-destructive/10 focus:text-destructive transition-colors cursor-pointer font-medium">
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Remove
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {/* Provider Detail Sheet */}
-      <Sheet open={!!selectedProvider} onOpenChange={() => setSelectedProvider(null)}>
-        <SheetContent className="sm:max-w-lg">
+        <TabsContent value="requests" className="mt-6">
+          <Card>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Request ID</TableHead>
+                    <TableHead>Service</TableHead>
+                    <TableHead>Property</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredRequests.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="h-24 text-center">
+                        No service requests found.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredRequests.map((request) => (
+                      <TableRow key={request.id}>
+                        <TableCell className="font-mono text-xs">
+                          {request.id.slice(0, 8)}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {request.serviceName}
+                        </TableCell>
+                        <TableCell>
+                          {request.propertyName ?? request.propertyTitle}
+                        </TableCell>
+                        <TableCell>{formatDate(request.scheduledAt)}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="outline"
+                            className={getStatusColor(request.status)}
+                          >
+                            {request.status.toUpperCase()}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-xl border-border/50 bg-background animate-in fade-in zoom-in duration-200">
+                              <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Actions</DropdownMenuLabel>
+                              <DropdownMenuSeparator className="my-1" />
+                              <DropdownMenuItem onClick={() => setSelectedRequest(request)} className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Details
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="rounded-md px-2 py-2 text-sm focus:bg-primary/10 focus:text-primary transition-colors cursor-pointer">
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit Request
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator className="my-1" />
+                              <DropdownMenuItem className="rounded-md px-2 py-2 text-sm text-destructive focus:bg-destructive/10 focus:text-destructive transition-colors cursor-pointer font-medium">
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Provider Details Sheet */}
+      <Sheet
+        open={!!selectedProvider}
+        onOpenChange={(open) => !open && setSelectedProvider(null)}
+      >
+        <SheetContent className="sm:max-w-md">
           <SheetHeader>
             <SheetTitle>Provider Details</SheetTitle>
             <SheetDescription>
-              View service provider information
+              Information about the service provider
             </SheetDescription>
           </SheetHeader>
           {selectedProvider && (
             <div className="mt-6 space-y-6">
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
-                  <AvatarImage src={selectedProvider.avatar} alt={selectedProvider.name} />
-                  <AvatarFallback className="text-lg">
-                    {selectedProvider.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
+                  <AvatarImage
+                    src={selectedProvider.avatar}
+                    alt={selectedProvider.name}
+                  />
+                  <AvatarFallback className="text-xl">
+                    {selectedProvider.name.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <div className="text-lg font-semibold">{selectedProvider.name}</div>
+                  <h3 className="text-lg font-semibold">
+                    {selectedProvider.name}
+                  </h3>
                   <Badge
-                    variant={getStatusColor(selectedProvider.status) as "default" | "secondary" | "destructive" | "outline"}
-                    className="mt-1"
+                    variant="outline"
+                    className={getStatusColor(selectedProvider.status)}
                   >
-                    {selectedProvider.status}
+                    {selectedProvider.status.toUpperCase()}
                   </Badge>
                 </div>
               </div>
 
-              <div className="grid gap-4">
-                <div className="flex items-center gap-2 text-sm">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                  {selectedProvider.email}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Category</p>
+                  <p className="font-medium">{selectedProvider.category}</p>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  {selectedProvider.phone}
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  {selectedProvider.location}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4 rounded-lg bg-muted/50 p-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold">{selectedProvider.completedJobs}</div>
-                  <div className="text-xs text-muted-foreground">Jobs Done</div>
-                </div>
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1">
-                    <Star className="h-5 w-5 fill-yellow-500 text-yellow-500" />
-                    <span className="text-2xl font-bold">{selectedProvider.rating}</span>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Rating</p>
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                    <span className="font-medium">
+                      {selectedProvider.rating.toFixed(1)}
+                    </span>
                   </div>
-                  <div className="text-xs text-muted-foreground">Rating</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">{selectedProvider.totalReviews}</div>
-                  <div className="text-xs text-muted-foreground">Reviews</div>
                 </div>
               </div>
 
-              <div>
-                <div className="text-sm font-medium mb-2">Services Offered</div>
-                <div className="flex flex-wrap gap-2">
-                  {(selectedProvider.services ?? []).map((service: string) => (
-                    <Badge key={service} variant="secondary">
-                      {service}
-                    </Badge>
-                  ))}
+              <div className="space-y-3">
+                <h4 className="font-medium border-b pb-2">Contact Info</h4>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    {selectedProvider.email}
+                  </div>
+                  {selectedProvider.phone && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      {selectedProvider.phone}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 text-sm">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    {selectedProvider.location}
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <div className="text-sm font-medium mb-2">Hourly Rate</div>
-                <div className="text-xl font-bold text-primary">
-                  {selectedProvider.hourlyRate ? `${formatCurrency(selectedProvider.hourlyRate)}/hr` : "—"}
-                </div>
-              </div>
-
-              <div className="flex gap-2">
-                <Button className="flex-1">Edit Provider</Button>
-                <Button
-                  variant="destructive"
-                  onClick={() => setDeleteDialogOpen(true)}
-                >
+              <div className="flex gap-2 pt-4">
+                <Button className="flex-1">
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit Provider
+                </Button>
+                <Button variant="destructive" onClick={() => setDeleteDialogOpen(true)}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
@@ -434,85 +515,69 @@ export default function ServicesPage() {
         </SheetContent>
       </Sheet>
 
-      {/* Request Detail Sheet */}
-      <Sheet open={!!selectedRequest} onOpenChange={() => setSelectedRequest(null)}>
-        <SheetContent className="sm:max-w-lg">
+      {/* Request Details Sheet */}
+      <Sheet
+        open={!!selectedRequest}
+        onOpenChange={(open) => !open && setSelectedRequest(null)}
+      >
+        <SheetContent className="sm:max-w-md">
           <SheetHeader>
             <SheetTitle>Request Details</SheetTitle>
             <SheetDescription>
-              View service request information
+              Information about the service request
             </SheetDescription>
           </SheetHeader>
           {selectedRequest && (
             <div className="mt-6 space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-mono text-sm text-muted-foreground">
-                    {selectedRequest.id}
-                  </div>
-                  <Badge
-                    variant={getStatusColor(selectedRequest.status) as "default" | "secondary" | "destructive" | "outline"}
-                    className="mt-1"
-                  >
-                    {selectedRequest.status}
-                  </Badge>
-                </div>
-                <Badge variant="outline" className="capitalize">
-                  {selectedRequest.category}
+              <div>
+                <h3 className="text-lg font-semibold">
+                  {selectedRequest.serviceName}
+                </h3>
+                <Badge
+                  variant="outline"
+                  className={getStatusColor(selectedRequest.status)}
+                >
+                  {selectedRequest.status.toUpperCase()}
                 </Badge>
               </div>
 
-              <div className="grid gap-4">
-                <div>
-                  <div className="text-sm text-muted-foreground">Property</div>
-                  <div className="font-medium">{selectedRequest.propertyName ?? selectedRequest.propertyTitle}</div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Property</p>
+                  <p className="font-medium">
+                    {selectedRequest.propertyName ?? selectedRequest.propertyTitle}
+                  </p>
                 </div>
-
-                <div>
-                  <div className="text-sm text-muted-foreground">Description</div>
-                  <div>{selectedRequest.description ?? selectedRequest.notes ?? "—"}</div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <div className="text-sm text-muted-foreground">Scheduled Date</div>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
-                      {formatDate(selectedRequest.scheduledDate ?? selectedRequest.scheduledAt)}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-muted-foreground">Estimated Cost</div>
-                    <div className="flex items-center gap-1 font-medium">
-                      <DollarSign className="h-4 w-4 text-muted-foreground" />
-                      {selectedRequest.estimatedCost ? formatCurrency(selectedRequest.estimatedCost) : "—"}
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="text-sm text-muted-foreground">Assigned Provider</div>
-                  <div className="font-medium">
-                    {selectedRequest.providerName || (
-                      <span className="text-muted-foreground italic">Not assigned</span>
-                    )}
-                  </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Requested By</p>
+                  <p className="font-medium">{selectedRequest.requestedBy}</p>
                 </div>
               </div>
 
-              <div className="flex gap-2">
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Scheduled Date</p>
+                <div className="flex items-center gap-2 font-medium">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  {formatDate(selectedRequest.scheduledAt)}
+                </div>
+              </div>
+
+              {selectedRequest.description && (
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Description</p>
+                  <p className="text-sm">{selectedRequest.description}</p>
+                </div>
+              )}
+
+              <div className="flex gap-2 pt-4">
+                <Button className="flex-1">
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit Request
+                </Button>
                 {selectedRequest.status === "pending" && (
-                  <>
-                    <Button className="flex-1">Assign Provider</Button>
-                    <Button variant="outline">Reschedule</Button>
-                  </>
-                )}
-                {selectedRequest.status === "in_progress" && (
-                  <Button className="flex-1">Mark Complete</Button>
-                )}
-                {selectedRequest.status === "completed" && (
-                  <Button className="flex-1" variant="outline">
-                    View Invoice
+                  <Button variant="outline" className="flex-1 text-emerald-500">
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                    Approve
                   </Button>
                 )}
               </div>
@@ -521,23 +586,21 @@ export default function ServicesPage() {
         </SheetContent>
       </Sheet>
 
-      {/* Delete Confirmation */}
+      {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Remove Service Provider</DialogTitle>
+            <DialogTitle>Are you sure?</DialogTitle>
             <DialogDescription>
-              Are you sure you want to remove this service provider? This action cannot be
-              undone.
+              This action cannot be undone. This will permanently delete the
+              provider and all associated data.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={() => setDeleteDialogOpen(false)}>
-              Remove Provider
-            </Button>
+            <Button variant="destructive">Delete</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

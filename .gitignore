@@ -8,6 +8,11 @@ out-tsc
 # dependencies
 node_modules
 
+# Environment variables (don't commit secrets!)
+.env
+.env.*
+!.env.example
+
 # IDEs and editors
 /.idea
 .project

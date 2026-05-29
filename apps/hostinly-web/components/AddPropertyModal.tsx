@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Upload, Trash2, Star } from 'lucide-react';
-import type { Property } from '@/lib/mockData';
+import { X, Upload, Trash2, Star, Loader2 } from 'lucide-react';
+import type { Property } from '@/lib/provideData';
+import { useAuth } from '@/context/AuthContext';
 
 interface AddPropertyModalProps {
   isOpen: boolean;
@@ -10,8 +11,13 @@ interface AddPropertyModalProps {
   onAdd: (property: Property) => void;
 }
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3333/api"
+
 export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddPropertyModalProps) {
-  const [step, setStep] = useState<0 | 1 | 2 | 3 | 4>(0);
+  const { user } = useAuth();
+  const [step, setStep] = useState<0 | 1 | 2>(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
   const [imageInput, setImageInput] = useState('');
   const [listForm, setListForm] = useState({
@@ -26,26 +32,16 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
     is_listed_on_airbnb: '',
     airbnb_listing_link: '',
     expected_monthly_bookings: '',
+    monthly_revenue: '',
     preferred_commission_structure: '',
     services_required: '',
     upload_property_photos: [] as { url: string; isFavorite: boolean }[],
     upload_safety_certificates: [] as { name: string; dataUrl: string }[],
-    full_name: '',
-    phone_number: '',
-    email_address: '',
-    preferred_contact_method: '',
-    agree_to_terms: false,
   });
 
-  const readSingleFileAsDataUrl = (file: File) =>
-    new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onerror = () => reject(new Error('File read failed'));
-      reader.onload = () => resolve(String(reader.result || ''));
-      reader.readAsDataURL(file);
-    });
+  const propertyTypes = ['Apartment', 'House', 'Villa', 'Studio', 'Penthouse', 'Cottage', 'Other'];
 
-  const validateStep = (s: 0 | 1 | 2 | 3 | 4) => {
+  const validateStep = (s: 0 | 1 | 2) => {
     if (s === 0) {
       return Boolean(
         listForm.property_title &&
@@ -62,6 +58,7 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
         !listForm.maximum_guest_capacity ||
         !listForm.is_listed_on_airbnb ||
         !listForm.expected_monthly_bookings ||
+        !listForm.monthly_revenue ||
         !listForm.preferred_commission_structure ||
         !listForm.services_required
       ) {
@@ -74,15 +71,6 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
     }
     if (s === 2) {
       return listForm.upload_property_photos.length > 0;
-    }
-    if (s === 3) {
-      return Boolean(
-        listForm.full_name &&
-          listForm.phone_number &&
-          listForm.email_address &&
-          listForm.preferred_contact_method &&
-          listForm.agree_to_terms
-      );
     }
     return true;
   };
@@ -103,15 +91,11 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
       is_listed_on_airbnb: '',
       airbnb_listing_link: '',
       expected_monthly_bookings: '',
+      monthly_revenue: '',
       preferred_commission_structure: '',
       services_required: '',
       upload_property_photos: [],
       upload_safety_certificates: [],
-      full_name: '',
-      phone_number: '',
-      email_address: '',
-      preferred_contact_method: '',
-      agree_to_terms: false,
     });
   };
 
@@ -123,8 +107,6 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
     }
     if (step === 0) setStep(1);
     else if (step === 1) setStep(2);
-    else if (step === 2) setStep(3);
-    else if (step === 3) setStep(4);
   };
 
   const handleBack = () => {
@@ -132,22 +114,8 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
     setStep((s) => {
       if (s === 0) return 0;
       if (s === 1) return 0;
-      if (s === 2) return 1;
-      if (s === 3) return 2;
-      return 3;
+      return 1;
     });
-  };
-
-  const handleAddPhotoUrl = () => {
-    if (!imageInput.trim()) return;
-    setListForm((prev) => ({
-      ...prev,
-      upload_property_photos: [
-        ...prev.upload_property_photos,
-        { url: imageInput.trim(), isFavorite: prev.upload_property_photos.length === 0 },
-      ],
-    }));
-    setImageInput('');
   };
 
   const handleRemovePhoto = (index: number) => {
@@ -170,55 +138,134 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
     }));
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'photo' | 'certificate') => {
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    if (files.length === 0) return;
+
+    setIsUploading(true);
+    setError('');
+    const token = localStorage.getItem('hostinly_token');
+
+    try {
+      const uploadPromises = files.map(async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await fetch(`${BASE_URL}/uploads/upload`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        });
+        const result = await res.json();
+        if (!result.success) throw new Error(result.error);
+        return result.data.url;
+      });
+
+      const urls = await Promise.all(uploadPromises);
+
+      if (type === 'photo') {
+        setListForm((prev) => ({
+          ...prev,
+          upload_property_photos: [
+            ...prev.upload_property_photos,
+            ...urls.map((url, idx) => ({
+              url,
+              isFavorite: prev.upload_property_photos.length === 0 && idx === 0,
+            })),
+          ],
+        }));
+      } else {
+        setListForm((prev) => ({
+          ...prev,
+          upload_safety_certificates: [
+            ...prev.upload_safety_certificates,
+            ...urls.map((url, idx) => ({
+              name: files[idx].name,
+              dataUrl: url,
+            })),
+          ],
+        }));
+      }
+    } catch (err: any) {
+      setError('Failed to upload images: ' + err.message);
+    } finally {
+      setIsUploading(false);
+      e.target.value = '';
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (step !== 4) {
+    if (step !== 2) {
       handleNext();
       return;
     }
 
-    if (![0, 1, 2, 3].every((s) => validateStep(s as 0 | 1 | 2 | 3))) {
-      setError('Please fill in all required fields');
+    if (!validateStep(2)) {
+      setError('Please upload at least one photo');
       return;
     }
 
-    const favorite = listForm.upload_property_photos.find((p) => p.isFavorite);
-    const imageUrls = listForm.upload_property_photos.map((p) => p.url);
-    const primaryImage =
-      favorite?.url ||
-      imageUrls[0] ||
-      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop';
+    setIsSubmitting(true);
+    try {
+      const favorite = listForm.upload_property_photos.find((p) => p.isFavorite);
+      const imageUrls = listForm.upload_property_photos.map((p) => p.url);
+      const primaryImage = favorite?.url || imageUrls[0];
 
-    const id = Math.random().toString(36).substring(7);
-    const newProperty: Property = {
-      id,
-      title: listForm.property_title,
-      location: `${listForm.city}, ${listForm.postcode}`,
-      price: 0,
-      bedrooms: parseInt(listForm.number_of_bedrooms),
-      bathrooms: parseFloat(listForm.number_of_bathrooms),
-      image: primaryImage,
-      images: imageUrls.length > 0 ? imageUrls : [primaryImage],
-      rating: 4.5,
-      reviews: 0,
-      status: 'pending' as const,
-    };
+      const payload = {
+        title: listForm.property_title,
+        description: `Type: ${listForm.property_type}. Services: ${listForm.services_required}`,
+        address: listForm.full_address,
+        city: listForm.city,
+        price: parseFloat(listForm.monthly_revenue) || 0,
+        type: listForm.property_type.toLowerCase(),
+        airbnbLink: listForm.airbnb_listing_link,
+        ownerId: user?.id,
+        images: imageUrls,
+        amenities: listForm.services_required.split(',').map((s) => s.trim()),
+        bedrooms: parseInt(listForm.number_of_bedrooms),
+        bathrooms: parseFloat(listForm.number_of_bathrooms),
+        guests: parseInt(listForm.maximum_guest_capacity),
+      };
 
-    const stored = localStorage.getItem('hostinly_list_your_property_submissions');
-    const parsed = stored ? (JSON.parse(stored) as unknown) : [];
-    const submissions = Array.isArray(parsed) ? parsed : [];
-    submissions.push({
-      id,
-      ...listForm,
-      created_at: new Date().toISOString(),
-    });
-    localStorage.setItem('hostinly_list_your_property_submissions', JSON.stringify(submissions));
+      const token = localStorage.getItem('hostinly_token');
+      const response = await fetch(`${BASE_URL}/properties`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
-    onAdd(newProperty);
-    resetForm();
-    onClose();
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to create property');
+      }
+
+      onAdd({
+        id: result.data.id,
+        title: result.data.title,
+        location: `${result.data.address}, ${result.data.city}`,
+        price: result.data.price,
+        bedrooms: result.data.bedrooms,
+        bathrooms: result.data.bathrooms,
+        image: primaryImage || '',
+        images: imageUrls,
+        rating: 4.5,
+        reviews: 0,
+        status: result.data.status.toLowerCase(),
+        ownerId: result.data.ownerId,
+      });
+      resetForm();
+      onClose();
+    } catch (err: any) {
+      setError(err.message || 'An error occurred while creating the property');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -240,18 +287,10 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
           <div className="p-6 space-y-4 overflow-y-auto flex-1">
             <div className="flex items-center justify-between">
               <div className="text-sm text-muted-foreground">
-                Step {step + 1} of 5
+                Step {step + 1} of 3
               </div>
               <div className="text-sm font-medium text-foreground">
-                {step === 0
-                  ? 'Property'
-                  : step === 1
-                  ? 'Details'
-                  : step === 2
-                  ? 'Uploads'
-                  : step === 3
-                  ? 'Contact'
-                  : 'Review'}
+                {step === 0 ? 'Property Info' : step === 1 ? 'Details & Services' : 'Photos & Certificates'}
               </div>
             </div>
 
@@ -273,7 +312,7 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
                     onChange={(e) =>
                       setListForm((p) => ({ ...p, property_title: e.target.value }))
                     }
-                    placeholder="Property title"
+                    placeholder="e.g. Beautiful Sea View Villa"
                     className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
@@ -282,15 +321,18 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
                   <label className="block text-sm font-medium text-foreground mb-2">
                     Property type *
                   </label>
-                  <input
-                    type="text"
+                  <select
                     value={listForm.property_type}
                     onChange={(e) =>
                       setListForm((p) => ({ ...p, property_type: e.target.value }))
                     }
-                    placeholder="Apartment, house, villa..."
                     className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
+                  >
+                    <option value="">Select type...</option>
+                    {propertyTypes.map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
@@ -303,7 +345,7 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
                     onChange={(e) =>
                       setListForm((p) => ({ ...p, full_address: e.target.value }))
                     }
-                    placeholder="Address"
+                    placeholder="Street address"
                     className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
@@ -452,21 +494,39 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Preferred commission structure *
+                      Expected monthly revenue (£) *
                     </label>
                     <input
-                      type="text"
-                      value={listForm.preferred_commission_structure}
+                      type="number"
+                      value={listForm.monthly_revenue}
                       onChange={(e) =>
                         setListForm((p) => ({
                           ...p,
-                          preferred_commission_structure: e.target.value,
+                          monthly_revenue: e.target.value,
                         }))
                       }
-                      placeholder="e.g. 15% per booking"
+                      placeholder="e.g. 2500"
                       className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Preferred commission structure *
+                  </label>
+                  <input
+                    type="text"
+                    value={listForm.preferred_commission_structure}
+                    onChange={(e) =>
+                      setListForm((p) => ({
+                        ...p,
+                        preferred_commission_structure: e.target.value,
+                      }))
+                    }
+                    placeholder="e.g. 15% per booking"
+                    className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
                 </div>
 
                 <div>
@@ -497,111 +557,81 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
                       Upload property photos *
                     </label>
                     <div className="space-y-3">
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={imageInput}
-                          onChange={(e) => setImageInput(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault();
-                              handleAddPhotoUrl();
-                            }
-                          }}
-                          placeholder="https://example.com/image.jpg"
-                          className="flex-1 px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                        />
-                        <button
-                          type="button"
-                          onClick={handleAddPhotoUrl}
-                          className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 text-white transition-opacity hover:opacity-90"
-                          style={{
-                            background:
-                              'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
-                          }}
-                        >
-                          <Upload size={16} />
-                        </button>
+                      <div className="flex flex-col gap-4">
+                        <div className="flex items-center justify-center w-full">
+                          <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-xl cursor-pointer hover:bg-muted/50 transition-colors">
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                              <Upload className="w-8 h-8 text-muted-foreground mb-2" />
+                              <p className="text-sm text-muted-foreground">
+                                <span className="font-bold">Click to upload</span> or drag and drop
+                              </p>
+                              <p className="text-xs text-muted-foreground">PNG, JPG, JPEG or PDF (MAX. 5MB)</p>
+                            </div>
+                            <input
+                              type="file"
+                              className="hidden"
+                              multiple
+                              accept="image/*,application/pdf"
+                              disabled={isUploading}
+                              onChange={(e) => handleFileUpload(e, 'photo')}
+                            />
+                          </label>
+                        </div>
+                        {isUploading && (
+                          <div className="flex items-center gap-2 text-sm text-primary">
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Uploading...
+                          </div>
+                        )}
                       </div>
-
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={async (e) => {
-                          const files = e.target.files ? Array.from(e.target.files) : [];
-                          if (files.length === 0) return;
-                          const dataUrls = await Promise.all(
-                            files.map((f) => readSingleFileAsDataUrl(f))
-                          );
-                          setListForm((prev) => ({
-                            ...prev,
-                            upload_property_photos: [
-                              ...prev.upload_property_photos,
-                              ...dataUrls.map((url, idx) => ({
-                                url,
-                                isFavorite:
-                                  prev.upload_property_photos.length === 0 && idx === 0,
-                              })),
-                            ],
-                          }));
-                          e.target.value = '';
-                        }}
-                        className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground text-sm"
-                      />
 
                       {listForm.upload_property_photos.length > 0 && (
                         <div>
-                          <p className="text-xs font-medium text-muted-foreground mb-3">
+                          <p className="text-xs font-bold text-muted-foreground mb-3 uppercase tracking-widest">
                             Photos (select favorite)
                           </p>
                           <div className="grid grid-cols-4 gap-3 max-h-80 overflow-y-auto pb-2">
                             {listForm.upload_property_photos.map((photo, index) => (
                               <div key={index} className="relative group">
-                                <div className="bg-muted rounded-lg overflow-hidden border border-border hover:border-primary transition-colors">
-                                  <img
-                                    src={photo.url}
-                                    alt={`photo-${index}`}
-                                    className="w-full h-24 object-cover"
-                                    onError={(e) => {
-                                      e.currentTarget.src =
-                                        'https://via.placeholder.com/96?text=Invalid';
-                                    }}
-                                  />
-                                  {photo.isFavorite && (
-                                    <div className="absolute top-1 right-1 bg-yellow-500 text-white px-2 py-1 rounded text-xs font-medium">
-                                      ★
+                                <div className={`rounded-xl overflow-hidden border-2 transition-all ${
+                                  photo.isFavorite ? 'border-primary shadow-md' : 'border-border hover:border-primary/50'
+                                }`}>
+                                  {photo.url.endsWith('.pdf') ? (
+                                    <div className="w-full h-24 flex items-center justify-center bg-muted text-muted-foreground flex-col gap-1">
+                                      <Upload size={24} />
+                                      <span className="text-[10px] font-bold">PDF Document</span>
                                     </div>
+                                  ) : (
+                                    <img
+                                      src={photo.url}
+                                      alt={`photo-${index}`}
+                                      className="w-full h-24 object-cover"
+                                    />
                                   )}
+                                  <div className="absolute top-1 right-1 flex gap-1">
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRemovePhoto(index)}
+                                      className="p-1 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
+                                    >
+                                      <Trash2 size={12} />
+                                    </button>
+                                  </div>
                                 </div>
-                                <div className="mt-2 space-y-2">
-                                  <button
-                                    type="button"
-                                    onClick={() => handleSetFavoritePhoto(index)}
-                                    className={`w-full p-1 text-sm rounded transition-colors ${
-                                      photo.isFavorite
-                                        ? 'bg-yellow-500 text-white'
-                                        : 'bg-muted text-muted-foreground hover:bg-yellow-100 hover:text-yellow-600'
-                                    }`}
-                                  >
-                                    <Star size={14} className="inline mr-1" />
-                                    Favorite
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleRemovePhoto(index)}
-                                    className="w-full p-1 text-sm rounded bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
-                                  >
-                                    <Trash2 size={14} className="inline mr-1" />
-                                    Remove
-                                  </button>
-                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => handleSetFavoritePhoto(index)}
+                                  className={`w-full mt-2 py-1 text-[10px] font-bold rounded-lg uppercase tracking-tighter transition-all ${
+                                    photo.isFavorite
+                                      ? 'bg-primary text-white'
+                                      : 'bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                                  }`}
+                                >
+                                  {photo.isFavorite ? 'Primary' : 'Set Primary'}
+                                </button>
                               </div>
                             ))}
                           </div>
-                          <p className="text-xs text-muted-foreground mt-3">
-                            {listForm.upload_property_photos.length} photo(s) added
-                          </p>
                         </div>
                       )}
                     </div>
@@ -611,196 +641,37 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
                     <label className="block text-sm font-medium text-foreground mb-2">
                       Upload safety certificates
                     </label>
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/*,application/pdf"
-                      onChange={async (e) => {
-                        const files = e.target.files ? Array.from(e.target.files) : [];
-                        if (files.length === 0) return;
-                        const items = await Promise.all(
-                          files.map(async (f) => ({
-                            name: f.name,
-                            dataUrl: await readSingleFileAsDataUrl(f),
-                          }))
-                        );
-                        setListForm((prev) => ({
-                          ...prev,
-                          upload_safety_certificates: [
-                            ...prev.upload_safety_certificates,
-                            ...items,
-                          ],
-                        }));
-                        e.target.value = '';
-                      }}
-                      className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground text-sm"
-                    />
-                    <p className="text-xs text-muted-foreground mt-2">
-                      {listForm.upload_safety_certificates.length} file(s) added
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {step === 3 && (
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Full name *
-                  </label>
-                  <input
-                    type="text"
-                    value={listForm.full_name}
-                    onChange={(e) =>
-                      setListForm((p) => ({ ...p, full_name: e.target.value }))
-                    }
-                    className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Phone number *
-                  </label>
-                  <input
-                    type="tel"
-                    value={listForm.phone_number}
-                    onChange={(e) =>
-                      setListForm((p) => ({ ...p, phone_number: e.target.value }))
-                    }
-                    className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Email address *
-                  </label>
-                  <input
-                    type="email"
-                    value={listForm.email_address}
-                    onChange={(e) =>
-                      setListForm((p) => ({ ...p, email_address: e.target.value }))
-                    }
-                    className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Preferred contact method *
-                  </label>
-                  <select
-                    value={listForm.preferred_contact_method}
-                    onChange={(e) =>
-                      setListForm((p) => ({
-                        ...p,
-                        preferred_contact_method: e.target.value,
-                      }))
-                    }
-                    className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    <option value="">Select...</option>
-                    <option value="email">Email</option>
-                    <option value="phone">Phone</option>
-                  </select>
-                </div>
-                <label className="flex items-start gap-3 text-sm text-foreground">
-                  <input
-                    type="checkbox"
-                    checked={listForm.agree_to_terms}
-                    onChange={(e) =>
-                      setListForm((p) => ({
-                        ...p,
-                        agree_to_terms: e.target.checked,
-                      }))
-                    }
-                    className="mt-1 h-4 w-4"
-                  />
-                  <span>Agree to terms *</span>
-                </label>
-              </div>
-            )}
-
-            {step === 4 && (
-              <div className="space-y-4">
-                <div className="rounded-lg border border-border p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm font-medium text-foreground">Property</div>
-                    <button
-                      type="button"
-                      className="text-sm text-primary hover:underline"
-                      onClick={() => setStep(0)}
-                    >
-                      Edit
-                    </button>
-                  </div>
-                  <div className="mt-3 space-y-1 text-sm text-muted-foreground">
-                    <div>{listForm.property_title}</div>
-                    <div>{listForm.property_type}</div>
-                    <div>{listForm.full_address}</div>
-                    <div>
-                      {listForm.city} {listForm.postcode}
+                    <div className="flex flex-col gap-3">
+                      <label className="flex items-center gap-2 px-4 py-3 border border-border rounded-xl cursor-pointer hover:bg-muted/50 transition-colors">
+                        <Upload size={18} className="text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Select certificates...</span>
+                        <input
+                          type="file"
+                          className="hidden"
+                          multiple
+                          accept="image/*,application/pdf"
+                          disabled={isUploading}
+                          onChange={(e) => handleFileUpload(e, 'certificate')}
+                        />
+                      </label>
+                      <div className="space-y-2">
+                        {listForm.upload_safety_certificates.map((cert, idx) => (
+                          <div key={idx} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg border border-border text-xs">
+                            <span className="truncate flex-1 font-medium">{cert.name}</span>
+                            <button
+                              type="button"
+                              onClick={() => setListForm(prev => ({
+                                ...prev,
+                                upload_safety_certificates: prev.upload_safety_certificates.filter((_, i) => i !== idx)
+                              }))}
+                              className="text-red-500 hover:text-red-700 ml-2"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </div>
-
-                <div className="rounded-lg border border-border p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm font-medium text-foreground">Details</div>
-                    <button
-                      type="button"
-                      className="text-sm text-primary hover:underline"
-                      onClick={() => setStep(1)}
-                    >
-                      Edit
-                    </button>
-                  </div>
-                  <div className="mt-3 grid grid-cols-2 gap-3 text-sm text-muted-foreground">
-                    <div>Bedrooms: {listForm.number_of_bedrooms}</div>
-                    <div>Bathrooms: {listForm.number_of_bathrooms}</div>
-                    <div>Max guests: {listForm.maximum_guest_capacity}</div>
-                    <div>Airbnb listed: {listForm.is_listed_on_airbnb}</div>
-                    <div>Bookings/mo: {listForm.expected_monthly_bookings}</div>
-                    <div>Commission: {listForm.preferred_commission_structure}</div>
-                  </div>
-                  <div className="mt-3 text-sm text-muted-foreground">
-                    Services: {listForm.services_required}
-                  </div>
-                </div>
-
-                <div className="rounded-lg border border-border p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm font-medium text-foreground">Uploads</div>
-                    <button
-                      type="button"
-                      className="text-sm text-primary hover:underline"
-                      onClick={() => setStep(2)}
-                    >
-                      Edit
-                    </button>
-                  </div>
-                  <div className="mt-3 space-y-1 text-sm text-muted-foreground">
-                    <div>Photos: {listForm.upload_property_photos.length}</div>
-                    <div>Safety certificates: {listForm.upload_safety_certificates.length}</div>
-                  </div>
-                </div>
-
-                <div className="rounded-lg border border-border p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm font-medium text-foreground">Contact</div>
-                    <button
-                      type="button"
-                      className="text-sm text-primary hover:underline"
-                      onClick={() => setStep(3)}
-                    >
-                      Edit
-                    </button>
-                  </div>
-                  <div className="mt-3 space-y-1 text-sm text-muted-foreground">
-                    <div>{listForm.full_name}</div>
-                    <div>{listForm.phone_number}</div>
-                    <div>{listForm.email_address}</div>
-                    <div>Preferred contact: {listForm.preferred_contact_method}</div>
-                    <div>Agreed to terms: {listForm.agree_to_terms ? 'yes' : 'no'}</div>
                   </div>
                 </div>
               </div>
@@ -811,30 +682,28 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
             <button
               type="button"
               onClick={handleBack}
-              className="flex-1 px-4 py-2 rounded-lg font-medium border border-border text-foreground hover:bg-muted transition-colors"
+              className="flex-1 px-4 py-2 rounded-lg font-bold border-2 border-border text-foreground hover:bg-muted transition-colors disabled:opacity-30"
               disabled={step === 0}
             >
               Back
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 rounded-lg font-medium text-white transition-opacity hover:opacity-90"
+              disabled={isSubmitting || isUploading}
+              className="flex-[2] px-4 py-3 rounded-xl font-bold text-white transition-all hover:opacity-90 disabled:opacity-50 shadow-lg active:scale-95"
               style={{
                 background:
                   'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
               }}
             >
-              {step === 4 ? 'Submit' : 'Continue'}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                resetForm();
-                onClose();
-              }}
-              className="hidden sm:inline-flex flex-1 px-4 py-2 rounded-lg font-medium border border-border text-foreground hover:bg-muted transition-colors items-center justify-center"
-            >
-              Cancel
+              {isSubmitting ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Processing...</span>
+                </div>
+              ) : (
+                step === 2 ? 'List My Property' : 'Next Step'
+              )}
             </button>
           </div>
         </form>

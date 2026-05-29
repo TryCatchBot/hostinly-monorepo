@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -24,7 +25,7 @@ const tiers: Tier[] = [
   },
   {
     name: 'Pro',
-    price: '£15–£25/mo',
+    price: '£20/mo',
     whoFor: 'Serious hosts (2–5 listings)',
     highlights: [
       'Priority matching',
@@ -35,7 +36,7 @@ const tiers: Tier[] = [
   },
   {
     name: 'Business',
-    price: '£40–£60/mo',
+    price: '£50/mo',
     whoFor: 'Multi-property owners',
     highlights: [
       'Highest priority matching',

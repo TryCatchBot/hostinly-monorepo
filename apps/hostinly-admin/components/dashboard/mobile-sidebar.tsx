@@ -37,7 +37,7 @@ const mainNavItems: NavItem[] = [
   { title: "Dashboard", href: "/", icon: LayoutDashboard, permissionKey: "users" },
   { title: "Users", href: "/users", icon: Users, permissionKey: "users" },
   { title: "Properties", href: "/properties", icon: Home, permissionKey: "properties" },
-  { title: "Co-hosts", href: "/co-hosts", icon: UserCheck, permissionKey: "coHosts" },
+  { title: "Co-Hosts", href: "/co-hosts", icon: UserCheck, permissionKey: "coHosts" },
   { title: "Bookings", href: "/bookings", icon: Calendar, permissionKey: "bookings" },
   { title: "Payments", href: "/payments", icon: CreditCard, permissionKey: "payments" },
   { title: "Services", href: "/services", icon: Wrench, permissionKey: "services" },
@@ -71,7 +71,7 @@ export function MobileSidebar() {
 
   const renderNavItems = (items: NavItem[]) => {
     return items.filter((item) => canViewItem(item.permissionKey)).map((item) => {
-      const isActive = pathname === item.href;
+      const isActive = pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href));
       const Icon = item.icon;
 
       return (

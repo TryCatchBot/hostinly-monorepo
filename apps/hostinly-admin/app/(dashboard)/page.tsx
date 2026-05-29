@@ -5,10 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { dashboardStats, revenueChartData, bookings, supportTickets, platformUsers } from "@/lib/mock-data";
-import { formatCurrency, formatNumber, formatRelativeTime, getStatusColor, formatStatus, getInitials } from "@/lib/utils";
+import { formatCurrency, formatNumber, getStatusColor, formatStatus, getInitials, BASE_URL } from "@/lib/utils";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, BarChart, Bar, ResponsiveContainer } from "recharts";
 import { Users, Home, Calendar, DollarSign, UserCheck, Clock, Ticket, Percent } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const chartConfig = {
   revenue: {
@@ -22,9 +22,77 @@ const chartConfig = {
 };
 
 export default function DashboardPage() {
-  const recentBookings = bookings.slice(0, 5);
-  const recentTickets = supportTickets.filter((t) => t.status !== "closed").slice(0, 4);
-  const recentUsers = platformUsers.slice(0, 5);
+  const [stats, setStats] = useState({
+    userCount: 0,
+    propertyCount: 0,
+    cohostCount: 0,
+    bookingCount: 0,
+    totalRevenue: 0,
+    openTickets: 0,
+    jobCount: 0,
+  });
+  const [recentBookings, setRecentBookings] = useState<any[]>([]);
+  const [recentUsers, setRecentUsers] = useState<any[]>([]);
+  const [chartData, setChartData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [statsRes, bookingsRes, usersRes, chartRes] = await Promise.all([
+          fetch(`${BASE_URL}/admin/stats`),
+          fetch(`${BASE_URL}/admin/recent-bookings`),
+          fetch(`${BASE_URL}/admin/recent-activity`),
+          fetch(`${BASE_URL}/admin/chart-data`),
+        ]);
+
+        if (!statsRes.ok || !bookingsRes.ok || !usersRes.ok || !chartRes.ok) {
+          throw new Error("One or more dashboard requests failed");
+        }
+
+        const statsData = await statsRes.json();
+        const bookingsData = await bookingsRes.json();
+        const usersData = await usersRes.json();
+        const chartDataData = await chartRes.json();
+
+        if (statsData.success) {
+          setStats(statsData.data);
+        }
+        if (bookingsData.success) {
+          // Check if data is an array or an object with data property
+          const bookings = Array.isArray(bookingsData.data) ? bookingsData.data : [];
+          setRecentBookings(bookings);
+        }
+        if (usersData.success) {
+          // Extract users from the activity data
+          const users = usersData.data
+            .filter((a: any) => a.type === 'USER_SIGNUP')
+            .map((a: any) => a.data);
+          setRecentUsers(users);
+        }
+        if (chartDataData.success) {
+          setChartData(chartDataData.data);
+        }
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading dashboard data...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  // Mock data for growth (replace with actual backend data if available)
+  const mockGrowth = { userGrowth: 12, propertyGrowth: 8, bookingGrowth: 15, revenueGrowth: 10 };
 
   return (
     <div className="space-y-6">
@@ -40,26 +108,26 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Users"
-          value={formatNumber(dashboardStats.totalUsers)}
-          change={dashboardStats.userGrowth}
+          value={formatNumber(stats.userCount)}
+          change={mockGrowth.userGrowth}
           icon={<Users className="h-4 w-4" />}
         />
         <StatCard
           title="Total Properties"
-          value={formatNumber(dashboardStats.totalProperties)}
-          change={dashboardStats.propertyGrowth}
+          value={formatNumber(stats.propertyCount)}
+          change={mockGrowth.propertyGrowth}
           icon={<Home className="h-4 w-4" />}
         />
         <StatCard
           title="Total Bookings"
-          value={formatNumber(dashboardStats.totalBookings)}
-          change={dashboardStats.bookingGrowth}
+          value={formatNumber(stats.bookingCount)}
+          change={mockGrowth.bookingGrowth}
           icon={<Calendar className="h-4 w-4" />}
         />
         <StatCard
           title="Total Revenue"
-          value={formatCurrency(dashboardStats.totalRevenue)}
-          change={dashboardStats.revenueGrowth}
+          value={formatCurrency(stats.totalRevenue)}
+          change={mockGrowth.revenueGrowth}
           icon={<DollarSign className="h-4 w-4" />}
         />
       </div>
@@ -67,23 +135,23 @@ export default function DashboardPage() {
       {/* Secondary Stats */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="Active Co-hosts"
-          value={formatNumber(dashboardStats.activeCoHosts)}
+          title="Active Co-Hosts"
+          value={formatNumber(stats.cohostCount)}
           icon={<UserCheck className="h-4 w-4" />}
         />
         <StatCard
           title="Pending Approvals"
-          value={dashboardStats.pendingApprovals}
+          value={stats.jobCount}
           icon={<Clock className="h-4 w-4" />}
         />
         <StatCard
           title="Open Tickets"
-          value={dashboardStats.openTickets}
+          value={stats.openTickets}
           icon={<Ticket className="h-4 w-4" />}
         />
         <StatCard
           title="Occupancy Rate"
-          value={`${dashboardStats.occupancyRate}%`}
+          value={`0%`}
           icon={<Percent className="h-4 w-4" />}
         />
       </div>
@@ -98,7 +166,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-[300px] w-full">
-              <AreaChart data={revenueChartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="fillRevenue" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="var(--color-revenue)" stopOpacity={0.8} />
@@ -146,7 +214,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-[300px] w-full">
-              <BarChart data={revenueChartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+              <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                 <XAxis
                   dataKey="date"
@@ -190,33 +258,7 @@ export default function DashboardPage() {
                     {formatStatus(booking.status)}
                   </Badge>
                   <span className="text-xs text-muted-foreground">
-                    {formatCurrency(booking.totalAmount)}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Open Tickets */}
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle>Open Tickets</CardTitle>
-            <CardDescription>Support tickets requiring attention</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {recentTickets.map((ticket) => (
-              <div key={ticket.id} className="flex items-start justify-between gap-2">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{ticket.subject}</p>
-                  <p className="text-xs text-muted-foreground">{ticket.userName}</p>
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                  <Badge variant="outline" className={getStatusColor(ticket.priority)}>
-                    {formatStatus(ticket.priority)}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">
-                    {formatRelativeTime(ticket.createdAt)}
+                    {formatCurrency(booking.amount)}
                   </span>
                 </div>
               </div>
@@ -227,25 +269,37 @@ export default function DashboardPage() {
         {/* Recent Users */}
         <Card className="lg:col-span-1">
           <CardHeader>
-            <CardTitle>Recent Users</CardTitle>
-            <CardDescription>New user registrations</CardDescription>
+            <CardTitle>New Platform Users</CardTitle>
+            <CardDescription>Recently registered users</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {recentUsers.map((user) => (
-              <div key={user.id} className="flex items-center gap-3">
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src={user.avatar} alt={user.name} />
+              <div key={user.id} className="flex items-center space-x-4">
+                <Avatar>
+                  <AvatarImage src={user.avatar} />
                   <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{user.name}</p>
                   <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                 </div>
-                <Badge variant="outline" className={getStatusColor(user.status)}>
-                  {formatStatus(user.role)}
-                </Badge>
+                <Badge variant="secondary">{user.userType}</Badge>
               </div>
             ))}
+          </CardContent>
+        </Card>
+
+        {/* Support Tickets */}
+        <Card className="lg:col-span-1">
+          <CardHeader>
+            <CardTitle>Open Support Tickets</CardTitle>
+            <CardDescription>Recent support requests</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Assuming you'll have a separate endpoint for recent tickets or filter from a larger set */}
+            {/* For now, using a placeholder or filtered mock data if needed */}
+            {/* If backend provides this, replace this with actual data */}
+            <div className="text-muted-foreground text-sm">No recent tickets to display.</div>
           </CardContent>
         </Card>
       </div>

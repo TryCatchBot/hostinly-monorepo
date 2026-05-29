@@ -1,0 +1,356 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../src/generated/client"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserType {
+  HOST
+  COHOST
+  CLEANER
+  SUPER_ADMIN
+  ADMIN
+  SUPERVISOR
+  FACILITY_MANAGER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum InterviewStatus {
+  PENDING
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum PropertyStatus {
+  AVAILABLE
+  MANAGED
+  INACTIVE
+  PENDING
+}
+
+enum PropertyType {
+  apartment
+  house
+  villa
+  condo
+  studio
+  penthouse
+}
+
+enum JobStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum BookingStatus {
+  confirmed
+  pending
+  cancelled
+  completed
+  no_show
+}
+
+enum MessageStatus {
+  unread
+  read
+  archived
+}
+
+enum PlanInterval {
+  month
+  year
+}
+
+enum PaymentStatus {
+  succeeded
+  pending
+  failed
+  refunded
+}
+
+enum EngagementStatus {
+  ACTIVE
+  PROBATION
+  ENDED
+}
+
+model User {
+  id                    String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                 String             @unique
+  name                  String
+  passwordHash          String             @map("password_hash")
+  userType              UserType           @map("user_type")
+  avatar                String?
+  phone                 String?
+  address               String?
+  city                  String?
+  state                 String?
+  zipCode               String?            @map("zip_code")
+  country               String?
+  status                UserStatus         @default(ACTIVE)
+  verificationStatus    VerificationStatus @default(PENDING) @map("verification_status")
+  createdAt             DateTime           @default(now()) @map("created_at")
+  lastActive            DateTime           @default(now()) @map("last_active")
+  dateOfBirth           DateTime?          @map("date_of_birth")
+  numberOfProperties    Int?               @map("number_of_properties")
+  hostingExperience     Int?               @map("hosting_experience")
+  propertyLocations     String?            @map("property_locations")
+  propertyTypes         String?            @map("property_types")
+  platformsUsed         String?            @map("platforms_used")
+  monthlyIncomeTarget   String?            @map("monthly_income_target")
+  usesCoHost            Boolean?           @map("uses_co_host")
+  supportRequired       String?            @map("support_required")
+  uploadId              String?            @map("upload_id")
+  proofOfOwnership      String?            @map("proof_of_ownership")
+  businessRegistration  String?            @map("business_registration")
+  postcode              String?            @map("postcode")
+  hasAirbnbExperience   Boolean?           @map("has_airbnb_experience")
+  yearsOfExperience     Int?               @map("years_of_experience")
+  propertiesManaged     Int?               @map("properties_managed")
+  averageRating         Float?             @map("average_rating")
+  servicesOffered       String?            @map("services_offered")
+  availability          String?            @map("availability")
+  areasCovered          String?            @map("areas_covered")
+  proofOfAddress        String?            @map("proof_of_address")
+  references            String?            @map("references")
+  insurance             String?            @map("insurance")
+  approvalReason        String?            @map("approval_reason")
+  isOnboardingCompleted Boolean            @default(false) @map("is_onboarding_completed")
+  resume                String?            @map("resume")
+  coverLetter           String?            @map("cover_letter")
+
+  properties            Property[]
+  cohostProfile         CoHost?
+  jobs                  JobPosting[]
+  applications          JobApplication[]
+  reviewsWritten        Review[]           @relation("Reviewer")
+  reviewsReceived       Review[]           @relation("Reviewee")
+  bookings              Booking[]
+  payments              Payment[]
+  interviewsAsHost      Interview[]        @relation("HostInterviews")
+  interviewsAsCandidate Interview[]        @relation("CandidateInterviews")
+  engagementsAsHost     Engagement[]       @relation("HostEngagements")
+  engagementsAsStaff    Engagement[]       @relation("StaffEngagements")
+
+  @@map("users")
+}
+
+model Interview {
+  id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  hostId      String          @map("host_id") @db.Uuid
+  candidateId String          @map("candidate_id") @db.Uuid
+  status      InterviewStatus @default(PENDING)
+  date        DateTime?
+  notes       String?
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  candidate   User            @relation("CandidateInterviews", fields: [candidateId], references: [id])
+  host        User            @relation("HostInterviews", fields: [hostId], references: [id])
+
+  @@map("interviews")
+}
+
+model Engagement {
+  id        String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  hostId    String           @map("host_id") @db.Uuid
+  staffId   String           @map("staff_id") @db.Uuid
+  status    EngagementStatus @default(ACTIVE)
+  startDate DateTime         @default(now()) @map("start_date")
+  endDate   DateTime?        @map("end_date")
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+
+  host      User             @relation("HostEngagements", fields: [hostId], references: [id])
+  staff     User             @relation("StaffEngagements", fields: [staffId], references: [id])
+
+  @@map("engagements")
+}
+
+model Property {
+  id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String
+  description String
+  address     String
+  city        String
+  price       Float
+  status      PropertyStatus @default(AVAILABLE)
+  ownerId     String         @map("owner_id") @db.Uuid
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  images      String[]
+  amenities   String[]
+  bedrooms    Int            @default(1)
+  bathrooms   Int            @default(1)
+  guests      Int            @default(2)
+  type        PropertyType
+  airbnbLink  String?        @map("airbnb_link")
+
+  owner       User           @relation(fields: [ownerId], references: [id])
+  cohosts     CoHost[]
+  jobs        JobPosting[]
+  bookings    Booking[]
+  reviews     Review[]
+
+  @@map("properties")
+}
+
+model CoHost {
+  id                 String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId             String     @unique @map("user_id") @db.Uuid
+  bio                String?
+  experience         Int        @default(0)
+  rating             Float      @default(5.0)
+  totalReviews       Int        @default(0) @map("total_reviews")
+  location           String?
+  hourlyRate         Float?     @map("hourly_rate")
+  commissionPercentage Float?   @map("commission_percentage")
+  languages          String[]
+  specialties        String[]
+  availabilityStatus String     @default("Available") @map("availability_status")
+
+  user               User       @relation(fields: [userId], references: [id])
+  properties         Property[]
+
+  @@map("cohosts")
+}
+
+model JobPosting {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title        String
+  description  String
+  budget       String
+  status       JobStatus @default(OPEN)
+  authorId     String    @map("author_id") @db.Uuid
+  propertyId   String?   @map("property_id") @db.Uuid
+  location     String
+  type         String
+  createdAt    DateTime  @default(now()) @map("created_at")
+  duration     String?
+  requirements String?
+  skills       String[]
+
+  author       User             @relation(fields: [authorId], references: [id])
+  property     Property?        @relation(fields: [propertyId], references: [id])
+  applications JobApplication[]
+
+  @@map("job_postings")
+}
+
+model JobApplication {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  jobId       String     @map("job_id") @db.Uuid
+  applicantId String     @map("applicant_id") @db.Uuid
+  status      String     @default("PENDING")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  job         JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  applicant   User       @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, applicantId])
+  @@map("job_applications")
+}
+
+model Review {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  rating      Int
+  comment     String
+  reviewerId  String   @map("reviewer_id") @db.Uuid
+  revieweeId  String   @map("reviewee_id") @db.Uuid
+  propertyId  String?  @map("property_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  reviewer    User     @relation("Reviewer", fields: [reviewerId], references: [id])
+  reviewee    User     @relation("Reviewee", fields: [revieweeId], references: [id])
+  property    Property? @relation(fields: [propertyId], references: [id])
+
+  @@map("reviews")
+}
+
+model Booking {
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  propertyId    String?       @map("property_id") @db.Uuid
+  propertyTitle String?       @map("property_title")
+  guestId       String?       @map("guest_id") @db.Uuid
+  guestName     String?       @map("guest_name")
+  checkIn       DateTime      @map("check_in") @db.Date
+  checkOut      DateTime      @map("check_out") @db.Date
+  amount        Decimal       @db.Decimal
+  status        BookingStatus @default(pending)
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  guest         User?         @relation(fields: [guestId], references: [id])
+  property      Property?     @relation(fields: [propertyId], references: [id])
+
+  @@map("bookings")
+}
+
+model ContactMessage {
+  id        BigInt        @id @default(autoincrement())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  status    MessageStatus @default(unread)
+  createdAt DateTime      @default(now()) @map("created_at")
+
+  @@map("contact_messages")
+}
+
+model PricingPlan {
+  id        String       @id
+  name      String
+  price     Decimal      @db.Decimal
+  interval  PlanInterval
+  features  String[]
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  @@map("pricing_plans")
+}
+
+model Payment {
+  id            BigInt        @id @default(autoincrement())
+  userId        String?       @map("user_id") @db.Uuid
+  amount        Decimal       @db.Decimal
+  currency      String        @default("USD")
+  status        PaymentStatus
+  paymentMethod String?       @map("payment_method")
+  description   String?
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  user          User?         @relation(fields: [userId], references: [id])
+
+  @@map("payments")
+}
+
+model Service {
+  id          BigInt   @id @default(autoincrement())
+  name        String
+  description String?
+  price       Decimal? @db.Decimal
+  category    String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("services")
+}

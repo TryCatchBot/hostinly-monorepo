@@ -20,7 +20,8 @@ export default function Navigation() {
   const [roleModalOpen, setRoleModalOpen] = useState(false);
   const { user, logout } = useAuth();
   const pathname = usePathname();
-  const isDashboard = pathname.startsWith('/dashboard');
+  const isDashboard = pathname?.startsWith('/dashboard') ?? false;
+  const isHome = pathname === '/';
   const router = useRouter();
 
   const handleDashboardClick = (e?: MouseEvent) => {
@@ -50,7 +51,7 @@ export default function Navigation() {
         <div className="flex items-center justify-between h-14 sm:h-16">
           <Link href="/" className="flex items-center space-x-2 shrink-0">
             <Image
-              src="/hostinly-logo.png"
+              src="/images/hostinly-logo.png"
               alt="Hostinly"
               width={40}
               height={40}
@@ -84,9 +85,18 @@ export default function Navigation() {
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <>
-                <span className="text-sm font-medium text-muted-foreground">
-                  {user.name}
-                </span>
+                {!isHome && (
+                  <div className="flex items-center gap-2">
+                    {user.avatar && (
+                      <div className="w-8 h-8 rounded-full overflow-hidden border border-border">
+                        <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <span className="text-sm font-medium text-muted-foreground">
+                      {user.name}
+                    </span>
+                  </div>
+                )}
                 <Link
                   href="/dashboard"
                   className="rounded-md px-4 py-2 text-sm font-medium transition-colors text-black hover:bg-[hsl(45,100%,90%)] hover:text-[hsl(45,100%,35%)]"
@@ -120,15 +130,14 @@ export default function Navigation() {
                   Sign In
                 </Link>
                 <Link
-                  href="/dashboard"
-                  onClick={handleDashboardClick}
+                  href="/auth/signup"
                   className="btn-breathe rounded-lg border-0 min-w-0 px-5 py-2.5 text-sm font-medium inline-flex items-center justify-center transition-colors"
                   style={{
                     background: "linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))",
                     color: "#ffffff",
                   }}
                 >
-                  Dashboard
+                  Sign Up
                 </Link>
               </>
             )}
@@ -166,9 +175,11 @@ export default function Navigation() {
             ))}
             {user ? (
               <>
-                <div className="py-2 text-sm font-medium text-muted-foreground border-t border-border pt-4">
-                  Signed in as {user.name}
-                </div>
+                {!isHome && (
+                  <div className="py-2 text-sm font-medium text-muted-foreground border-t border-border pt-4">
+                    Signed in as {user.name}
+                  </div>
+                )}
                 <Link
                   href="/dashboard"
                   onClick={() => setMobileOpen(false)}
@@ -191,6 +202,7 @@ export default function Navigation() {
                   onClick={() => {
                     logout();
                     setMobileOpen(false);
+                    window.location.href = '/login';
                   }}
                   className="py-2 px-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md -mx-2 transition-colors flex items-center gap-2"
                 >
@@ -208,15 +220,15 @@ export default function Navigation() {
                   Sign In
                 </Link>
                 <Link
-                  href="/dashboard"
-                  onClick={(e) => handleDashboardClick(e)}
+                  href="/auth/signup"
+                  onClick={() => setMobileOpen(false)}
                   className="btn-breathe w-full justify-center rounded-lg border-0 text-sm font-medium py-3 inline-flex items-center transition-colors"
                   style={{
                     background: "linear-gradient(135deg, hsl(180, 50%, 35%), hsl(195, 60%, 40%))",
                     color: "#ffffff",
                   }}
                 >
-                  Dashboard
+                  Sign Up
                 </Link>
               </>
             )}

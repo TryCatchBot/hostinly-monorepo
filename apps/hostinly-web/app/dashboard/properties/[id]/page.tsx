@@ -1,29 +1,89 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import DashboardLayout from '@/components/DashboardLayout';
-import { getPropertyById, updateProperty, type Property } from '@/lib/mockData';
+import { type Property } from '@/lib/provideData';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Star, MapPin, Bed, Bath, Edit2, Trash2 } from 'lucide-react';
+import { ArrowLeft, Star, MapPin, Bed, Bath, Edit2, Trash2, AlertTriangle, Send, CheckCircle, ExternalLink } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import PropertyImageCarousel from '@/components/PropertyImageCarousel';
+import { toast } from 'sonner';
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3333/api"
 
 export default function PropertyDetailPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
-  const [revision, setRevision] = useState(0);
-  const property = useMemo(
-    () => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const _ = revision;
-      return getPropertyById(params.id);
-    },
-    [params.id, revision]
-  );
+  const { user } = useAuth();
+  const id = params?.id;
+  
+  const [property, setProperty] = useState<Property | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [statusOverride, setStatusOverride] = useState<Property['status'] | null>(
-    null
-  );
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
+
+  useEffect(() => {
+    const fetchProperty = async () => {
+      if (!id) return;
+      
+      try {
+        const token = localStorage.getItem('hostinly_token');
+        const response = await fetch(`${BASE_URL}/properties/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const result = await response.json();
+        if (result.success) {
+          const p = result.data;
+          const trimmedImages = (p.images || []).map((img: string) => img.trim().replace(/^`|`$/g, ''));
+          setProperty({
+            id: p.id,
+            title: p.title,
+            location: `${p.address}, ${p.city}`,
+            price: p.price,
+            bedrooms: p.bedrooms,
+            bathrooms: p.bathrooms,
+            image: trimmedImages[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop',
+            images: trimmedImages,
+            rating: 4.5,
+            reviews: 0,
+            status: p.status.toLowerCase(),
+            ownerId: p.ownerId,
+            description: p.description,
+            airbnbLink: p.airbnbLink,
+          });
+
+          // Check if user has already applied (this would usually be a backend check)
+          // For now, we'll check local storage or a mock check
+          const appliedProperties = JSON.parse(localStorage.getItem('applied_properties') || '[]');
+          if (appliedProperties.includes(id)) {
+            setHasApplied(true);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch property:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProperty();
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   if (!property) {
     return (
@@ -31,25 +91,81 @@ export default function PropertyDetailPage() {
         <div className="flex flex-col items-center justify-center min-h-screen">
           <h1 className="text-2xl font-bold mb-4">Property not found</h1>
           <Button
-            onClick={() => router.push('/dashboard')}
+            onClick={() => router.push('/dashboard/properties')}
             className="py-2 px-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
+            Back to Properties
           </Button>
         </div>
       </DashboardLayout>
     );
   }
 
-  const handleDelete = () => {
-    // In a real app, this would call an API
-    console.log('Deleting property:', property.id);
-    setShowDeleteConfirm(false);
-    router.push('/dashboard');
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const token = localStorage.getItem('hostinly_token');
+      const response = await fetch(`${BASE_URL}/properties/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const result = await response.json();
+      if (result.success) {
+        router.push('/dashboard/properties');
+      } else {
+        alert(result.error || 'Failed to delete property');
+      }
+    } catch (error) {
+      console.error('Failed to delete property:', error);
+      alert('An error occurred while deleting the property');
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
   };
 
-  const currentStatus = statusOverride ?? property.status;
+  const handleApply = async () => {
+    if (!user || !id) return;
+    setIsApplying(true);
+    try {
+      const token = localStorage.getItem('hostinly_token');
+      // Create an interview request as an application
+      const response = await fetch(`${BASE_URL}/interviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          hostId: property.ownerId || '', // We need ownerId here
+          candidateId: user.id,
+          notes: `Application to manage property: ${property.title}`,
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setHasApplied(true);
+        const appliedProperties = JSON.parse(localStorage.getItem('applied_properties') || '[]');
+        localStorage.setItem('applied_properties', JSON.stringify([...appliedProperties, id]));
+        toast.success('Application sent successfully!');
+      } else {
+        toast.error(result.error || 'Failed to send application');
+      }
+    } catch (error) {
+      console.error('Failed to apply:', error);
+      toast.error('An error occurred while sending your application');
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
+  const currentStatus = property.status;
+  const isStaff = user?.userType === 'cohost' || user?.userType === 'cleaner';
+  const isHost = user?.userType === 'host';
 
   return (
     <DashboardLayout>
@@ -64,31 +180,34 @@ export default function PropertyDetailPage() {
             Back
           </button>
           <div className="flex gap-3">
-            <Button
-              variant="outline"
-              className="py-2 px-4"
-            >
-              <Edit2 className="h-4 w-4 mr-2" />
-              Edit
-            </Button>
-            <Button
-              variant="destructive"
-              className="py-2 px-4"
-              onClick={() => setShowDeleteConfirm(true)}
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete
-            </Button>
+            {isHost && (
+              <>
+                <Button
+                  variant="outline"
+                  className="py-2 px-4"
+                  onClick={() => router.push(`/dashboard/properties/${id}/edit`)}
+                >
+                  <Edit2 className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+                <Button
+                  variant="destructive"
+                  className="py-2 px-4"
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
-        {/* Property Image */}
-        <div className="relative w-full h-96 rounded-lg overflow-hidden mb-6 border border-border">
-          <Image
-            src={property.image}
-            alt={property.title}
-            fill
-            className="object-cover"
+        {/* Property Slideshow */}
+        <div className="mb-6">
+          <PropertyImageCarousel
+            images={property.images || [property.image]}
+            title={property.title}
           />
         </div>
 
@@ -99,7 +218,7 @@ export default function PropertyDetailPage() {
             <h1 className="text-4xl font-bold text-foreground mb-4">{property.title}</h1>
 
             {/* Location and Rating */}
-            <div className="flex items-center gap-6 mb-6 pb-6 border-b border-border">
+            <div className="flex flex-wrap items-center gap-6 mb-6 pb-6 border-b border-border">
               <div className="flex items-center gap-2">
                 <MapPin size={20} className="text-muted-foreground" />
                 <span className="text-muted-foreground">{property.location}</span>
@@ -109,6 +228,17 @@ export default function PropertyDetailPage() {
                 <span className="font-semibold">{property.rating}</span>
                 <span className="text-muted-foreground">({property.reviews} reviews)</span>
               </div>
+              {property.airbnbLink && (
+                <a 
+                  href={property.airbnbLink} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-primary hover:underline font-bold text-sm"
+                >
+                  <ExternalLink size={16} />
+                  View on Airbnb
+                </a>
+              )}
             </div>
 
             {/* Property Features */}
@@ -133,7 +263,7 @@ export default function PropertyDetailPage() {
             <div className="mb-8">
               <h2 className="text-2xl font-bold mb-4">About this property</h2>
               <p className="text-muted-foreground leading-relaxed">
-                This beautiful property is located in the heart of {property.location}. With {property.bedrooms} spacious bedrooms and {property.bathrooms} modern bathrooms, it is perfect for guests looking for comfort and convenience. The property features modern amenities and has consistently received excellent reviews from guests.
+                {property.description || `This beautiful property is located in the heart of ${property.location}. With ${property.bedrooms} spacious bedrooms and ${property.bathrooms} modern bathrooms, it is perfect for guests looking for comfort and convenience.`}
               </p>
             </div>
 
@@ -143,11 +273,11 @@ export default function PropertyDetailPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Nightly Rate</p>
-                  <p className="text-3xl font-bold text-primary">${property.price}</p>
+                  <p className="text-3xl font-bold text-primary">£{property.price}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Estimated Monthly</p>
-                  <p className="text-3xl font-bold">${(property.price * 30).toLocaleString()}</p>
+                  <p className="text-3xl font-bold">£{(property.price * 30).toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -160,7 +290,7 @@ export default function PropertyDetailPage() {
                 <p className="text-sm text-muted-foreground mb-2">Status</p>
                 <div
                   className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                    currentStatus === 'managing'
+                    currentStatus === 'managed' || currentStatus === 'managing'
                       ? 'bg-green-100 text-green-700'
                       : currentStatus === 'pending'
                       ? 'bg-yellow-100 text-yellow-700'
@@ -169,35 +299,53 @@ export default function PropertyDetailPage() {
                 >
                   {currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1)}
                 </div>
-                <div className="mt-3">
-                  <select
-                    value={currentStatus}
-                    onChange={(e) => {
-                      const nextStatus = e.target.value as Property['status'];
-                      setStatusOverride(nextStatus);
-                      updateProperty(property.id, { status: nextStatus });
-                      setRevision((r) => r + 1);
-                    }}
-                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    <option value="pending">Pending</option>
-                    <option value="managing">Managing</option>
-                    <option value="available">Available</option>
-                  </select>
-                </div>
               </div>
 
               <div className="space-y-4">
-                <Button
-                  className="w-full py-3"
-                  style={{
-                    background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
-                    color: '#ffffff',
-                  }}
-                >
-                  Contact Manager
-                </Button>
-                <Button variant="outline" className="w-full py-3">
+                {isStaff && (
+                  <Button
+                    className="w-full py-4 text-lg font-bold rounded-xl shadow-lg transition-all hover:scale-[1.02]"
+                    style={{
+                      background: hasApplied 
+                        ? 'hsl(142, 76%, 36%)' 
+                        : 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
+                      color: '#ffffff',
+                    }}
+                    onClick={handleApply}
+                    disabled={isApplying || hasApplied}
+                  >
+                    {isApplying ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Applying...
+                      </div>
+                    ) : hasApplied ? (
+                      <div className="flex items-center gap-2">
+                        <CheckCircle size={20} />
+                        Applied
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Send size={20} />
+                        Apply to Manage
+                      </div>
+                    )}
+                  </Button>
+                )}
+
+                {isHost && (
+                  <Button
+                    className="w-full py-3"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(180, 41.50%, 51.80%), hsl(195, 60%, 40%))',
+                      color: '#ffffff',
+                    }}
+                  >
+                    Contact Manager
+                  </Button>
+                )}
+                
+                <Button variant="outline" className="w-full py-3 font-semibold">
                   View Analytics
                 </Button>
               </div>
@@ -209,16 +357,20 @@ export default function PropertyDetailPage() {
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-background rounded-lg p-6 max-w-sm w-full">
-            <h2 className="text-xl font-bold mb-2">Delete Property?</h2>
+          <div className="bg-background rounded-lg p-6 max-w-sm w-full border border-border shadow-xl">
+            <div className="flex items-center gap-3 text-destructive mb-4">
+              <AlertTriangle size={24} />
+              <h2 className="text-xl font-bold">Danger Zone</h2>
+            </div>
             <p className="text-muted-foreground mb-6">
-              Are you sure you want to delete {property.title}? This action cannot be undone.
+              Are you sure you want to delete <span className="font-semibold text-foreground">{property.title}</span>? This action is permanent and cannot be undone.
             </p>
             <div className="flex gap-3">
               <Button
                 variant="outline"
                 className="flex-1 py-2"
                 onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
               >
                 Cancel
               </Button>
@@ -226,8 +378,9 @@ export default function PropertyDetailPage() {
                 variant="destructive"
                 className="flex-1 py-2"
                 onClick={handleDelete}
+                disabled={isDeleting}
               >
-                Delete
+                {isDeleting ? 'Deleting...' : 'Delete Forever'}
               </Button>
             </div>
           </div>
