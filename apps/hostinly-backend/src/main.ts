@@ -2,6 +2,9 @@ import express from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
 
+console.log("Backend - process.env.DATABASE_URL:", process.env.DATABASE_URL);
+console.log("Backend - process.env.DIRECT_URL:", process.env.DIRECT_URL);
+
 import { corsMiddleware } from './middleware';
 import { API_PREFIX, DEFAULT_PORT, DEFAULT_HOST } from './constants';
 

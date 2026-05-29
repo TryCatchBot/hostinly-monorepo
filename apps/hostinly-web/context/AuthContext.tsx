@@ -46,7 +46,7 @@ export interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3333/api"
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://hostinly-backend.onrender.com/api"
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -110,6 +110,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signup = useCallback(async (email: string, password: string, name: string, userType: 'host' | 'cohost' | 'cleaner', additionalData: any = {}) => {
     setIsLoading(true);
     try {
+      console.log("AuthContext - BASE_URL:", BASE_URL);
+      console.log("AuthContext - process.env.NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
+      console.log("AuthContext - process.env.NEXT_PUBLIC_ADMIN_API_URL:", process.env.NEXT_PUBLIC_ADMIN_API_URL);
+      console.log("AuthContext - process.env.NEXT_PUBLIC_TEST_API_URL:", process.env.NEXT_PUBLIC_TEST_API_URL);
+
       const payload = {
         email,
         password,

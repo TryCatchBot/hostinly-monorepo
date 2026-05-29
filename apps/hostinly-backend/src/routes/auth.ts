@@ -66,6 +66,8 @@ router.post('/logout', (req, res) => {
 
 router.post('/signup', async (req, res) => {
   try {
+    console.log("Auth Route - process.env.DATABASE_URL:", process.env.DATABASE_URL);
+    console.log("Auth Route - process.env.DIRECT_URL:", process.env.DIRECT_URL);
     const {
       email,
       password,
