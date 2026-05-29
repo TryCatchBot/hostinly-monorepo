@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://hostinly-backend.onrender.com/api';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 
 export default function EditPropertyPage() {
   const params = useParams<{ id: string }>();
@@ -36,7 +36,7 @@ export default function EditPropertyPage() {
       if (!id) return;
       try {
         const token = localStorage.getItem('hostinly_token');
-        const response = await fetch(`${API_URL}/properties/${id}`, {
+        const response = await fetch(`${BASE_URL}/properties/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -75,7 +75,7 @@ export default function EditPropertyPage() {
 
     try {
       const token = localStorage.getItem('hostinly_token');
-      const response = await fetch(`${API_URL}/properties/${id}`, {
+      const response = await fetch(`${BASE_URL}/properties/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

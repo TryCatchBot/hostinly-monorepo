@@ -46,7 +46,7 @@ export interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://hostinly-backend.onrender.com/api';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
+      const response = await fetch(`${BASE_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -118,7 +118,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         ...additionalData,
       };
 
-      const response = await fetch(`${API_URL}/auth/signup`, {
+      const response = await fetch(`${BASE_URL}/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -146,7 +146,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       const token = localStorage.getItem('hostinly_token');
-      const response = await fetch(`${API_URL}/users/${user.id}`, {
+      const response = await fetch(`${BASE_URL}/users/${user.id}`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',
@@ -180,7 +180,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     try {
       const token = localStorage.getItem('hostinly_token');
-      const response = await fetch(`${API_URL}/users/${user.id}`, {
+      const response = await fetch(`${BASE_URL}/users/${user.id}`, {
         headers: { 
           'Authorization': `Bearer ${token}`
         },

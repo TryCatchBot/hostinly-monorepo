@@ -11,7 +11,7 @@ interface AddPropertyModalProps {
   onAdd: (property: Property) => void;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://hostinly-backend.onrender.com/api';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 
 export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddPropertyModalProps) {
   const { user } = useAuth();
@@ -150,7 +150,7 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
       const uploadPromises = files.map(async (file) => {
         const formData = new FormData();
         formData.append('file', file);
-        const res = await fetch(`${API_URL}/uploads/upload`, {
+        const res = await fetch(`${BASE_URL}/uploads/upload`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
           body: formData,
@@ -230,7 +230,7 @@ export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddProperty
       };
 
       const token = localStorage.getItem('hostinly_token');
-      const response = await fetch(`${API_URL}/properties`, {
+      const response = await fetch(`${BASE_URL}/properties`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

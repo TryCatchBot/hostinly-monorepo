@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import { type AdminUser, type AdminRole, ROLE_PERMISSIONS, type RolePermissions } from "./types";
-import { API_URL } from "./utils";
+import { BASE_URL } from "./utils";
 
 interface AuthContextType {
   user: AdminUser | null;
@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
+      const response = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

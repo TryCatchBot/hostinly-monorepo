@@ -12,7 +12,7 @@ interface PostJobModalProps {
   onPost: (job: JobPosting) => void;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://hostinly-backend.onrender.com/api';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 
 interface JobForm {
   title: string;
@@ -97,7 +97,7 @@ export default function PostJobModal({ isOpen, onClose, onPost }: PostJobModalPr
           authorId: user?.id,
         };
 
-        const response = await fetch(`${API_URL}/jobs`, {
+        const response = await fetch(`${BASE_URL}/jobs`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

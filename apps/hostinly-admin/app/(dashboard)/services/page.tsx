@@ -65,7 +65,7 @@ import {
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { StatCard } from "@/components/dashboard/stat-card"
-import { formatCurrency, formatDate, getStatusColor, API_URL } from "@/lib/utils"
+import { formatCurrency, formatDate, getStatusColor, BASE_URL } from "@/lib/utils"
 import { toast } from "sonner"
 import type { ServiceProvider, ServiceRequest } from "@/lib/types"
 
@@ -85,8 +85,8 @@ export default function ServicesPage() {
     const fetchData = async () => {
       try {
         const [providersRes, requestsRes] = await Promise.all([
-          fetch(`${API_URL}/services/providers`),
-          fetch(`${API_URL}/services/requests`),
+          fetch(`${BASE_URL}/services/providers`),
+          fetch(`${BASE_URL}/services/requests`),
         ])
 
         if (!providersRes.ok || !requestsRes.ok) {

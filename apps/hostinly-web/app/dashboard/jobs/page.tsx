@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, ChevronLeft, ChevronRight, Loader2, LayoutGrid, List, Briefcase } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://hostinly-backend.onrender.com/api';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 
 export default function JobsPage() {
   const { user, isLoading: authLoading } = useAuth();
@@ -39,7 +39,7 @@ export default function JobsPage() {
       if (!token) {
         throw new Error('No authentication token found');
       }
-      const response = await fetch(`${API_URL}/jobs?page=${page}&limit=10`, {
+      const response = await fetch(`${BASE_URL}/jobs?page=${page}&limit=10`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

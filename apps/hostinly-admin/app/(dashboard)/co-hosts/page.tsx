@@ -16,7 +16,7 @@ import { StatCard } from "@/components/dashboard/stat-card";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { CoHost } from "@/lib/types";
-import { formatDate, getStatusColor, formatStatus, API_URL } from "@/lib/utils";
+import { formatDate, getStatusColor, formatStatus, BASE_URL } from "@/lib/utils";
 import {
   MoreHorizontal,
   Eye,
@@ -182,7 +182,7 @@ export default function CoHostsPage() {
   useEffect(() => {
     const fetchCoHosts = async () => {
       try {
-        const response = await fetch(`${API_URL}/cohosts`);
+        const response = await fetch(`${BASE_URL}/cohosts`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

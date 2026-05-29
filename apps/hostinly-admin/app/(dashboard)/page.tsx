@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { formatCurrency, formatNumber, getStatusColor, formatStatus, getInitials, API_URL } from "@/lib/utils";
+import { formatCurrency, formatNumber, getStatusColor, formatStatus, getInitials, BASE_URL } from "@/lib/utils";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, BarChart, Bar, ResponsiveContainer } from "recharts";
 import { Users, Home, Calendar, DollarSign, UserCheck, Clock, Ticket, Percent } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -41,10 +41,10 @@ export default function DashboardPage() {
     const fetchData = async () => {
       try {
         const [statsRes, bookingsRes, usersRes, chartRes] = await Promise.all([
-          fetch(`${API_URL}/admin/stats`),
-          fetch(`${API_URL}/admin/recent-bookings`),
-          fetch(`${API_URL}/admin/recent-activity`),
-          fetch(`${API_URL}/admin/chart-data`),
+          fetch(`${BASE_URL}/admin/stats`),
+          fetch(`${BASE_URL}/admin/recent-bookings`),
+          fetch(`${BASE_URL}/admin/recent-activity`),
+          fetch(`${BASE_URL}/admin/chart-data`),
         ]);
 
         if (!statsRes.ok || !bookingsRes.ok || !usersRes.ok || !chartRes.ok) {

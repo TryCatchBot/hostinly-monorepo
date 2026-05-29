@@ -23,7 +23,7 @@ import { Home, Users, Briefcase, TrendingUp, Plus, AlertCircle, Activity, ArrowU
 import NextImage from 'next/image';
 import { Button } from '@/components/ui/button';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://hostinly-backend.onrender.com/api';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -59,13 +59,13 @@ export default function DashboardPage() {
       const headers = { Authorization: `Bearer ${token}` };
       
       const [statsRes, activityRes, cohostsRes, jobsRes, propertiesRes, interviewsRes, engagementsRes] = await Promise.all([
-        fetch(`${API_URL}/admin/stats`, { headers }),
-        fetch(`${API_URL}/admin/recent-activity`, { headers }),
-        fetch(`${API_URL}/cohosts`, { headers }),
-        fetch(`${API_URL}/jobs?limit=10`, { headers }),
-        fetch(`${API_URL}/properties`, { headers }),
-        fetch(`${API_URL}/interviews`, { headers }),
-        fetch(`${API_URL}/engagements`, { headers })
+        fetch(`${BASE_URL}/admin/stats`, { headers }),
+        fetch(`${BASE_URL}/admin/recent-activity`, { headers }),
+        fetch(`${BASE_URL}/cohosts`, { headers }),
+        fetch(`${BASE_URL}/jobs?limit=10`, { headers }),
+        fetch(`${BASE_URL}/properties`, { headers }),
+        fetch(`${BASE_URL}/interviews`, { headers }),
+        fetch(`${BASE_URL}/engagements`, { headers })
       ]);
       
       const statsData = await statsRes.json();

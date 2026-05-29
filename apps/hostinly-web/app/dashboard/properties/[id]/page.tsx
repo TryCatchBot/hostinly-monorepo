@@ -11,7 +11,7 @@ import { useAuth } from '@/context/AuthContext';
 import PropertyImageCarousel from '@/components/PropertyImageCarousel';
 import { toast } from 'sonner';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://hostinly-backend.onrender.com/api';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 
 export default function PropertyDetailPage() {
   const params = useParams<{ id: string }>();
@@ -32,7 +32,7 @@ export default function PropertyDetailPage() {
       
       try {
         const token = localStorage.getItem('hostinly_token');
-        const response = await fetch(`${API_URL}/properties/${id}`, {
+        const response = await fetch(`${BASE_URL}/properties/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -106,7 +106,7 @@ export default function PropertyDetailPage() {
     setIsDeleting(true);
     try {
       const token = localStorage.getItem('hostinly_token');
-      const response = await fetch(`${API_URL}/properties/${id}`, {
+      const response = await fetch(`${BASE_URL}/properties/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -133,7 +133,7 @@ export default function PropertyDetailPage() {
     try {
       const token = localStorage.getItem('hostinly_token');
       // Create an interview request as an application
-      const response = await fetch(`${API_URL}/interviews`, {
+      const response = await fetch(`${BASE_URL}/interviews`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

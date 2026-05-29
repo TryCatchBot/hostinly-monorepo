@@ -22,7 +22,7 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://hostinly-backend.onrender.com/api';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 
 export default function JobDetailPage() {
   const params = useParams<{ id: string }>();
@@ -44,7 +44,7 @@ export default function JobDetailPage() {
       if (!id) return;
       try {
         const token = localStorage.getItem('hostinly_token');
-        const response = await fetch(`${API_URL}/jobs/${id}`, {
+        const response = await fetch(`${BASE_URL}/jobs/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -106,7 +106,7 @@ export default function JobDetailPage() {
     setIsApplying(true);
     try {
       const token = localStorage.getItem('hostinly_token');
-      const response = await fetch(`${API_URL}/jobs/${id}/apply`, {
+      const response = await fetch(`${BASE_URL}/jobs/${id}/apply`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -135,7 +135,7 @@ export default function JobDetailPage() {
     setIsSaving(true);
     try {
       const token = localStorage.getItem('hostinly_token');
-      const response = await fetch(`${API_URL}/jobs/${id}/save`, {
+      const response = await fetch(`${BASE_URL}/jobs/${id}/save`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -161,7 +161,7 @@ export default function JobDetailPage() {
     setIsDeleting(true);
     try {
       const token = localStorage.getItem('hostinly_token');
-      const response = await fetch(`${API_URL}/jobs/${id}`, {
+      const response = await fetch(`${BASE_URL}/jobs/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

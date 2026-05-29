@@ -27,7 +27,7 @@ import {
   formatCurrency,
   getStatusColor,
   formatStatus,
-  API_URL,
+  BASE_URL,
 } from "@/lib/utils";
 import { toast } from "sonner";
 import {
@@ -49,7 +49,7 @@ import { ExternalLink } from "lucide-react";
 
 
 
-console.log(API_URL)
+console.log(BASE_URL)
 
 
 
@@ -505,7 +505,7 @@ export default function PropertiesPage() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch(`${API_URL}/properties`);
+        const response = await fetch(`${BASE_URL}/properties`);
         const data = await response.json();
         if (data.success) {
           setProperties(data.data);

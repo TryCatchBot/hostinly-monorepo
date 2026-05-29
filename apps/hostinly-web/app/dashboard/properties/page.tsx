@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://hostinly-backend.onrender.com/api';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 
 export default function PropertiesPage() {
   const { user, isLoading: authLoading } = useAuth();
@@ -31,7 +31,7 @@ export default function PropertiesPage() {
       
       try {
         const token = localStorage.getItem('hostinly_token');
-        const response = await fetch(`${API_URL}/properties`, {
+        const response = await fetch(`${BASE_URL}/properties`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
