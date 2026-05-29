@@ -103,9 +103,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Contact
-                </a>
+              
               </li>
               <li>
                 <a href="#" className="hover:text-white transition-colors">
@@ -119,6 +117,12 @@ export default function Footer() {
               </li>
             </ul>
           </div>
+        </div>
+
+        <div>
+           <a href="mailto:hello@hostinly.co" className="hover:text-white transition-colors">
+                  hello@hostinly.co
+                </a>
         </div>
 
         <div className="border-t border-white/20 mt-8 pt-8 text-center text-white">
