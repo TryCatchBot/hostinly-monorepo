@@ -1,8 +1,7 @@
-import express from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
 
-// Set correct DB URL based on NODE_ENV
+// Set correct DB URL based on NODE_ENV BEFORE importing anything that uses Prisma
 const isProd = process.env.NODE_ENV === 'production';
 process.env.DATABASE_URL = isProd 
   ? process.env.PROD_DATABASE_URL 
@@ -11,10 +10,11 @@ process.env.DIRECT_URL = isProd
   ? process.env.PROD_DIRECT_URL 
   : process.env.DEV_DIRECT_URL;
 
-// console.log("Backend - NODE_ENV:", process.env.NODE_ENV);
-// console.log("Backend - DATABASE_URL:", process.env.DATABASE_URL);
-// console.log("Backend - DIRECT_URL:", process.env.DIRECT_URL);
+console.log("Backend - NODE_ENV:", process.env.NODE_ENV);
+console.log("Backend - DATABASE_URL:", process.env.DATABASE_URL);
+console.log("Backend - DIRECT_URL:", process.env.DIRECT_URL);
 
+import express from 'express';
 import { corsMiddleware } from './middleware';
 import { API_PREFIX, DEFAULT_PORT, DEFAULT_HOST } from './constants';
 

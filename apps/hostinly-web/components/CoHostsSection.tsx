@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, Check, Loader2 } from "lucide-react";
 import Image from "next/image";
-import { mockCoHosts } from "@/lib/provideData";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -13,6 +12,7 @@ export default function CoHostsSection() {
   const router = useRouter();
   const [cohosts, setCohosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCohosts = async () => {
@@ -33,11 +33,11 @@ export default function CoHostsSection() {
             specialties: c.specialties || []
           })));
         } else {
-          setCohosts(mockCoHosts);
+          setError(result.message || "Failed to fetch co-hosts");
         }
       } catch (err) {
         console.error('Failed to fetch cohosts:', err);
-        setCohosts(mockCoHosts);
+        setError("An error occurred while fetching co-hosts");
       } finally {
         setIsLoading(false);
       }
@@ -60,6 +60,14 @@ export default function CoHostsSection() {
         {isLoading ? (
           <div className="flex justify-center py-20">
             <Loader2 className="w-12 h-12 text-primary animate-spin" />
+          </div>
+        ) : error ? (
+          <div className="text-center py-20 text-red-500">
+            <p>{error}</p>
+          </div>
+        ) : cohosts.length === 0 ? (
+          <div className="text-center py-20 text-white">
+            <p>No co-hosts available at the moment.</p>
           </div>
         ) : (
           <div className="relative mb-12">

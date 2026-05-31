@@ -34,7 +34,7 @@ export default function PropertyListingSection() {
             bedrooms: p.bedrooms || 0,
             bathrooms: p.bathrooms || 0,
             image: (p.images && p.images.length > 0) ? p.images[0].replace(/`/g, '') : 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop',
-            status: (p.status || 'available').toLowerCase()
+            status: (p.status || 'AVAILABLE')
           })));
         } else {
           setError(result.message || "Failed to fetch properties");
