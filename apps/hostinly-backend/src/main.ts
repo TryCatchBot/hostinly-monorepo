@@ -1,20 +1,69 @@
-import express from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
 
-// Set correct DB URL based on NODE_ENV
-const isProd = process.env.NODE_ENV === 'production';
-process.env.DATABASE_URL = isProd 
-  ? process.env.PROD_DATABASE_URL 
-  : process.env.DEV_DATABASE_URL;
-process.env.DIRECT_URL = isProd 
-  ? process.env.PROD_DIRECT_URL 
-  : process.env.DEV_DIRECT_URL;
+// Helper to sanitize env vars (trim, remove quotes)
+const sanitizeEnvVar = (value: string | undefined): string | undefined => {
+  if (!value) return undefined;
+  return value.trim().replace(/^["']|["']$/g, '');
+};
 
-// console.log("Backend - NODE_ENV:", process.env.NODE_ENV);
-// console.log("Backend - DATABASE_URL:", process.env.DATABASE_URL);
-// console.log("Backend - DIRECT_URL:", process.env.DIRECT_URL);
+// --- SANITIZE AND LOG ENV ---
+const rawNodeEnv = process.env.NODE_ENV;
+const rawDevDbUrl = process.env.DEV_DATABASE_URL;
+const rawProdDbUrl = process.env.PROD_DATABASE_URL;
+const rawDirectUrl = process.env.DIRECT_URL;
+const rawDevDirectUrl = process.env.DEV_DIRECT_URL;
+const rawProdDirectUrl = process.env.PROD_DIRECT_URL;
 
+const nodeEnv = sanitizeEnvVar(rawNodeEnv) || 'development';
+const isProd = nodeEnv === 'production';
+const devDbUrl = sanitizeEnvVar(rawDevDbUrl);
+const prodDbUrl = sanitizeEnvVar(rawProdDbUrl);
+const directUrl = sanitizeEnvVar(rawDirectUrl);
+const devDirectUrl = sanitizeEnvVar(rawDevDirectUrl);
+const prodDirectUrl = sanitizeEnvVar(rawProdDirectUrl);
+
+console.log('=== RAW SANITIZED ENVIRONMENT ===');
+console.log('NODE_ENV:', nodeEnv);
+console.log('isProd:', isProd);
+console.log('DEV_DATABASE_URL:', devDbUrl ? `${devDbUrl.substring(0, 40)}...` : 'NOT SET');
+console.log('PROD_DATABASE_URL:', prodDbUrl ? `${prodDbUrl.substring(0, 40)}...` : 'NOT SET');
+
+// --- DETERMINE DB URLs ---
+let finalDatabaseUrl: string | undefined;
+let finalDirectUrl: string | undefined;
+
+if (isProd) {
+  // PRODUCTION MODE: Strict checks!
+  finalDatabaseUrl = prodDbUrl || sanitizeEnvVar(process.env.DATABASE_URL);
+  finalDirectUrl = prodDirectUrl || sanitizeEnvVar(process.env.DIRECT_URL);
+  
+  // Validate we have real prod DB URL!
+  if (!finalDatabaseUrl || finalDatabaseUrl.includes('dd9633bbae04474f')) { // This is DEV DB's prefix!
+    console.error('❌ PRODUCTION MODE: INVALID DATABASE URL! USING DEV DB BY ACCIDENT?');
+    process.exit(1); // Crash hard to prevent prod using dev DB!
+  }
+} else {
+  // DEVELOPMENT MODE
+  finalDatabaseUrl = devDbUrl || sanitizeEnvVar(process.env.DATABASE_URL);
+  finalDirectUrl = devDirectUrl || sanitizeEnvVar(process.env.DIRECT_URL);
+}
+
+// Set env vars so Prisma picks them up!
+if (finalDatabaseUrl) process.env.DATABASE_URL = finalDatabaseUrl;
+if (finalDirectUrl) process.env.DIRECT_URL = finalDirectUrl;
+
+console.log('=== FINAL DB CONFIGURATION ===');
+console.log('Final DATABASE_URL:', finalDatabaseUrl ? `${finalDatabaseUrl.substring(0, 40)}...` : 'NOT SET');
+console.log('Final DIRECT_URL:', finalDirectUrl ? `${finalDirectUrl.substring(0, 40)}...` : 'NOT SET');
+
+// Verify once more before importing Prisma stuff!
+if (isProd && finalDatabaseUrl?.includes('dd9633bbae04474f')) {
+  console.error('❌ CRITICAL ERROR: Production using dev DB!');
+  process.exit(1);
+}
+
+import express from 'express';
 import { corsMiddleware } from './middleware';
 import { API_PREFIX, DEFAULT_PORT, DEFAULT_HOST } from './constants';
 
