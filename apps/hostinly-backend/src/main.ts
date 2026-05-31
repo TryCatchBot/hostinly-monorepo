@@ -1,18 +1,29 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+// --- DETAILED ENVIRONMENT DEBUG LOGGING ---
+console.log('=== RUNTIME ENVIRONMENT ===');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('DEV_DATABASE_URL:', process.env.DEV_DATABASE_URL ? `${process.env.DEV_DATABASE_URL.substring(0, 40)}...` : 'NOT SET');
+console.log('PROD_DATABASE_URL:', process.env.PROD_DATABASE_URL ? `${process.env.PROD_DATABASE_URL.substring(0, 40)}...` : 'NOT SET');
+console.log('Current DATABASE_URL before override:', process.env.DATABASE_URL ? `${process.env.DATABASE_URL.substring(0, 40)}...` : 'NOT SET');
+
 // Set correct DB URL based on NODE_ENV BEFORE importing anything that uses Prisma
 const isProd = process.env.NODE_ENV === 'production';
-process.env.DATABASE_URL = isProd 
+const finalDatabaseUrl = isProd 
   ? (process.env.PROD_DATABASE_URL || process.env.DATABASE_URL)
   : (process.env.DEV_DATABASE_URL || process.env.DATABASE_URL);
-process.env.DIRECT_URL = isProd 
+const finalDirectUrl = isProd 
   ? (process.env.PROD_DIRECT_URL || process.env.DIRECT_URL)
   : (process.env.DEV_DIRECT_URL || process.env.DIRECT_URL);
 
-console.log("Backend - NODE_ENV:", process.env.NODE_ENV);
-console.log("Backend - DATABASE_URL set to:", process.env.DATABASE_URL ? `${process.env.DATABASE_URL.substring(0, 30)}...` : 'NOT SET');
-console.log("Backend - DIRECT_URL set to:", process.env.DIRECT_URL ? `${process.env.DIRECT_URL.substring(0, 30)}...` : 'NOT SET');
+process.env.DATABASE_URL = finalDatabaseUrl;
+process.env.DIRECT_URL = finalDirectUrl;
+
+console.log('=== SET ENVIRONMENT ===');
+console.log('isProd:', isProd);
+console.log('Final DATABASE_URL:', finalDatabaseUrl ? `${finalDatabaseUrl.substring(0, 40)}...` : 'NOT SET');
+console.log('Final DIRECT_URL:', finalDirectUrl ? `${finalDirectUrl.substring(0, 40)}...` : 'NOT SET');
 
 import express from 'express';
 import { corsMiddleware } from './middleware';
