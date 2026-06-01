@@ -19,7 +19,6 @@ const nodeEnv = sanitizeEnvVar(rawNodeEnv) || 'development';
 const isProd = nodeEnv === 'production';
 const devDbUrl = sanitizeEnvVar(rawDevDbUrl);
 const prodDbUrl = sanitizeEnvVar(rawProdDbUrl);
-const directUrl = sanitizeEnvVar(rawDirectUrl);
 const devDirectUrl = sanitizeEnvVar(rawDevDirectUrl);
 const prodDirectUrl = sanitizeEnvVar(rawProdDirectUrl);
 
@@ -34,17 +33,26 @@ let finalDatabaseUrl: string | undefined;
 let finalDirectUrl: string | undefined;
 
 if (isProd) {
-  // PRODUCTION MODE: Strict checks!
-  finalDatabaseUrl = prodDbUrl || sanitizeEnvVar(process.env.DATABASE_URL);
-  finalDirectUrl = prodDirectUrl || sanitizeEnvVar(process.env.DIRECT_URL);
-  
-  // Validate we have real prod DB URL!
-  if (!finalDatabaseUrl || finalDatabaseUrl.includes('dd9633bbae04474f')) { // This is DEV DB's prefix!
-    console.error('❌ PRODUCTION MODE: INVALID DATABASE URL! USING DEV DB BY ACCIDENT?');
-    process.exit(1); // Crash hard to prevent prod using dev DB!
+  // --- PRODUCTION MODE: NO FALLBACKS, NO MERCY ---
+  console.log('=== PRODUCTION MODE ACTIVE ===');
+  if (!prodDbUrl) {
+    console.error('❌ FATAL: PROD_DATABASE_URL is NOT SET in production!');
+    process.exit(1);
   }
+  if (!prodDirectUrl) {
+    console.error('❌ FATAL: PROD_DIRECT_URL is NOT SET in production!');
+    process.exit(1);
+  }
+  // Check for DEV DB prefix in prod URL (just to be 100% safe!)
+  if (prodDbUrl.includes('dd9633bbae04474f')) {
+    console.error('❌ FATAL: PROD_DATABASE_URL contains DEV DB credentials!');
+    process.exit(1);
+  }
+  finalDatabaseUrl = prodDbUrl;
+  finalDirectUrl = prodDirectUrl;
 } else {
-  // DEVELOPMENT MODE
+  // --- DEVELOPMENT MODE ---
+  console.log('=== DEVELOPMENT MODE ACTIVE ===');
   finalDatabaseUrl = devDbUrl || sanitizeEnvVar(process.env.DATABASE_URL);
   finalDirectUrl = devDirectUrl || sanitizeEnvVar(process.env.DIRECT_URL);
 }
@@ -57,9 +65,9 @@ console.log('=== FINAL DB CONFIGURATION ===');
 console.log('Final DATABASE_URL:', finalDatabaseUrl ? `${finalDatabaseUrl.substring(0, 40)}...` : 'NOT SET');
 console.log('Final DIRECT_URL:', finalDirectUrl ? `${finalDirectUrl.substring(0, 40)}...` : 'NOT SET');
 
-// Verify once more before importing Prisma stuff!
-if (isProd && finalDatabaseUrl?.includes('dd9633bbae04474f')) {
-  console.error('❌ CRITICAL ERROR: Production using dev DB!');
+// LAST LINE OF DEFENSE
+if (isProd && (!finalDatabaseUrl || finalDatabaseUrl.includes('dd9633bbae04474f'))) {
+  console.error('❌ CRITICAL: LAST CHECK FAILED - USING DEV DB IN PROD!');
   process.exit(1);
 }
 
