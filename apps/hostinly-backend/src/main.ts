@@ -11,7 +11,6 @@ const sanitizeEnvVar = (value: string | undefined): string | undefined => {
 const rawNodeEnv = process.env.NODE_ENV;
 const rawDevDbUrl = process.env.DEV_DATABASE_URL;
 const rawProdDbUrl = process.env.PROD_DATABASE_URL;
-const rawDirectUrl = process.env.DIRECT_URL;
 const rawDevDirectUrl = process.env.DEV_DIRECT_URL;
 const rawProdDirectUrl = process.env.PROD_DIRECT_URL;
 
