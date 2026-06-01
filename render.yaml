@@ -26,7 +26,7 @@ services:
     plan: free
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        value: https://hostinly-backend.onrender.com/api
+        value: https://hostinly-backend-prod.onrender.com/api
       - key: NODE_ENV
         value: production
 
@@ -39,6 +39,6 @@ services:
     plan: free
     envVars:
       - key: NEXT_PUBLIC_ADMIN_API_URL
-        value: https://hostinly-backend.onrender.com/api
+        value: https://hostinly-backend-prod.onrender.com/api
       - key: NODE_ENV
         value: production
