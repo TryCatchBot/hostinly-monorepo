@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Hostinly Admin Dashboard",
   description: "Comprehensive admin management dashboard for Hostinly property management platform",
+  icons: {
+    icon: "/favicon.ico?v=2",
+  },
 };
 
 export const viewport: Viewport = {
