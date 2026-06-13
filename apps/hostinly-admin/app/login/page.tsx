@@ -24,12 +24,12 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const success = await login(email, password);
-      if (success) {
+      const result = await login(email, password);
+      if (result.success) {
         toast.success("Welcome back! Redirecting to dashboard...");
         router.push("/");
       } else {
-        toast.error("Invalid credentials. Only admin users can log in.");
+        toast.error(result.error || "Invalid credentials. Only admin users can log in.");
       }
     } catch {
       toast.error("An error occurred. Please try again.");

@@ -3,8 +3,8 @@ import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import path from 'path';
 
-// Load environment variables from the root .env file
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+// Load environment variables from the hostinly-backend .env file
+dotenv.config({ path: path.resolve(process.cwd(), 'apps/hostinly-backend/.env') });
 
 const prisma = new PrismaClient();
 
