@@ -7,7 +7,7 @@ import { BASE_URL } from "./utils";
 interface AuthContextType {
   user: AdminUser | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   permissions: RolePermissions | null;
 }
@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       console.log("Admin AuthContext - BASE_URL:", BASE_URL);
       console.log("Admin AuthContext - process.env.NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
@@ -65,12 +65,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(adminUser);
         localStorage.setItem("hostinly_admin_user", JSON.stringify(adminUser));
         localStorage.setItem("hostinly_admin_token", result.data.token);
-        return true;
+        return { success: true };
+      } else {
+        // Check if it's invalid credentials OR just not an admin user
+        const errorMsg = result.error || "Invalid credentials. Only admin users can log in.";
+        return { success: false, error: errorMsg };
       }
-      return false;
     } catch (error) {
       console.error("Login error:", error);
-      return false;
+      return { success: false, error: "An error occurred. Please try again." };
     }
   };
 
