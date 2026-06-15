@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3333/api"
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function EditJobPage() {
   const params = useParams<{ id: string }>();

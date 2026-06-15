@@ -46,7 +46,7 @@ export interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://hostinly-backend.onrender.com/api"
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -112,8 +112,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log("AuthContext - BASE_URL:", BASE_URL);
       console.log("AuthContext - process.env.NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
-      console.log("AuthContext - process.env.NEXT_PUBLIC_ADMIN_API_URL:", process.env.NEXT_PUBLIC_ADMIN_API_URL);
-      console.log("AuthContext - process.env.NEXT_PUBLIC_TEST_API_URL:", process.env.NEXT_PUBLIC_TEST_API_URL);
 
       const payload = {
         email,
