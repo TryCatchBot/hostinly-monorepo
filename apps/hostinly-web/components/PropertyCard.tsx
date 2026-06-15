@@ -11,7 +11,7 @@ interface PropertyCardProps {
   onSelect?: (property: Property) => void;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3333/api"
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function PropertyCard({ property }: PropertyCardProps) {
   const { user } = useAuth();
