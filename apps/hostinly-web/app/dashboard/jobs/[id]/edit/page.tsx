@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://hostinly-backend-prod.onrender.com/api";
 
 export default function EditJobPage() {
   const params = useParams<{ id: string }>();
