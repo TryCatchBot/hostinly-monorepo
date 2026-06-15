@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, ChevronLeft, ChevronRight, Loader2, LayoutGrid, List, Briefcase } from 'lucide-react';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://hostinly-backend-prod.onrender.com/api";
 
 export default function JobsPage() {
   const { user, isLoading: authLoading } = useAuth();

@@ -11,7 +11,7 @@ interface AddPropertyModalProps {
   onAdd: (property: Property) => void;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://hostinly-backend-prod.onrender.com/api";
 
 export default function AddPropertyModal({ isOpen, onClose, onAdd }: AddPropertyModalProps) {
   const { user } = useAuth();

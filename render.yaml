@@ -24,6 +24,9 @@ services:
     dockerContext: .
     dockerfilePath: apps/hostinly-web/Dockerfile
     plan: free
+    buildArgs:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://hostinly-backend.onrender.com/api
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: https://hostinly-backend.onrender.com/api
@@ -37,6 +40,9 @@ services:
     dockerContext: .
     dockerfilePath: apps/hostinly-admin/Dockerfile
     plan: free
+    buildArgs:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://hostinly-backend.onrender.com/api
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: https://hostinly-backend.onrender.com/api
@@ -68,6 +74,9 @@ services:
     dockerContext: .
     dockerfilePath: apps/hostinly-web/Dockerfile
     plan: free
+    buildArgs:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://hostinly-backend-prod.onrender.com/api
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: https://hostinly-backend-prod.onrender.com/api
@@ -81,6 +90,9 @@ services:
     dockerContext: .
     dockerfilePath: apps/hostinly-admin/Dockerfile
     plan: free
+    buildArgs:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://hostinly-backend-prod.onrender.com/api
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: https://hostinly-backend-prod.onrender.com/api

@@ -23,7 +23,7 @@ import { Home, Users, Briefcase, TrendingUp, Plus, AlertCircle, Activity, ArrowU
 import NextImage from 'next/image';
 import { Button } from '@/components/ui/button';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://hostinly-backend-prod.onrender.com/api";
 
 export default function DashboardPage() {
   const router = useRouter();
