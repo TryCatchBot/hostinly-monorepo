@@ -38,7 +38,7 @@ services:
     dockerfilePath: apps/hostinly-admin/Dockerfile
     plan: free
     envVars:
-      - key: NEXT_PUBLIC_ADMIN_API_URL
+      - key: NEXT_PUBLIC_API_URL
         value: https://hostinly-backend.onrender.com/api
       - key: NODE_ENV
         value: production
@@ -82,7 +82,7 @@ services:
     dockerfilePath: apps/hostinly-admin/Dockerfile
     plan: free
     envVars:
-      - key: NEXT_PUBLIC_ADMIN_API_URL
+      - key: NEXT_PUBLIC_API_URL
         value: https://hostinly-backend-prod.onrender.com/api
       - key: NODE_ENV
         value: production

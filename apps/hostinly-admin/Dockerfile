@@ -16,8 +16,8 @@ COPY . .
 RUN pnpm install --frozen-lockfile
 
 # Build the admin app
-ARG NEXT_PUBLIC_ADMIN_API_URL=http://localhost:3333/api
-ENV NEXT_PUBLIC_ADMIN_API_URL=$NEXT_PUBLIC_ADMIN_API_URL
+ARG NEXT_PUBLIC_API_URL=http://localhost:3333/api
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
 RUN pnpm nx build hostinly-admin --prod --skip-nx-cache
 

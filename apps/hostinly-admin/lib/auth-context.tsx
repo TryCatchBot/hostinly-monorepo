@@ -39,10 +39,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       console.log("Admin AuthContext - BASE_URL:", BASE_URL);
       console.log("Admin AuthContext - process.env.NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
-      console.log("Admin AuthContext - process.env.NEXT_PUBLIC_ADMIN_API_URL:", process.env.NEXT_PUBLIC_ADMIN_API_URL);
-      console.log("Admin AuthContext - process.env.NEXT_PUBLIC_TEST_API_URL:", process.env.NEXT_PUBLIC_TEST_API_URL);
-      console.log("Admin AuthContext - process.env.DATABASE_URL:", process.env.DATABASE_URL);
-      console.log("Admin AuthContext - process.env.DIRECT_URL:", process.env.DIRECT_URL);
       const response = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
